@@ -5,14 +5,6 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Магазин в Telegram</title>
     <style>
-        /* Подключение шрифта */
-        @font-face {
-            font-family: 'Moscow Sans';
-            src: url('fonts/Moscow Sans.ttf') format('truetype');
-            font-weight: normal;
-            font-style: normal;
-        }
-        
         /* Базовые стили */
         :root {
             --primary-bg: #000;
@@ -21,20 +13,28 @@
             --border-radius: 12px;
             --border-radius-small: 8px;
             --border-width: 1px;
-            --header-height: 120px;
+            --header-height: 150px;
             --section-margin: 12px;
             --card-size: 160px;
             --card-margin: 30px;
             --card-gap: 20px;
             --nav-height: 60px;
+            --transition: all 0.3s ease;
+        }
+
+        @font-face {
+            font-family: 'Moscow Sans';
+            src: url('fonts/Moscow Sans.ttf') format('truetype');
+            font-weight: normal;
+            font-style: normal;
         }
         
         * {
             margin: 0;
             padding: 0;
             box-sizing: border-box;
-            font-family: 'Moscow Sans', sans-serif;
-            outline: none;
+            font-family: 'Moscow Sans', 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            -webkit-tap-highlight-color: rgba(0, 0, 0, 0.3);
         }
         
         body {
@@ -56,17 +56,28 @@
         /* Стили для разделов */
         .page {
             display: none;
-            padding: 0 20px;
+            padding: 0 12px;
+            animation: fadeIn 0.5s ease;
         }
         
         .page.active {
             display: block;
         }
         
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        
+        @keyframes fadeOut {
+            from { opacity: 1; transform: translateY(0); }
+            to { opacity: 0; transform: translateY(10px); }
+        }
+        
         /* Стили для шапки */
         .header {
             height: var(--header-height);
-            padding: 15px 0 0;
+            padding: 20px 12px 0;
         }
         
         .page-title {
@@ -89,6 +100,7 @@
             color: var(--primary-text);
             padding: 0 15px;
             font-size: 16px;
+            transition: var(--transition);
         }
         
         .search-input:focus {
@@ -108,7 +120,16 @@
             gap: 8px;
             font-size: 16px;
             cursor: pointer;
+            transition: var(--transition);
             white-space: nowrap;
+        }
+        
+        /* Убрали hover эффекты для мобильных устройств */
+        @media (hover: hover) and (pointer: fine) {
+            .search-btn:hover {
+                background: rgba(255, 255, 255, 0.1);
+                transform: translateY(-2px);
+            }
         }
         
         /* Стили для уведомлений */
@@ -144,19 +165,8 @@
         
         .section-content {
             padding: 45px 15px 15px;
-            font-size: 16px;
+            font-size: 18px;
             line-height: 1.4;
-        }
-        
-        .notification-item {
-            margin-bottom: 10px;
-            padding-bottom: 10px;
-            border-bottom: 1px solid #333;
-        }
-        
-        .notification-item:last-child {
-            border-bottom: none;
-            margin-bottom: 0;
         }
         
         /* Стили для заказов */
@@ -174,13 +184,13 @@
             display: flex;
             align-items: center;
             padding: 12px 15px;
-            justify-content: flex-start;
+            justify-content: space-between;
         }
         
         .orders-title-wrapper {
             display: flex;
             align-items: center;
-            gap: 10px;
+            gap: 3px;
         }
         
         .orders-title {
@@ -198,27 +208,10 @@
             align-items: center;
             justify-content: center;
             cursor: pointer;
-            border-radius: 50%;
+            transition: var(--transition);
+            border-radius: 0;
             font-size: 16px;
-        }
-        
-        .order-content {
-            padding: 0 15px 15px;
-            font-size: 16px;
-            line-height: 1.4;
-        }
-        
-        .get-code-btn {
-            display: block;
-            width: calc(100% - 30px);
-            height: 45px;
-            background: var(--primary-text);
-            color: var(--primary-bg);
-            border: none;
-            border-radius: var(--border-radius-small);
-            font-size: 18px;
-            margin: 0 15px 15px;
-            cursor: pointer;
+            margin-left: 10px;
         }
         
         /* Стили для рекомендаций */
@@ -228,20 +221,28 @@
         
         .recommendations-title {
             font-size: 24px;
-            margin: 20px 0;
+            margin: 20px 12px;
         }
         
         .products-grid {
             display: grid;
             grid-template-columns: repeat(2, 1fr);
             gap: var(--card-gap);
+            margin: 0 12px;
         }
         
         .product-card {
             width: 100%;
             max-width: var(--card-size);
             margin: 0 auto;
+            transition: var(--transition);
             cursor: pointer;
+        }
+        
+        @media (hover: hover) and (pointer: fine) {
+            .product-card:hover {
+                transform: translateY(-5px);
+            }
         }
         
         .product-image {
@@ -286,6 +287,13 @@
             margin: 60px 0;
             color: var(--primary-text);
             text-decoration: none;
+            transition: var(--transition);
+        }
+        
+        @media (hover: hover) and (pointer: fine) {
+            .catalog-link:hover {
+                text-decoration: underline;
+            }
         }
         
         /* Стили для каталога */
@@ -293,7 +301,7 @@
             display: grid;
             grid-template-columns: repeat(2, 1fr);
             gap: var(--card-gap);
-            margin: var(--section-margin) 0;
+            margin: var(--section-margin) 12px;
         }
         
         /* Стили для корзины */
@@ -314,7 +322,13 @@
             border-radius: var(--border-radius);
             padding: 15px;
             margin-bottom: 12px;
+            animation: slideIn 0.3s ease;
             gap: 15px;
+        }
+        
+        @keyframes slideIn {
+            from { opacity: 0; transform: translateX(-20px); }
+            to { opacity: 1; transform: translateX(0); }
         }
         
         .cart-item-image {
@@ -381,7 +395,15 @@
             align-items: center;
             justify-content: center;
             cursor: pointer;
+            transition: var(--transition);
             font-size: 16px;
+        }
+        
+        @media (hover: hover) and (pointer: fine) {
+            .quantity-btn:hover {
+                background: rgba(255, 255, 255, 0.1);
+                transform: scale(1.1);
+            }
         }
         
         .quantity-display {
@@ -395,6 +417,7 @@
             text-align: right;
             font-size: 20px;
             margin: 20px 0;
+            animation: fadeIn 0.5s ease;
         }
         
         .checkout-btn {
@@ -407,11 +430,25 @@
             border-radius: var(--border-radius);
             font-size: 20px;
             cursor: pointer;
+            transition: var(--transition);
+        }
+        
+        @media (hover: hover) and (pointer: fine) {
+            .checkout-btn:hover {
+                transform: translateY(-2px);
+                box-shadow: 0 5px 15px rgba(255, 255, 255, 0.2);
+            }
         }
         
         .checkout-btn:disabled {
             opacity: 0.5;
             cursor: not-allowed;
+            transform: none;
+        }
+        
+        .checkout-btn:disabled:hover {
+            transform: none;
+            box-shadow: none;
         }
         
         /* Стили для профиля */
@@ -450,13 +487,21 @@
             color: var(--primary-text);
             font-size: 16px;
             cursor: pointer;
+            transition: var(--transition);
+        }
+        
+        @media (hover: hover) and (pointer: fine) {
+            .profile-btn:hover {
+                background: rgba(255, 255, 255, 0.1);
+                transform: translateY(-2px);
+            }
         }
         
         .version-info {
             text-align: center;
-            margin-top: 30px;
             font-size: 12px;
-            color: #888;
+            margin-top: 30px;
+            color: #ccc;
         }
         
         /* Стили для карточки товара */
@@ -471,11 +516,16 @@
             z-index: 1000;
             align-items: center;
             justify-content: center;
+            animation: fadeIn 0.3s ease;
             padding: 10px;
         }
         
         .product-modal.active {
             display: flex;
+        }
+        
+        .product-modal.fade-out {
+            animation: fadeOut 0.3s ease forwards;
         }
         
         .product-modal-content {
@@ -488,6 +538,7 @@
             max-height: 90vh;
             overflow-y: auto;
             position: relative;
+            animation: scaleIn 0.3s ease;
         }
         
         .product-modal-close {
@@ -502,7 +553,14 @@
             align-items: center;
             justify-content: center;
             border-radius: 50%;
+            transition: var(--transition);
             z-index: 10;
+        }
+        
+        @media (hover: hover) and (pointer: fine) {
+            .product-modal-close:hover {
+                background: rgba(255, 255, 255, 0.1);
+            }
         }
         
         .product-modal-image {
@@ -637,7 +695,7 @@
             gap: 10px;
             align-items: center;
             margin-top: 15px;
-            flex-wrap: wrap;
+            flex-wrap: nowrap;
         }
         
         .quantity-controls {
@@ -647,6 +705,13 @@
             background: rgba(255, 255, 255, 0.1);
             padding: 8px 12px;
             border-radius: var(--border-radius);
+            transition: all 0.3s ease;
+            animation: slideInControls 0.3s ease;
+        }
+        
+        @keyframes slideInControls {
+            from { opacity: 0; transform: translateX(-10px); }
+            to { opacity: 1; transform: translateX(0); }
         }
         
         .add-to-cart-btn {
@@ -657,6 +722,7 @@
             border-radius: var(--border-radius);
             font-size: 14px;
             cursor: pointer;
+            transition: var(--transition);
             flex: 1;
             min-width: 150px;
         }
@@ -669,8 +735,16 @@
             border-radius: var(--border-radius);
             font-size: 14px;
             cursor: pointer;
+            transition: var(--transition);
             flex: 1;
             min-width: 150px;
+        }
+        
+        @media (hover: hover) and (pointer: fine) {
+            .add-to-cart-btn:hover, .go-to-cart-btn:hover {
+                transform: translateY(-2px);
+                box-shadow: 0 5px 15px rgba(255, 255, 255, 0.2);
+            }
         }
         
         /* Стили для уведомлений */
@@ -695,11 +769,6 @@
             opacity: 1;
         }
         
-        .notification.hide {
-            transform: translateX(100%);
-            opacity: 0;
-        }
-        
         /* Стили для нижнего меню */
         .bottom-nav {
             position: fixed;
@@ -721,6 +790,7 @@
             align-items: center;
             justify-content: center;
             cursor: pointer;
+            transition: var(--transition);
             padding: 3px 8px;
             border-radius: var(--border-radius);
             -webkit-tap-highlight-color: transparent;
@@ -749,21 +819,6 @@
             font-size: 12px;
         }
         
-        .cart-count {
-            position: absolute;
-            top: -5px;
-            right: -5px;
-            background: red;
-            color: white;
-            border-radius: 50%;
-            width: 18px;
-            height: 18px;
-            font-size: 12px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-        }
-        
         /* Модальное окно */
         .modal {
             display: none;
@@ -776,10 +831,15 @@
             z-index: 1000;
             align-items: center;
             justify-content: center;
+            animation: fadeIn 0.3s ease;
         }
         
         .modal.active {
             display: flex;
+        }
+        
+        .modal.fade-out {
+            animation: fadeOut 0.3s ease forwards;
         }
         
         .modal-content {
@@ -790,6 +850,12 @@
             max-width: 400px;
             width: 90%;
             position: relative;
+            animation: scaleIn 0.3s ease;
+        }
+        
+        @keyframes scaleIn {
+            from { transform: scale(0.9); opacity: 0; }
+            to { transform: scale(1); opacity: 1; }
         }
         
         .modal-close {
@@ -804,6 +870,13 @@
             align-items: center;
             justify-content: center;
             border-radius: 50%;
+            transition: var(--transition);
+        }
+        
+        @media (hover: hover) and (pointer: fine) {
+            .modal-close:hover {
+                background: rgba(255, 255, 255, 0.1);
+            }
         }
         
         .modal-title {
@@ -826,16 +899,20 @@
             border-radius: var(--border-radius);
             font-size: 16px;
             cursor: pointer;
+            transition: var(--transition);
+        }
+        
+        @media (hover: hover) and (pointer: fine) {
+            .modal-btn:hover {
+                transform: translateY(-2px);
+                box-shadow: 0 5px 15px rgba(255, 255, 255, 0.2);
+            }
         }
         
         /* Адаптивность */
         @media (max-width: 780px) {
-            .page {
-                padding: 0 12px;
-            }
-            
             .header {
-                padding: 10px 0 0;
+                padding: 20px 12px 0;
             }
             
             .search-container {
@@ -857,10 +934,15 @@
             
             .products-grid, .catalog-grid {
                 grid-template-columns: repeat(2, 1fr);
+                margin: 0 12px;
             }
             
             .section-content, .order-content {
                 font-size: 16px;
+            }
+            
+            .recommendations-title {
+                margin: 20px 12px;
             }
             
             .product-modal-content {
@@ -874,6 +956,7 @@
             
             .product-modal-actions {
                 flex-direction: row;
+                flex-wrap: wrap;
             }
             
             .add-to-cart-btn, .go-to-cart-btn {
@@ -895,21 +978,23 @@
                 justify-content: flex-end;
             }
             
-            /* Для мобильных - кнопка "Перейти в корзину" рядом с контролами количества */
-            @media (max-width: 480px) {
-                .product-modal-actions {
-                    flex-direction: row;
-                    flex-wrap: nowrap;
-                }
-                
-                .quantity-controls {
-                    flex: 1;
-                }
-                
-                .go-to-cart-btn {
-                    min-width: auto;
-                    flex: 1;
-                }
+            /* Исправление для кнопки "Перейти в корзину" в мобильной версии */
+            .product-modal-actions {
+                flex-direction: row;
+                align-items: center;
+                justify-content: space-between;
+            }
+            
+            .quantity-controls {
+                flex: 1;
+                max-width: 120px;
+                justify-content: center;
+            }
+            
+            .go-to-cart-btn {
+                flex: 2;
+                min-width: auto;
+                margin-left: 10px;
             }
         }
         
@@ -921,7 +1006,7 @@
             .sections-row {
                 display: flex;
                 gap: var(--section-margin);
-                margin: var(--section-margin) 0;
+                margin: var(--section-margin) 20px;
             }
             
             .notifications-section, .orders-section {
@@ -935,8 +1020,9 @@
             }
         }
         
-        button {
-            -webkit-tap-highlight-color: transparent;
+        button:active {
+            transform: scale(0.98);
+            transition: transform 0.1s ease;
         }
         
         /* Стили для дополнительного каталога в корзине */
@@ -961,6 +1047,30 @@
             align-items: center;
             gap: 10px;
             margin-top: 8px;
+        }
+        
+        /* Стили для списка уведомлений */
+        .notifications-list {
+            list-style-type: none;
+        }
+        
+        .notification-item {
+            padding: 8px 0;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.2);
+        }
+        
+        .notification-item:last-child {
+            border-bottom: none;
+        }
+        
+        .notification-date {
+            font-size: 12px;
+            color: #ccc;
+            margin-bottom: 3px;
+        }
+        
+        .notification-title {
+            font-size: 14px;
         }
     </style>
 </head>
@@ -991,10 +1101,8 @@
                 
                 <div class="orders-section">
                     <div class="orders-header">
-                        <div class="orders-title-wrapper">
-                            <div class="section-title">Мои актуальные заказы</div>
-                            <div class="help-btn" id="help-btn">?</div>
-                        </div>
+                        <div class="section-title">Мои актуальные заказы</div>
+                        <button class="help-btn" id="help-btn">?</button>
                     </div>
                     <div class="order-content">
                         №00183 — 114 позиций (Готов к получению)<br>
@@ -1094,7 +1202,7 @@
                     <button class="profile-btn" id="about-btn">О нас</button>
                 </div>
                 
-                <div class="version-info">Версия: 0.0.1</div>
+                <div class="version-info">Версия: 0.0.2</div>
             </div>
         </section>
         
@@ -1118,20 +1226,20 @@
             </div>
         </div>
         
+        <!-- Модальное окно оформления заказа -->
+        <div class="modal" id="order-modal">
+            <div class="modal-content">
+                <span class="modal-close" id="order-modal-close">&times;</span>
+                <h2 class="modal-title">Заказ оформлен</h2>
+                <p class="modal-text">Спасибо за покупку! Ваш заказ успешно оформлен.</p>
+                <button class="modal-btn" id="order-modal-ok-btn">Хорошо</button>
+            </div>
+        </div>
+        
         <!-- Модальное окно товара -->
         <div class="product-modal" id="product-modal">
             <div class="product-modal-content">
                 <!-- Контент будет заполнен через JavaScript -->
-            </div>
-        </div>
-        
-        <!-- Кастомное модальное окно для сообщений -->
-        <div class="modal" id="message-modal">
-            <div class="modal-content">
-                <span class="modal-close" id="message-modal-close">&times;</span>
-                <h2 class="modal-title" id="message-modal-title">Сообщение</h2>
-                <p class="modal-text" id="message-modal-text">Текст сообщения</p>
-                <button class="modal-btn" id="message-modal-ok-btn">Хорошо</button>
             </div>
         </div>
     </div>
@@ -1153,7 +1261,6 @@
         <div class="nav-item" data-page="cart">
             <div class="nav-icon">
                 <img src="media/icons/cart.png" alt="Корзина">
-                <span class="cart-count" id="cart-count">0</span>
             </div>
             <span class="nav-label">Корзина</span>
         </div>
@@ -1173,7 +1280,7 @@
         let cart = [];
         let currentProduct = null;
         let notifications = [];
-        let userData = {};
+        let telegramUserData = null;
 
         // Функция для безопасной загрузки корзины из localStorage
         function loadCart() {
@@ -1181,10 +1288,12 @@
                 const savedCart = localStorage.getItem('cart');
                 if (savedCart) {
                     const parsedCart = JSON.parse(savedCart);
+                    // Проверяем, что это массив
                     if (Array.isArray(parsedCart)) {
                         cart = parsedCart;
                     } else {
                         cart = [];
+                        console.warn('Некорректные данные корзины, создана новая корзина');
                     }
                 } else {
                     cart = [];
@@ -1193,25 +1302,14 @@
                 console.error('Ошибка загрузки корзины:', error);
                 cart = [];
             }
-            updateCartCount();
         }
 
         // Функция для сохранения корзины в localStorage
         function saveCart() {
             try {
                 localStorage.setItem('cart', JSON.stringify(cart));
-                updateCartCount();
             } catch (error) {
                 console.error('Ошибка сохранения корзины:', error);
-            }
-        }
-
-        // Обновление счетчика корзины
-        function updateCartCount() {
-            const cartCount = document.getElementById('cart-count');
-            if (cartCount) {
-                const totalItems = cart.reduce((sum, item) => sum + item.quantity, 0);
-                cartCount.textContent = totalItems > 0 ? totalItems : '';
             }
         }
 
@@ -1222,6 +1320,7 @@
                 if (!response.ok) throw new Error('Ошибка загрузки каталога');
                 const data = await response.json();
                 products = data.products || data;
+                initializeApp();
             } catch (error) {
                 console.error('Ошибка загрузки товаров:', error);
                 // Демо-данные
@@ -1265,8 +1364,49 @@
                         image: "media/products/macbook.png",
                         seller: "Apple",
                         quantity: 5
+                    },
+                    {
+                        id: 3,
+                        shortName: "Наушники",
+                        fullName: "Наушники Sony WH-1000XM4",
+                        price: 29990,
+                        currency: "₽",
+                        description: "Беспроводные наушники с шумоподавлением.",
+                        characteristics: {
+                            "Тип": "Накладные",
+                            "Аккумулятор": "30 часов",
+                            "Вес": "254 г"
+                        },
+                        reviews: [
+                            {
+                                author: "Мария",
+                                text: "Отличное шумоподавление!",
+                                rating: 5
+                            }
+                        ],
+                        image: "media/products/headphones.png",
+                        seller: "Sony",
+                        quantity: 15
+                    },
+                    {
+                        id: 4,
+                        shortName: "Часы",
+                        fullName: "Apple Watch Series 7",
+                        price: 39990,
+                        currency: "₽",
+                        description: "Умные часы с расширенными функциями здоровья.",
+                        characteristics: {
+                            "Экран": "45 мм",
+                            "Водозащита": "50 м",
+                            "Аккумулятор": "18 часов"
+                        },
+                        reviews: [],
+                        image: "media/products/watch.png",
+                        seller: "Apple",
+                        quantity: 8
                     }
                 ];
+                initializeApp();
             }
         }
 
@@ -1280,31 +1420,31 @@
                 displayNotifications();
             } catch (error) {
                 console.error('Ошибка загрузки уведомлений:', error);
-                // Демо-уведомления
+                // Демо-данные
                 notifications = [
                     {
                         id: 1,
-                        title: "Заказ №00185 готов к получению",
+                        title: "Ваш заказ №00185 собран",
                         date: "2023-09-15 14:30",
                         read: false
                     },
                     {
                         id: 2,
-                        title: "Новая акция на смартфоны",
+                        title: "Новые поступления в категории Электроника",
                         date: "2023-09-14 10:15",
-                        read: false
+                        read: true
                     },
                     {
                         id: 3,
-                        title: "Ваш отзыв был опубликован",
+                        title: "Специальное предложение для вас",
                         date: "2023-09-13 16:45",
                         read: true
                     },
                     {
                         id: 4,
-                        title: "Доставка задерживается",
+                        title: "Ваш отзыв был опубликован",
                         date: "2023-09-12 09:20",
-                        read: false
+                        read: true
                     }
                 ];
                 displayNotifications();
@@ -1320,61 +1460,64 @@
             const recentNotifications = notifications.slice(-3).reverse();
             
             if (recentNotifications.length === 0) {
-                notificationsContent.innerHTML = '<div>У вас пока нет уведомлений</div>';
+                notificationsContent.innerHTML = '<div>У вас нет уведомлений</div>';
                 return;
             }
             
-            notificationsContent.innerHTML = recentNotifications.map(notification => `
-                <div class="notification-item">
-                    <strong>${formatDate(notification.date)}</strong> — ${notification.title}
-                </div>
-            `).join('');
-        }
-
-        // Форматирование даты
-        function formatDate(dateString) {
-            const date = new Date(dateString);
-            return `${date.toLocaleDateString()} ${date.toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'})}`;
+            let html = '<ul class="notifications-list">';
+            recentNotifications.forEach(notification => {
+                const date = new Date(notification.date);
+                const formattedDate = `${date.toLocaleDateString()} ${date.toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'})}`;
+                
+                html += `
+                    <li class="notification-item">
+                        <div class="notification-date">${formattedDate}</div>
+                        <div class="notification-title">${notification.title}</div>
+                    </li>
+                `;
+            });
+            html += '</ul>';
+            
+            notificationsContent.innerHTML = html;
         }
 
         // Получение данных пользователя из Telegram
-        function loadUserData() {
-            // Если мы в Telegram WebApp
+        function getTelegramUserData() {
+            // Проверяем, доступен ли объект Telegram WebApp
             if (window.Telegram && window.Telegram.WebApp) {
                 const webApp = window.Telegram.WebApp;
-                userData = {
-                    name: webApp.initDataUnsafe.user?.first_name || 'Пользователь',
-                    username: webApp.initDataUnsafe.user?.username || '@username',
-                    id: webApp.initDataUnsafe.user?.id || '123456789',
-                    language: webApp.initDataUnsafe.user?.language_code || 'ru'
-                };
+                telegramUserData = webApp.initDataUnsafe.user || {};
+                
+                // Заполняем профиль данными из Telegram
+                document.getElementById('profile-name').textContent = 
+                    telegramUserData.first_name + (telegramUserData.last_name ? ' ' + telegramUserData.last_name : '');
+                document.getElementById('profile-username').textContent = 
+                    telegramUserData.username ? '@' + telegramUserData.username : 'Не указан';
+                document.getElementById('profile-id').textContent = telegramUserData.id || 'Не доступен';
+                document.getElementById('profile-language').textContent = telegramUserData.language_code || 'ru';
             } else {
-                // Демо-данные для тестирования
-                userData = {
-                    name: 'Иван Иванов',
-                    username: '@ivanov',
-                    id: '123456789',
-                    language: 'ru'
-                };
+                // Заглушка для разработки
+                document.getElementById('profile-name').textContent = 'Иван Иванов';
+                document.getElementById('profile-username').textContent = '@ivanov';
+                document.getElementById('profile-id').textContent = '123456789';
+                document.getElementById('profile-language').textContent = 'ru';
             }
-            
-            // Заполняем профиль
-            document.getElementById('profile-name').textContent = userData.name;
-            document.getElementById('profile-username').textContent = userData.username;
-            document.getElementById('profile-id').textContent = userData.id;
-            document.getElementById('profile-language').textContent = userData.language;
         }
 
         function initializeApp() {
-            // Загружаем данные перед инициализацией
+            // Загружаем корзину перед инициализацией
             loadCart();
-            loadUserData();
+            
+            // Получаем данные пользователя из Telegram
+            getTelegramUserData();
+            
+            // Загружаем уведомления
             loadNotifications();
             
             // Заполнение рекомендаций
             fillProductsGrid('recommended-products', products.slice(0, 4));
             fillProductsGrid('catalog-products', products);
-            fillProductsGrid('cart-recommended-products', products.slice(0, 4));
+            fillProductsGrid('cart-recommended-products', products.slice(2, 6));
 
             // Навигация
             setupNavigation();
@@ -1387,9 +1530,6 @@
             
             // Корзина
             updateCartDisplay();
-            
-            // Обработчики для кнопок профиля
-            setupProfileButtons();
         }
 
         function fillProductsGrid(gridId, productsArray) {
@@ -1457,6 +1597,48 @@
             if (codeModalClose) codeModalClose.addEventListener('click', () => hideModal(codeModal));
             if (codeModalOk) codeModalOk.addEventListener('click', () => hideModal(codeModal));
 
+            // Оформление заказа
+            const checkoutBtn = document.getElementById('checkout-btn');
+            const orderModal = document.getElementById('order-modal');
+            const orderModalClose = document.getElementById('order-modal-close');
+            const orderModalOk = document.getElementById('order-modal-ok-btn');
+
+            if (checkoutBtn) {
+                checkoutBtn.addEventListener('click', function() {
+                    if (cart.length > 0) {
+                        showModal(orderModal);
+                        cart = [];
+                        saveCart();
+                        updateCartDisplay();
+                    } else {
+                        showNotification('Корзина пуста!');
+                    }
+                });
+            }
+            if (orderModalClose) orderModalClose.addEventListener('click', () => hideModal(orderModal));
+            if (orderModalOk) orderModalOk.addEventListener('click', () => hideModal(orderModal));
+
+            // Кнопки профиля
+            document.getElementById('my-orders-btn').addEventListener('click', () => {
+                showNotification('Раздел "Мои заказы" в разработке');
+            });
+            
+            document.getElementById('my-notifications-btn').addEventListener('click', () => {
+                showNotification('Раздел "Мои уведомления" в разработке');
+            });
+            
+            document.getElementById('settings-btn').addEventListener('click', () => {
+                showNotification('Раздел "Настройки" в разработке');
+            });
+            
+            document.getElementById('bug-report-btn').addEventListener('click', () => {
+                showNotification('Раздел "Нашёл ошибку" в разработке');
+            });
+            
+            document.getElementById('about-btn').addEventListener('click', () => {
+                showNotification('Раздел "О нас" в разработке');
+            });
+
             // Закрытие по клику вне модального окна
             document.querySelectorAll('.modal, .product-modal').forEach(modal => {
                 if (modal) {
@@ -1465,30 +1647,6 @@
                     });
                 }
             });
-
-            // Оформление заказа
-            const checkoutBtn = document.getElementById('checkout-btn');
-            if (checkoutBtn) {
-                checkoutBtn.addEventListener('click', function() {
-                    if (cart.length > 0) {
-                        showMessage('Заказ оформлен!', 'Спасибо за покупку!');
-                        cart = [];
-                        saveCart();
-                        updateCartDisplay();
-                        switchPage('home');
-                    } else {
-                        showMessage('Корзина пуста', 'Добавьте товары в корзину перед оформлением заказа.');
-                    }
-                });
-            }
-
-            // Настройка модального окна для сообщений
-            const messageModal = document.getElementById('message-modal');
-            const messageModalClose = document.getElementById('message-modal-close');
-            const messageModalOk = document.getElementById('message-modal-ok-btn');
-
-            if (messageModalClose) messageModalClose.addEventListener('click', () => hideModal(messageModal));
-            if (messageModalOk) messageModalOk.addEventListener('click', () => hideModal(messageModal));
         }
 
         function setupSearch() {
@@ -1511,28 +1669,6 @@
                         if (e.key === 'Enter') performSearch(this.value);
                     });
                 }
-            });
-        }
-
-        function setupProfileButtons() {
-            document.getElementById('my-orders-btn').addEventListener('click', () => {
-                showMessage('Мои заказы', 'Здесь будут отображаться все ваши заказы.');
-            });
-            
-            document.getElementById('my-notifications-btn').addEventListener('click', () => {
-                showMessage('Мои уведомления', 'Здесь будут все ваши уведомления.');
-            });
-            
-            document.getElementById('settings-btn').addEventListener('click', () => {
-                showMessage('Настройки', 'Раздел настроек находится в разработке.');
-            });
-            
-            document.getElementById('bug-report-btn').addEventListener('click', () => {
-                showMessage('Сообщить об ошибке', 'Если вы нашли ошибку, пожалуйста, напишите нам в поддержку.');
-            });
-            
-            document.getElementById('about-btn').addEventListener('click', () => {
-                showMessage('О нас', 'Мы - лучший магазин в Telegram! Версия 0.0.1');
             });
         }
 
@@ -1705,18 +1841,16 @@
         }
 
         function showModal(modal) {
+            modal.classList.remove('fade-out');
             modal.classList.add('active');
         }
 
         function hideModal(modal) {
-            modal.classList.remove('active');
-        }
-
-        function showMessage(title, text) {
-            const modal = document.getElementById('message-modal');
-            document.getElementById('message-modal-title').textContent = title;
-            document.getElementById('message-modal-text').textContent = text;
-            showModal(modal);
+            modal.classList.add('fade-out');
+            setTimeout(() => {
+                modal.classList.remove('active');
+                modal.classList.remove('fade-out');
+            }, 300);
         }
 
         function addToCart(product) {
@@ -1764,7 +1898,6 @@
             // Анимация исчезновения
             setTimeout(() => {
                 notification.classList.remove('show');
-                notification.classList.add('hide');
                 setTimeout(() => {
                     if (notification.parentNode) {
                         notification.parentNode.removeChild(notification);
@@ -1846,6 +1979,13 @@
                 item.quantity += 1;
                 saveCart();
                 updateCartDisplay();
+                // Обновляем модальное окно товара, если оно открыто
+                if (currentProduct && currentProduct.id === productId) {
+                    const modal = document.getElementById('product-modal');
+                    if (modal.classList.contains('active')) {
+                        updateProductModalActions(currentProduct, modal);
+                    }
+                }
             }
         }
 
@@ -1860,6 +2000,13 @@
                 }
                 saveCart();
                 updateCartDisplay();
+                // Обновляем модальное окно товара, если оно открыто
+                if (currentProduct && currentProduct.id === productId) {
+                    const modal = document.getElementById('product-modal');
+                    if (modal.classList.contains('active')) {
+                        updateProductModalActions(currentProduct, modal);
+                    }
+                }
             }
         }
 
@@ -1884,11 +2031,6 @@
             // Обновляем корзину при переходе на страницу корзины
             if (pageId === 'cart') {
                 updateCartDisplay();
-            }
-            
-            // Обновляем уведомления при переходе на главную
-            if (pageId === 'home') {
-                displayNotifications();
             }
         }
 
@@ -1919,14 +2061,12 @@
             });
             
             if (!foundAny) {
-                showMessage('Поиск', 'Товары по вашему запросу не найдены');
+                showNotification('Товары по вашему запросу не найдены');
             }
         }
 
         // Запуск приложения
-        document.addEventListener('DOMContentLoaded', function() {
-            loadProducts().then(initializeApp);
-        });
+        document.addEventListener('DOMContentLoaded', loadProducts);
     </script>
 </body>
 </html>
