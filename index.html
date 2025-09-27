@@ -332,12 +332,13 @@
         
         .cart-item {
             display: flex;
-            align-items: center;
+            align-items: flex-start;
             border: var(--border-width) solid var(--border-color);
             border-radius: var(--border-radius);
             padding: 15px;
             margin-bottom: 12px;
             animation: slideIn 0.3s ease;
+            gap: 15px;
         }
         
         @keyframes slideIn {
@@ -346,11 +347,10 @@
         }
         
         .cart-item-image {
-            width: 70px;
-            height: 70px;
+            width: 80px;
+            height: 80px;
             background: var(--primary-text);
             border-radius: var(--border-radius);
-            margin-right: 15px;
             display: flex;
             align-items: center;
             justify-content: center;
@@ -367,26 +367,36 @@
         .cart-item-details {
             flex: 1;
             min-width: 0;
+            display: flex;
+            flex-direction: column;
+            gap: 5px;
         }
         
         .cart-item-name {
             font-size: 16px;
-            margin-bottom: 8px;
+            font-weight: bold;
             white-space: nowrap;
             overflow: hidden;
             text-overflow: ellipsis;
         }
         
-        .cart-item-price {
+        .cart-item-price-info {
             font-size: 14px;
             color: #ccc;
+        }
+        
+        .cart-item-total {
+            font-size: 16px;
+            font-weight: bold;
+            margin-top: 5px;
         }
         
         .cart-item-controls {
             display: flex;
             align-items: center;
             gap: 10px;
-            margin-top: 8px;
+            margin-left: auto;
+            align-self: center;
         }
         
         .quantity-btn {
@@ -782,6 +792,7 @@
             padding: 3px 8px;
             border-radius: var(--border-radius);
             -webkit-tap-highlight-color: transparent;
+            position: relative;
         }
         
         .nav-item.active {
@@ -804,6 +815,21 @@
         
         .nav-label {
             font-size: 12px;
+        }
+        
+        .cart-count {
+            position: absolute;
+            top: -5px;
+            right: -5px;
+            background: red;
+            color: white;
+            border-radius: 50%;
+            width: 18px;
+            height: 18px;
+            font-size: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
         }
         
         /* Модальное окно */
@@ -944,17 +970,17 @@
             }
             
             .cart-item {
-                flex-direction: column;
-                text-align: center;
+                flex-direction: row;
+                text-align: left;
             }
             
             .cart-item-image {
                 margin-right: 0;
-                margin-bottom: 10px;
+                margin-bottom: 0;
             }
             
             .cart-item-controls {
-                justify-content: center;
+                justify-content: flex-end;
             }
         }
         
@@ -1170,34 +1196,26 @@
     <nav class="bottom-nav">
         <div class="nav-item active" data-page="home">
             <div class="nav-icon">
-                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                    <path d="M10 20V14H14V20H19V12H22L12 3L2 12H5V20H10Z" fill="white"/>
-                </svg>
+                <img src="media/icons/home.png" alt="Главная">
             </div>
             <span class="nav-label">Главная</span>
         </div>
         <div class="nav-item" data-page="catalog">
             <div class="nav-icon">
-                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                    <path d="M4 6H2V20C2 21.11 2.89 22 4 22H18V20H4V6ZM20 2H8C6.89 2 6 2.89 6 4V16C6 17.11 6.89 18 8 18H20C21.11 18 22 17.11 22 16V4C22 2.89 21.11 2 20 2ZM20 16H8V4H20V16Z" fill="white"/>
-                </svg>
+                <img src="media/icons/catalog.png" alt="Каталог">
             </div>
             <span class="nav-label">Каталог</span>
         </div>
         <div class="nav-item" data-page="cart">
             <div class="nav-icon">
-                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                    <path d="M7 18C5.9 18 5.01 18.9 5.01 20C5.01 21.1 5.9 22 7 22C8.1 22 9 21.1 9 20C9 18.9 8.1 18 7 18ZM1 2V4H3L6.6 11.59L5.25 14.04C5.09 14.32 5 14.65 5 15C5 16.1 5.9 17 7 17H19V15H7.42C7.28 15 7.17 14.89 7.17 14.75L7.2 14.63L8.1 13H15.55C16.3 13 16.96 12.59 17.3 11.97L20.88 5.48C20.96 5.34 21 5.17 21 5C21 4.45 20.55 4 20 4H5.21L4.27 2H1ZM17 18C15.9 18 15.01 18.9 15.01 20C15.01 21.1 15.9 22 17 22C18.1 22 19 21.1 19 20C19 18.9 18.1 18 17 18Z" fill="white"/>
-                </svg>
+                <img src="media/icons/cart.png" alt="Корзина">
                 <span class="cart-count" id="cart-count">0</span>
             </div>
             <span class="nav-label">Корзина</span>
         </div>
         <div class="nav-item" data-page="profile">
             <div class="nav-icon">
-                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                    <path d="M12 12C14.21 12 16 10.21 16 8C16 5.79 14.21 4 12 4C9.79 4 8 5.79 8 8C8 10.21 9.79 12 12 12ZM12 14C9.33 14 4 15.34 4 18V20H20V18C20 15.34 14.67 14 12 14Z" fill="white"/>
-                </svg>
+                <img src="media/icons/profile.png" alt="Профиль">
             </div>
             <span class="nav-label">Профиль</span>
         </div>
@@ -1205,7 +1223,7 @@
     
     <!-- Уведомление -->
     <div class="notification" id="notification"></div>
-
+    
     <script>
         let products = [];
         let cart = [];
@@ -1231,14 +1249,25 @@
                 console.error('Ошибка загрузки корзины:', error);
                 cart = [];
             }
+            updateCartCount();
         }
 
         // Функция для сохранения корзины в localStorage
         function saveCart() {
             try {
                 localStorage.setItem('cart', JSON.stringify(cart));
+                updateCartCount();
             } catch (error) {
                 console.error('Ошибка сохранения корзины:', error);
+            }
+        }
+
+        // Обновление счетчика корзины
+        function updateCartCount() {
+            const cartCount = document.getElementById('cart-count');
+            if (cartCount) {
+                const totalItems = cart.reduce((sum, item) => sum + item.quantity, 0);
+                cartCount.textContent = totalItems > 0 ? totalItems : '';
             }
         }
 
@@ -1732,7 +1761,8 @@
             checkoutBtn.disabled = false;
             
             cart.forEach(item => {
-                total += item.price * item.quantity;
+                const itemTotal = item.price * item.quantity;
+                total += itemTotal;
                 
                 const cartItem = document.createElement('div');
                 cartItem.className = 'cart-item';
@@ -1742,12 +1772,13 @@
                     </div>
                     <div class="cart-item-details">
                         <div class="cart-item-name">${item.name}</div>
-                        <div class="cart-item-price">${item.price} ₽ × ${item.quantity} = ${item.price * item.quantity} ₽</div>
-                        <div class="cart-item-controls">
-                            <button class="quantity-btn minus" data-id="${item.id}">-</button>
-                            <span class="quantity-display">${item.quantity}</span>
-                            <button class="quantity-btn plus" data-id="${item.id}">+</button>
-                        </div>
+                        <div class="cart-item-price-info">${item.price} ₽ × ${item.quantity}</div>
+                        <div class="cart-item-total">${itemTotal} ₽</div>
+                    </div>
+                    <div class="cart-item-controls">
+                        <button class="quantity-btn minus" data-id="${item.id}">-</button>
+                        <span class="quantity-display">${item.quantity}</span>
+                        <button class="quantity-btn plus" data-id="${item.id}">+</button>
                     </div>
                 `;
                 
@@ -1798,6 +1829,9 @@
         }
 
         function switchPage(pageId) {
+            // Прокручиваем страницу вверх перед переключением
+            window.scrollTo(0, 0);
+            
             document.querySelectorAll('.page').forEach(page => {
                 if (page) page.classList.remove('active');
             });
