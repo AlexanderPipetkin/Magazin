@@ -163,6 +163,30 @@
             border-bottom-right-radius: 0;
         }
         
+        .get-code-btn {
+            display: block;
+            width: calc(100% - 30px); /* Растянуть на всю ширину с отступами */
+            margin: 15px auto;
+            height: 32px;
+            background: var(--primary-text);
+            color: var(--primary-bg);
+            border: none;
+            border-radius: var(--border-radius);
+            font-size: 16px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: var(--transition);
+        }
+
+        .get-code-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(255, 255, 255, 0.2);
+        }
+
+        .get-code-btn:active {
+            transform: translateY(0);
+        }
+
         .section-content {
             padding: 45px 15px 15px;
             font-size: 18px;
@@ -939,6 +963,7 @@
             
             .section-content, .order-content {
                 font-size: 16px;
+                padding: 45px 15px 15px !important;
             }
             
             .recommendations-title {
@@ -1072,6 +1097,28 @@
         .notification-title {
             font-size: 14px;
         }
+
+        .orders-title-wrapper {
+    display: flex;
+    align-items: center;
+    gap: 10px; /* Расстояние между заголовком и кнопкой */
+}
+
+.help-btn {
+    width: 35px;
+    height: 35px;
+    border: var(--border-width) solid var(--border-color);
+    background: transparent;
+    color: #000;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: var(--transition);
+    border-radius: 50%;
+    font-size: 16px;
+    flex-shrink: 0; /* Чтобы не сжималась */
+}
     </style>
 </head>
 <body>
@@ -1101,10 +1148,10 @@
                 
                 <div class="orders-section">
                     <div class="orders-header">
-                        <div class="section-title">Мои актуальные заказы</div>
-                        <button class="help-btn" id="help-btn">?</button>
+                        <div class="section-title">Мои актуальные заказы
+                        <button class="help-btn" id="help-btn">?</button></div>
                     </div>
-                    <div class="order-content">
+                    <div style="padding: 35px 15px 15px; font-size: 16px; line-height: 1.4;">
                         №00183 — 114 позиций (Готов к получению)<br>
                         №00185 — 20 позиций (Приедет ~17 сен)<br>
                         №00186 — 190 позиций (Приедет ~43 сен)
@@ -1187,10 +1234,6 @@
                     <div class="profile-field">
                         <span class="profile-label">ID:</span>
                         <span id="profile-id">123456789</span>
-                    </div>
-                    <div class="profile-field">
-                        <span class="profile-label">Язык:</span>
-                        <span id="profile-language">ru</span>
                     </div>
                 </div>
                 
@@ -1494,20 +1537,18 @@
                 document.getElementById('profile-username').textContent = 
                     telegramUserData.username ? '@' + telegramUserData.username : 'Не указан';
                 document.getElementById('profile-id').textContent = telegramUserData.id || 'Не доступен';
-                document.getElementById('profile-language').textContent = telegramUserData.language_code || 'ru';
             } else {
                 // Заглушка для разработки
-                document.getElementById('profile-name').textContent = 'Иван Иванов';
-                document.getElementById('profile-username').textContent = '@ivanov';
-                document.getElementById('profile-id').textContent = '123456789';
-                document.getElementById('profile-language').textContent = 'ru';
+                document.getElementById('profile-name').textContent = 'тут будет имя';
+                document.getElementById('profile-username').textContent = 'тут будет юз';
+                document.getElementById('profile-id').textContent = 'тут телефон или айди';
             }
         }
 
         function initializeApp() {
             // Загружаем корзину перед инициализацией
             loadCart();
-            
+
             // Получаем данные пользователя из Telegram
             getTelegramUserData();
             
@@ -1731,7 +1772,7 @@
                     </div>
                 </div>
                 
-                <div class="product-modal-actions">
+                <div class="product-modal-actions" id="product-modal-actions">
                     ${cartItem ? `
                         <div class="quantity-controls">
                             <button class="quantity-btn minus" data-id="${product.id}">-</button>
@@ -1751,38 +1792,55 @@
                 closeBtn.addEventListener('click', () => hideModal(modal));
             }
 
-            const addToCartBtn = content.querySelector('.add-to-cart-btn');
-            if (addToCartBtn) {
-                addToCartBtn.addEventListener('click', () => {
-                    addToCart(product);
-                    updateProductModalActions(product, modal);
-                });
-            }
-
-            const goToCartBtn = content.querySelector('.go-to-cart-btn');
-            if (goToCartBtn) {
-                goToCartBtn.addEventListener('click', () => {
-                    hideModal(modal);
-                    setTimeout(() => switchPage('cart'), 300);
-                });
-            }
-
-            const minusBtn = content.querySelector('.minus');
-            const plusBtn = content.querySelector('.plus');
+            // Удаляем все предыдущие обработчики перед добавлением новых
+            const actionsContainer = content.querySelector('#product-modal-actions');
             
-            if (minusBtn) {
-                minusBtn.addEventListener('click', () => {
-                    decreaseQuantity(product.id);
-                    updateProductModalActions(product, modal);
-                });
-            }
+            // Временно удаляем контейнер действий из DOM
+            const actionsHTML = actionsContainer.innerHTML;
+            actionsContainer.innerHTML = '';
             
-            if (plusBtn) {
-                plusBtn.addEventListener('click', () => {
-                    increaseQuantity(product.id);
-                    updateProductModalActions(product, modal);
-                });
-            }
+            // Создаем новый контейнер с обработчиками
+            setTimeout(() => {
+                actionsContainer.innerHTML = actionsHTML;
+                
+                // Назначаем обработчики один раз
+                const addToCartBtn = actionsContainer.querySelector('.add-to-cart-btn');
+                if (addToCartBtn) {
+                    addToCartBtn.onclick = function(e) {
+                        e.stopPropagation();
+                        addToCart(product);
+                        updateProductModalActions(product, modal);
+                    };
+                }
+
+                const goToCartBtn = actionsContainer.querySelector('.go-to-cart-btn');
+                if (goToCartBtn) {
+                    goToCartBtn.onclick = function(e) {
+                        e.stopPropagation();
+                        hideModal(modal);
+                        setTimeout(() => switchPage('cart'), 300);
+                    };
+                }
+
+                const minusBtn = actionsContainer.querySelector('.minus');
+                const plusBtn = actionsContainer.querySelector('.plus');
+                
+                if (minusBtn) {
+                    minusBtn.onclick = function(e) {
+                        e.stopPropagation();
+                        decreaseQuantity(product.id);
+                        updateProductModalActions(product, modal);
+                    };
+                }
+                
+                if (plusBtn) {
+                    plusBtn.onclick = function(e) {
+                        e.stopPropagation();
+                        increaseQuantity(product.id);
+                        updateProductModalActions(product, modal);
+                    };
+                }
+            }, 0);
 
             showModal(modal);
         }
@@ -1790,7 +1848,12 @@
         function updateProductModalActions(product, modal) {
             // Безопасный поиск товара в корзине
             const cartItem = Array.isArray(cart) ? cart.find(item => item.id === product.id) : null;
-            const actionsContainer = modal.querySelector('.product-modal-actions');
+            const actionsContainer = modal.querySelector('#product-modal-actions');
+            
+            if (!actionsContainer) return;
+            
+            // Сохраняем текущее состояние обработчиков
+            const currentHTML = actionsContainer.innerHTML;
             
             if (cartItem) {
                 actionsContainer.innerHTML = `
@@ -1805,40 +1868,48 @@
                 actionsContainer.innerHTML = `<button class="add-to-cart-btn">Добавить в корзину</button>`;
             }
             
-            // Перепривязываем обработчики событий
+            // Если HTML не изменился, не перепривязываем обработчики
+            if (currentHTML === actionsContainer.innerHTML) return;
+            
+            // Назначаем обработчики для новых кнопок
             const addToCartBtn = actionsContainer.querySelector('.add-to-cart-btn');
             if (addToCartBtn) {
-                addToCartBtn.addEventListener('click', () => {
+                addToCartBtn.onclick = function(e) {
+                    e.stopPropagation();
                     addToCart(product);
                     updateProductModalActions(product, modal);
-                });
+                };
             }
 
             const goToCartBtn = actionsContainer.querySelector('.go-to-cart-btn');
             if (goToCartBtn) {
-                goToCartBtn.addEventListener('click', () => {
+                goToCartBtn.onclick = function(e) {
+                    e.stopPropagation();
                     hideModal(modal);
                     setTimeout(() => switchPage('cart'), 300);
-                });
+                };
             }
 
             const minusBtn = actionsContainer.querySelector('.minus');
             const plusBtn = actionsContainer.querySelector('.plus');
             
             if (minusBtn) {
-                minusBtn.addEventListener('click', () => {
+                minusBtn.onclick = function(e) {
+                    e.stopPropagation();
                     decreaseQuantity(product.id);
                     updateProductModalActions(product, modal);
-                });
+                };
             }
             
             if (plusBtn) {
-                plusBtn.addEventListener('click', () => {
+                plusBtn.onclick = function(e) {
+                    e.stopPropagation();
                     increaseQuantity(product.id);
                     updateProductModalActions(product, modal);
-                });
+                };
             }
         }
+
 
         function showModal(modal) {
             modal.classList.remove('fade-out');
@@ -1854,10 +1925,8 @@
         }
 
         function addToCart(product) {
-            // Убеждаемся, что cart - это массив
-            if (!Array.isArray(cart)) {
-                cart = [];
-            }
+            // ВСЕГДА загружаем актуальные данные перед изменением
+            loadCart();
             
             const existingItem = cart.find(item => item.id === product.id);
             
@@ -1906,76 +1975,80 @@
             }, 2000);
         }
 
-        function updateCartDisplay() {
-            const cartItems = document.getElementById('cart-items');
-            const cartTotal = document.getElementById('cart-total');
-            const emptyCartMessage = document.getElementById('empty-cart-message');
-            const checkoutBtn = document.getElementById('checkout-btn');
+    function updateCartDisplay() {
+        loadCart();
+        
+        const cartItems = document.getElementById('cart-items');
+        const cartTotal = document.getElementById('cart-total');
+        const emptyCartMessage = document.getElementById('empty-cart-message');
+        const checkoutBtn = document.getElementById('checkout-btn');
+        
+        if (!cartItems) return;
+        
+        cartItems.innerHTML = '';
+        let total = 0;
+        
+        if (!Array.isArray(cart) || cart.length === 0) {
+            if (emptyCartMessage) emptyCartMessage.style.display = 'block';
+            if (checkoutBtn) checkoutBtn.disabled = true;
+            if (cartTotal) cartTotal.textContent = `Итого: 0 ₽`;
+            return;
+        }
+        
+        if (emptyCartMessage) emptyCartMessage.style.display = 'none';
+        if (checkoutBtn) checkoutBtn.disabled = false;
+        
+        cart.forEach(item => {
+            const itemTotal = item.price * item.quantity;
+            total += itemTotal;
             
-            if (!cartItems || !cartTotal || !emptyCartMessage || !checkoutBtn) return;
+            const cartItem = document.createElement('div');
+            cartItem.className = 'cart-item';
+            cartItem.innerHTML = `
+                <div class="cart-item-image">
+                    ${item.image ? `<img src="${item.image}" alt="${item.name}" onerror="this.style.display='none'; this.parentNode.innerHTML='${item.shortName}'">` : item.shortName}
+                </div>
+                <div class="cart-item-details">
+                    <div class="cart-item-name">${item.name}</div>
+                    <div class="cart-item-price-info">${item.price} ₽ × ${item.quantity}</div>
+                    <div class="cart-item-total">${itemTotal} ₽</div>
+                </div>
+                <div class="cart-item-controls">
+                    <button class="quantity-btn minus" data-id="${item.id}">-</button>
+                    <span class="quantity-display">${item.quantity}</span>
+                    <button class="quantity-btn plus" data-id="${item.id}">+</button>
+                </div>
+            `;
             
-            cartItems.innerHTML = '';
-            let total = 0;
-            
-            // Безопасная проверка корзины
-            if (!Array.isArray(cart) || cart.length === 0) {
-                emptyCartMessage.style.display = 'block';
-                checkoutBtn.disabled = true;
-                cartTotal.textContent = `Итого: 0 ₽`;
-                return;
-            }
-            
-            emptyCartMessage.style.display = 'none';
-            checkoutBtn.disabled = false;
-            
-            cart.forEach(item => {
-                const itemTotal = item.price * item.quantity;
-                total += itemTotal;
-                
-                const cartItem = document.createElement('div');
-                cartItem.className = 'cart-item';
-                cartItem.innerHTML = `
-                    <div class="cart-item-image">
-                        ${item.image ? `<img src="${item.image}" alt="${item.name}" onerror="this.style.display='none'; this.parentNode.innerHTML='${item.shortName}'">` : item.shortName}
-                    </div>
-                    <div class="cart-item-details">
-                        <div class="cart-item-name">${item.name}</div>
-                        <div class="cart-item-price-info">${item.price} ₽ × ${item.quantity}</div>
-                        <div class="cart-item-total">${itemTotal} ₽</div>
-                    </div>
-                    <div class="cart-item-controls">
-                        <button class="quantity-btn minus" data-id="${item.id}">-</button>
-                        <span class="quantity-display">${item.quantity}</span>
-                        <button class="quantity-btn plus" data-id="${item.id}">+</button>
-                    </div>
-                `;
-                
-                cartItems.appendChild(cartItem);
-            });
-            
-            cartTotal.textContent = `Итого: ${total} ₽`;
-            
-            // Обработчики для кнопок в корзине
+            cartItems.appendChild(cartItem);
+        });
+        
+        if (cartTotal) cartTotal.textContent = `Итого: ${total} ₽`;
+        
+        // Перепривязываем обработчики для НОВЫХ кнопок
+        setTimeout(() => {
             document.querySelectorAll('.quantity-btn.minus').forEach(btn => {
-                btn.addEventListener('click', function() {
-                    const id = parseInt(this.getAttribute('data-id'));
-                    decreaseQuantity(id);
-                });
+                btn.onclick = function() {
+                    decreaseQuantity(parseInt(this.getAttribute('data-id')));
+                };
             });
             
             document.querySelectorAll('.quantity-btn.plus').forEach(btn => {
-                btn.addEventListener('click', function() {
-                    const id = parseInt(this.getAttribute('data-id'));
-                    increaseQuantity(id);
-                });
+                btn.onclick = function() {
+                    increaseQuantity(parseInt(this.getAttribute('data-id')));
+                };
             });
-        }
+        }, 100);
+    }
 
         function increaseQuantity(productId) {
+            loadCart(); // Всегда загружаем актуальные данные
+            
             if (!Array.isArray(cart)) return;
             
             const item = cart.find(item => item.id === productId);
             if (item) {
+                console.log('Увеличиваем количество с', item.quantity, 'до', item.quantity + 1);
                 item.quantity += 1;
                 saveCart();
                 updateCartDisplay();
@@ -1990,10 +2063,13 @@
         }
 
         function decreaseQuantity(productId) {
+            loadCart(); // Всегда загружаем актуальные данные
+            
             if (!Array.isArray(cart)) return;
             
             const item = cart.find(item => item.id === productId);
             if (item) {
+                console.log('Уменьшаем количество с', item.quantity, 'до', item.quantity - 1);
                 item.quantity -= 1;
                 if (item.quantity <= 0) {
                     cart = cart.filter(item => item.id !== productId);
