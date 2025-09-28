@@ -167,12 +167,12 @@
             display: block;
             width: calc(100% - 30px); /* Растянуть на всю ширину с отступами */
             margin: 15px auto;
-            height: 32px;
+            height: 50px;
             background: var(--primary-text);
             color: var(--primary-bg);
-            border: none;
+            border: none;                       
             border-radius: var(--border-radius);
-            font-size: 16px;
+            font-size: 18px;
             font-weight: bold;
             cursor: pointer;
             transition: var(--transition);
@@ -1099,9 +1099,67 @@
         }
 
         .orders-title-wrapper {
-    display: flex;
-    align-items: center;
-    gap: 10px; /* Расстояние между заголовком и кнопкой */
+            display: flex;
+            align-items: center;
+            gap: 10px;
+
+        .empty-cart-message {
+            text-align: center;
+            padding: 40px 15px;
+            font-size: 18px;
+            font-weight: bold;
+            color: #aaa;
+            }
+
+
+        .help-btn {
+            width: 35px;
+            height: 35px;
+            border: 1px solid #fff;
+            background: #000;
+            color: #fff;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            border-radius: 50%;
+            font-size: 16px;
+            position: absolute;
+            right: 10px;
+            top: 10px;
+            }
+
+
+        .nav-icon img, .product-image img {
+            pointer-events: none; /* чтобы не открывались картинки при зажатии */
+            }
+
+
+        .profile-avatar {
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            background: #fff;
+            margin-right: 15px;
+            overflow: hidden;
+            flex-shrink: 0;
+            }
+        .profile-avatar img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            }
+        .profile-info {
+            display: flex;
+            align-items: center;
+            border: var(--border-width) solid var(--border-color);
+            border-radius: var(--border-radius);
+            padding: 20px;
+            margin-bottom: 20px;
+            }
+        .profile-fields {
+            flex: 1;
+            }
 }
 
 .help-btn {
@@ -1219,24 +1277,31 @@
         <section id="profile" class="page">
             <div class="header">
                 <h1 class="page-title">Профиль</h1>
-            </div>
-            
-            <div class="profile-section">
-                <div class="profile-info">
-                    <div class="profile-field">
+                </div>
+                    <div class="profile-section">
+                        <div class="profile-info">
+                        <div class="profile-avatar" id="profile-avatar"></div>
+                        <div class="profile-fields">
+                        <div class="profile-field">
                         <span class="profile-label">Имя:</span>
                         <span id="profile-name">Загрузка...</span>
-                    </div>
-                    <div class="profile-field">
+                        </div>
+                        <div class="profile-field">
                         <span class="profile-label">Юзернейм:</span>
                         <span id="profile-username">@username</span>
-                    </div>
-                    <div class="profile-field">
+                        </div>
+                        <div class="profile-field">
+                        <span class="profile-label">Телефон:</span>
+                        <span id="profile-phone">Не указан</span>
+                        </div>
+                        <div class="profile-field">
                         <span class="profile-label">ID:</span>
                         <span id="profile-id">123456789</span>
+                        </div>
                     </div>
                 </div>
-                
+
+
                 <div class="profile-actions">
                     <button class="profile-btn" id="my-orders-btn">Мои заказы</button>
                     <button class="profile-btn" id="my-notifications-btn">Мои уведомления</button>
@@ -1244,8 +1309,9 @@
                     <button class="profile-btn" id="bug-report-btn">Нашёл ошибку</button>
                     <button class="profile-btn" id="about-btn">О нас</button>
                 </div>
-                
-                <div class="version-info">Версия: 0.0.2</div>
+
+
+                <div class="version-info">Версия: 0.0.28</div>
             </div>
         </section>
         
@@ -1526,22 +1592,30 @@
 
         // Получение данных пользователя из Telegram
         function getTelegramUserData() {
-            // Проверяем, доступен ли объект Telegram WebApp
             if (window.Telegram && window.Telegram.WebApp) {
-                const webApp = window.Telegram.WebApp;
-                telegramUserData = webApp.initDataUnsafe.user || {};
-                
-                // Заполняем профиль данными из Telegram
-                document.getElementById('profile-name').textContent = 
-                    telegramUserData.first_name + (telegramUserData.last_name ? ' ' + telegramUserData.last_name : '');
-                document.getElementById('profile-username').textContent = 
-                    telegramUserData.username ? '@' + telegramUserData.username : 'Не указан';
-                document.getElementById('profile-id').textContent = telegramUserData.id || 'Не доступен';
+            const webApp = window.Telegram.WebApp;
+            telegramUserData = webApp.initDataUnsafe.user || {};
+
+
+            document.getElementById('profile-name').textContent =
+            telegramUserData.first_name + (telegramUserData.last_name ? ' ' + telegramUserData.last_name : '');
+            document.getElementById('profile-username').textContent =
+            telegramUserData.username ? '@' + telegramUserData.username : 'Не указан';
+            document.getElementById('profile-id').textContent = telegramUserData.id || 'Не доступен';
+            document.getElementById('profile-phone').textContent = telegramUserData.phone_number || 'Не указан';
+
+
+            if (telegramUserData.photo_url) {
+            document.getElementById('profile-avatar').innerHTML = `<img src="${telegramUserData.photo_url}" alt="avatar">`;
             } else {
-                // Заглушка для разработки
-                document.getElementById('profile-name').textContent = 'тут будет имя';
-                document.getElementById('profile-username').textContent = 'тут будет юз';
-                document.getElementById('profile-id').textContent = 'тут телефон или айди';
+            document.getElementById('profile-avatar').innerHTML = `<img src="media/icons/profile.png" alt="avatar">`;
+            }
+            } else {
+            document.getElementById('profile-name').textContent = 'Имя (заглушка)';
+            document.getElementById('profile-username').textContent = '@username';
+            document.getElementById('profile-id').textContent = 'ID (заглушка)';
+            document.getElementById('profile-phone').textContent = '+000000000';
+            document.getElementById('profile-avatar').innerHTML = `<img src="media/icons/profile.png" alt="avatar">`;
             }
         }
 
@@ -2133,7 +2207,7 @@
                             card.style.display = 'none';
                         }
                     }
-                }
+                } 
             });
             
             if (!foundAny) {
@@ -2146,5 +2220,3 @@
     </script>
 </body>
 </html>
-
-
