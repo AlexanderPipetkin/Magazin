@@ -5,7 +5,6 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Магазин в Telegram</title>
     <style>
-        /* Базовые стили */
         :root {
             --primary-bg: #000;
             --primary-text: #fff;
@@ -40,7 +39,7 @@
         img {
             pointer-events: none;
             -webkit-user-drag: none;
-            -webkit-touch-callout: none; /* отключает меню при долгом тапе на iOS */
+            -webkit-touch-callout: none;
             -moz-user-select: none;
             user-select: none;
         }
@@ -61,7 +60,6 @@
             padding-bottom: var(--nav-height);
         }
         
-        /* Стили для разделов */
         .page {
             display: none;
             padding: 0 12px;
@@ -82,7 +80,6 @@
             to { opacity: 0; transform: translateY(10px); }
         }
         
-        /* Стили для шапки */
         .header {
             height: var(--header-height);
             padding: 20px 20px 0;
@@ -132,7 +129,6 @@
             white-space: nowrap;
         }
         
-        /* Убрали hover эффекты для мобильных устройств */
         @media (hover: hover) and (pointer: fine) {
             .search-btn:hover {
                 background: rgba(255, 255, 255, 0.1);
@@ -140,7 +136,6 @@
             }
         }
         
-        /* Стили для уведомлений */
         .notifications-section {
             width: 100%;
             max-width: 716px;
@@ -155,9 +150,9 @@
         
         .section-title {
             display: inline-block;
-            background: var(--primary-text); /* белый фон */
-            color: var(--primary-bg);        /* чёрный текст */
-            border-radius: 0;                /* убираем скругления */
+            background: var(--primary-text);
+            color: var(--primary-bg);
+            border-radius: 0;
             padding: 0 12px;
             height: 35px;
             line-height: 35px;
@@ -167,7 +162,7 @@
         
         .get-code-btn {
             display: block;
-            width: calc(100% - 30px); /* Растянуть на всю ширину с отступами */
+            width: calc(100% - 30px);
             margin: 15px auto;
             height: 50px;
             background: var(--primary-text);
@@ -195,7 +190,6 @@
             line-height: 1.4;
         }
         
-        /* Стили для заказов */
         .orders-section {
             width: 100%;
             max-width: 716px;
@@ -208,7 +202,7 @@
         
         .orders-header {
             display: flex;
-            align-items: flex-start; /* чтобы были на одной линии сверху */
+            align-items: flex-start;
             gap: 0;
         }
         
@@ -237,8 +231,6 @@
             justify-content: center;
         }
 
-        
-        /* Стили для рекомендаций */
         .recommendations-section {
             margin: 30px auto;
         }
@@ -320,7 +312,6 @@
             }
         }
         
-        /* Стили для каталога */
         .catalog-grid {
             display: grid;
             grid-template-columns: repeat(2, 1fr);
@@ -328,7 +319,6 @@
             margin: var(--section-margin) 12px;
         }
         
-        /* Стили для корзины */
         .cart-container {
             width: 100%;
             max-width: 716px;
@@ -475,7 +465,6 @@
             box-shadow: none;
         }
         
-        /* Стили для профиля */
         .profile-section {
             margin: var(--section-margin) 0;
         }
@@ -528,7 +517,6 @@
             color: #ccc;
         }
         
-        /* Стили для карточки товара */
         .product-modal {
             display: none;
             position: fixed;
@@ -616,7 +604,6 @@
             margin-bottom: 15px;
         }
         
-        /* Стили для подразделов в модальном окне */
         .modal-subsection {
             border: var(--border-width) solid var(--border-color);
             border-radius: var(--border-radius);
@@ -687,7 +674,6 @@
             margin-bottom: 3px;
         }
         
-        /* Стили для продавца */
         .seller-info {
             display: flex;
             align-items: center;
@@ -713,7 +699,6 @@
             font-weight: bold;
         }
         
-        /* Стили для действий в модальном окне */
         .product-modal-actions {
             display: flex;
             gap: 10px;
@@ -771,7 +756,6 @@
             }
         }
         
-        /* Стили для уведомлений */
         .notification {
             position: fixed;
             top: 15px;
@@ -793,7 +777,6 @@
             opacity: 1;
         }
         
-        /* Стили для нижнего меню */
         .bottom-nav {
             position: fixed;
             bottom: 0;
@@ -843,7 +826,6 @@
             font-size: 12px;
         }
         
-        /* Модальное окно */
         .modal {
             display: none;
             position: fixed;
@@ -933,7 +915,6 @@
             }
         }
         
-        /* Адаптивность */
         @media (max-width: 780px) {
             .header {
                 padding: 20px 12px 0;
@@ -1003,7 +984,6 @@
                 justify-content: flex-end;
             }
             
-            /* Исправление для кнопки "Перейти в корзину" в мобильной версии */
             .product-modal-actions {
                 flex-direction: row;
                 align-items: center;
@@ -1050,7 +1030,6 @@
             transition: transform 0.1s ease;
         }
         
-        /* Стили для дополнительного каталога в корзине */
         .cart-recommendations {
             margin: 30px auto;
         }
@@ -1074,7 +1053,6 @@
             margin-top: 8px;
         }
         
-        /* Стили для списка уведомлений */
         .notifications-list {
             list-style-type: none;
         }
@@ -1113,7 +1091,7 @@
 
 
         .nav-icon img, .product-image img {
-            pointer-events: none; /* чтобы не открывались картинки при зажатии */
+            pointer-events: none;
             }
 
 
@@ -1166,7 +1144,6 @@
                 <div class="notifications-section">
                     <div class="section-title">Уведомления</div>
                     <div class="section-content" id="notifications-content">
-                        <!-- Уведомления будут загружены через JavaScript -->
                     </div>
                 </div>
                 
@@ -1187,7 +1164,6 @@
             <div class="recommendations-section">
                 <h2 class="recommendations-title">А как насчёт...</h2>
                 <div class="products-grid" id="recommended-products">
-                    <!-- Продукты будут добавлены через JavaScript -->
                 </div>
                 <a href="#" class="catalog-link" data-page="catalog">Остальное в каталоге >>></a>
             </div>
@@ -1209,7 +1185,6 @@
             </div>
             
             <div class="catalog-grid" id="catalog-products">
-                <!-- Продукты будут добавлены через JavaScript -->
             </div>
         </section>
         
@@ -1229,11 +1204,9 @@
                 <div class="cart-total" id="cart-total">Итого: 0 ₽</div>
                 <button class="checkout-btn" id="checkout-btn" disabled>Оформить заказ</button>
                 
-                <!-- Дополнительный каталог в корзине -->
                 <div class="cart-recommendations">
                     <h2 class="cart-recommendations-title">А может...</h2>
                     <div class="products-grid" id="cart-recommended-products">
-                        <!-- Продукты будут добавлены через JavaScript -->
                     </div>
                 </div>
             </div>
@@ -1314,7 +1287,6 @@
         <!-- Модальное окно товара -->
         <div class="product-modal" id="product-modal">
             <div class="product-modal-content">
-                <!-- Контент будет заполнен через JavaScript -->
             </div>
         </div>
     </div>
