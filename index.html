@@ -36,7 +36,15 @@
             font-family: 'Moscow Sans', 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
             -webkit-tap-highlight-color: rgba(0, 0, 0, 0.3);
         }
-        
+
+        img {
+            pointer-events: none;
+            -webkit-user-drag: none;
+            -webkit-touch-callout: none; /* отключает меню при долгом тапе на iOS */
+            -moz-user-select: none;
+            user-select: none;
+        }
+
         body {
             background-color: var(--primary-bg);
             color: var(--primary-text);
@@ -144,23 +152,17 @@
             overflow: hidden;
         }
         
+        
         .section-title {
-            position: absolute;
-            top: 0;
-            left: 0;
-            min-width: 150px;
-            height: 35px;
-            background: var(--primary-text);
-            color: var(--primary-bg);
-            border-radius: var(--border-radius) 0 var(--border-radius) 0;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 16px;
+            display: inline-block;
+            background: var(--primary-text); /* белый фон */
+            color: var(--primary-bg);        /* чёрный текст */
+            border-radius: 0;                /* убираем скругления */
             padding: 0 12px;
+            height: 35px;
+            line-height: 35px;
+            font-size: 16px;
             white-space: nowrap;
-            font-weight: normal;
-            border-bottom-right-radius: 0;
         }
         
         .get-code-btn {
@@ -206,9 +208,8 @@
         
         .orders-header {
             display: flex;
-            align-items: center;
-            padding: 12px 15px;
-            justify-content: space-between;
+            align-items: flex-start; /* чтобы были на одной линии сверху */
+            gap: 0;
         }
         
         .orders-title-wrapper {
@@ -222,21 +223,21 @@
             white-space: nowrap;
         }
         
-        .help-btn {
-            width: 30px;
-            height: 30px;
-            border: var(--border-width) solid var(--border-color);
-            background: transparent;
-            color: var(--primary-text);
+       .help-btn {
+            height: 36px;
+            width: 36px;
+            margin: -1px 3px;                
+            border: 1px solid #fff;   /* белая обводка */
+            background: #000;         /* чёрный фон */
+            color: #fff;              /* белый текст */
+            border-radius: 0 0 0 0;         /* острые углы */
+            font-size: 18px;
+            cursor: pointer;
             display: flex;
             align-items: center;
             justify-content: center;
-            cursor: pointer;
-            transition: var(--transition);
-            border-radius: 0;
-            font-size: 16px;
-            margin-left: 10px;
         }
+
         
         /* Стили для рекомендаций */
         .recommendations-section {
@@ -1112,24 +1113,6 @@
             }
 
 
-        .help-btn {
-            width: 35px;
-            height: 35px;
-            border: 1px solid #fff;
-            background: #000;
-            color: #fff;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            cursor: pointer;
-            border-radius: 50%;
-            font-size: 16px;
-            position: absolute;
-            right: 10px;
-            top: 10px;
-            }
-
-
         .nav-icon img, .product-image img {
             pointer-events: none; /* чтобы не открывались картинки при зажатии */
             }
@@ -1161,22 +1144,6 @@
             flex: 1;
             }
 }
-
-.help-btn {
-    width: 35px;
-    height: 35px;
-    border: var(--border-width) solid var(--border-color);
-    background: transparent;
-    color: #000;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    cursor: pointer;
-    transition: var(--transition);
-    border-radius: 50%;
-    font-size: 16px;
-    flex-shrink: 0; /* Чтобы не сжималась */
-}
     </style>
 </head>
 <body>
@@ -1206,8 +1173,8 @@
                 
                 <div class="orders-section">
                     <div class="orders-header">
-                        <div class="section-title">Мои актуальные заказы
-                        <button class="help-btn" id="help-btn">?</button></div>
+                        <div class="section-title">Мои актуальные заказы</div>
+                        <button class="help-btn" id="help-btn">?</button>
                     </div>
                     <div style="padding: 35px 15px 15px; font-size: 16px; line-height: 1.4;">
                         №00183 — 114 позиций (Готов к получению)<br>
@@ -1288,15 +1255,15 @@
                         </div>
                         <div class="profile-field">
                         <span class="profile-label">Юзернейм:</span>
-                        <span id="profile-username">@username</span>
+                        <span id="profile-username">@тут будет юз</span>
                         </div>
                         <div class="profile-field">
                         <span class="profile-label">Телефон:</span>
-                        <span id="profile-phone">Не указан</span>
+                        <span id="profile-phone">стырили</span>
                         </div>
                         <div class="profile-field">
                         <span class="profile-label">ID:</span>
-                        <span id="profile-id">123456789</span>
+                        <span id="profile-id">айди не загрузилось</span>
                         </div>
                     </div>
                 </div>
@@ -1311,7 +1278,7 @@
                 </div>
 
 
-                <div class="version-info">Версия: 0.0.28</div>
+                <div class="version-info">Версия: 0.0.32</div>
             </div>
         </section>
         
@@ -1605,17 +1572,10 @@
             document.getElementById('profile-phone').textContent = telegramUserData.phone_number || 'Не указан';
 
 
-            if (telegramUserData.photo_url) {
-            document.getElementById('profile-avatar').innerHTML = `<img src="${telegramUserData.photo_url}" alt="avatar">`;
-            } else {
-            document.getElementById('profile-avatar').innerHTML = `<img src="media/icons/profile.png" alt="avatar">`;
-            }
-            } else {
-            document.getElementById('profile-name').textContent = 'Имя (заглушка)';
-            document.getElementById('profile-username').textContent = '@username';
-            document.getElementById('profile-id').textContent = 'ID (заглушка)';
-            document.getElementById('profile-phone').textContent = '+000000000';
-            document.getElementById('profile-avatar').innerHTML = `<img src="media/icons/profile.png" alt="avatar">`;
+            document.getElementById('profile-name').textContent = 'Имя (не загрузило)';
+            document.getElementById('profile-username').textContent = '@тут будет юз';
+            document.getElementById('profile-id').textContent = 'ID (хз)';
+            document.getElementById('profile-phone').textContent = '+телефон стырыли';
             }
         }
 
@@ -2063,7 +2023,7 @@
         let total = 0;
         
         if (!Array.isArray(cart) || cart.length === 0) {
-            if (emptyCartMessage) emptyCartMessage.style.display = 'block';
+            cartItems.innerHTML = '<div class="empty-cart-message">Корзина пуста</div>';
             if (checkoutBtn) checkoutBtn.disabled = true;
             if (cartTotal) cartTotal.textContent = `Итого: 0 ₽`;
             return;
