@@ -1534,23 +1534,43 @@
                 const webApp = window.Telegram.WebApp;
                 telegramUserData = webApp.initDataUnsafe.user || {};
 
-                // Здесь вы правильно устанавливаете данные...
-                document.getElementById('profile-name').textContent =
-                    telegramUserData.first_name + (telegramUserData.last_name ? ' ' + telegramUserData.last_name : '');
-                document.getElementById('profile-username').textContent =
-                    telegramUserData.username ? '@' + telegramUserData.username : 'Не указан';
-                document.getElementById('profile-id').textContent = telegramUserData.id || 'Не доступен';
-                document.getElementById('profile-phone').textContent = telegramUserData.phone_number || 'Не указан';
-
-                // ...но потом сразу перезаписываете тестовыми данными!
-                document.getElementById('profile-name').textContent = 'Имя (не загрузило)';
-                document.getElementById('profile-username').textContent = '@тут будет юз';
-                document.getElementById('profile-id').textContent = 'ID (хз)';
-                document.getElementById('profile-phone').textContent = '+телефон стырыли';
+                if (telegramUserData && Object.keys(telegramUserData).length > 0) {
+                    // Реальные данные из Telegram
+                    document.getElementById('profile-name').textContent = 
+                        telegramUserData.first_name + (telegramUserData.last_name ? ' ' + telegrammerData.last_name : '');
+                    document.getElementById('profile-username').textContent = 
+                        telegramUserData.username ? '@' + telegramUserData.username : 'Не указан';
+                    document.getElementById('profile-id').textContent = telegramUserData.id || 'Не доступен';
+                    document.getElementById('profile-phone').textContent = 
+                        telegramUserData.phone_number || 'Не указан';
+                    
+                    // Также можно инициализировать аватар
+                    if (telegramUserData.photo_url) {
+                        document.getElementById('profile-avatar').innerHTML = 
+                            `<img src="${telegramUserData.photo_url}" alt="Аватар">`;
+                    }
+                } else {
+                    // Только если данные действительно не пришли
+                    document.getElementById('profile-name').textContent = 'Имя (не загрузило)';
+                    document.getElementById('profile-username').textContent = '@тут будет юз';
+                    document.getElementById('profile-id').textContent = 'ID (хз)';
+                    document.getElementById('profile-phone').textContent = '+телефон стырыли';
+                }
+            } else {
+                // Telegram WebApp не доступен (открыто в браузере)
+                document.getElementById('profile-name').textContent = 'Telegram не доступен';
+                document.getElementById('profile-username').textContent = '@откройте в Telegram';
+                document.getElementById('profile-id').textContent = '---';
+                document.getElementById('profile-phone').textContent = '---';
             }
         }
 
         function initializeApp() {
+            if (window.Telegram && window.Telegram.WebApp) {
+                window.Telegram.WebApp.ready();
+                window.Telegram.WebApp.expand(); // Раскрыть на весь экран
+            }
+
             // Загружаем корзину перед инициализацией
             loadCart();
 
