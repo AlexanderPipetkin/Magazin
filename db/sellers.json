@@ -1,0 +1,15 @@
+{
+  "sellers": [
+    {
+      "userId": 1618025244,
+      "companyName": "ООО \"Это же Лёха\"",
+      "contactPhone": "8 (800) 555-35-35",
+      "email": "contact@techgadgets.ru",
+      "avatar": "media/sellers/lexa.jpg",
+      "rating": 5.2,
+      "description": "Профессиональная техника и гаджеты",
+      "joinDate": "2023-05-15",
+      "isActive": true
+    }
+  ]
+}
