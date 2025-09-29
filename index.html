@@ -1329,6 +1329,11 @@
         let notifications = [];
         let telegramUserData = null;
 
+        if (window.Telegram && window.Telegram.WebApp) {
+            window.Telegram.WebApp.ready();
+            window.Telegram.WebApp.expand(); // Раскрыть на весь экран
+        }
+
         // Функция для безопасной загрузки корзины из localStorage
         function loadCart() {
             try {
@@ -2171,3 +2176,4 @@
     </script>
 </body>
 </html>
+
