@@ -1329,18 +1329,12 @@
         let notifications = [];
         let telegramUserData = null;
 
-        if (window.Telegram && window.Telegram.WebApp) {
-            window.Telegram.WebApp.ready();
-            window.Telegram.WebApp.expand(); // Раскрыть на весь экран
-        }
-
         // Функция для безопасной загрузки корзины из localStorage
         function loadCart() {
             try {
                 const savedCart = localStorage.getItem('cart');
                 if (savedCart) {
                     const parsedCart = JSON.parse(savedCart);
-                    // Проверяем, что это массив
                     if (Array.isArray(parsedCart)) {
                         cart = parsedCart;
                     } else {
@@ -1535,26 +1529,34 @@
 
         // Получение данных пользователя из Telegram
         function getTelegramUserData() {
+            console.log('Проверка Telegram WebApp...');
+            
             if (window.Telegram && window.Telegram.WebApp) {
+                console.log('Telegram WebApp доступен');
                 const webApp = window.Telegram.WebApp;
                 telegramUserData = webApp.initDataUnsafe.user || {};
-
+                
+                console.log('Данные пользователя:', telegramUserData);
+                
                 if (telegramUserData && Object.keys(telegramUserData).length > 0) {
                     // Реальные данные из Telegram
-                    document.getElementById('profile-name').textContent = 
-                        telegramUserData.first_name + (telegramUserData.last_name ? ' ' + telegrammerData.last_name : '');
-                    document.getElementById('profile-username').textContent = 
-                        telegramUserData.username ? '@' + telegramUserData.username : 'Не указан';
-                    document.getElementById('profile-id').textContent = telegramUserData.id || 'Не доступен';
-                    document.getElementById('profile-phone').textContent = 
-                        telegramUserData.phone_number || 'Не указан';
+                    const fullName = telegramUserData.first_name + (telegramUserData.last_name ? ' ' + telegramUserData.last_name : '');
+                    const username = telegramUserData.username ? '@' + telegramUserData.username : 'Не указан';
+                    const userId = telegramUserData.id || 'Не доступен';
                     
-                    // Также можно инициализировать аватар
+                    console.log('Установка реальных данных:', { fullName, username, userId });
+                    
+                    document.getElementById('profile-name').textContent = fullName;
+                    document.getElementById('profile-username').textContent = username;
+                    document.getElementById('profile-id').textContent = userId;
+                    document.getElementById('profile-phone').textContent = telegramUserData.phone_number || 'Не указан';
+                    
+                    // Аватар
                     if (telegramUserData.photo_url) {
-                        document.getElementById('profile-avatar').innerHTML = 
-                            `<img src="${telegramUserData.photo_url}" alt="Аватар">`;
+                        document.getElementById('profile-avatar').innerHTML = `<img src="${telegramUserData.photo_url}" alt="Аватар">`;
                     }
                 } else {
+                    console.log('Данные пользователя пусты, используем тестовые данные');
                     // Только если данные действительно не пришли
                     document.getElementById('profile-name').textContent = 'Имя (не загрузило)';
                     document.getElementById('profile-username').textContent = '@тут будет юз';
@@ -1562,6 +1564,7 @@
                     document.getElementById('profile-phone').textContent = '+телефон стырыли';
                 }
             } else {
+                console.log('Telegram WebApp не доступен');
                 // Telegram WebApp не доступен (открыто в браузере)
                 document.getElementById('profile-name').textContent = 'Telegram не доступен';
                 document.getElementById('profile-username').textContent = '@откройте в Telegram';
@@ -1571,9 +1574,13 @@
         }
 
         function initializeApp() {
+            console.log('Инициализация приложения...');
+            
+            // Инициализация Telegram WebApp
             if (window.Telegram && window.Telegram.WebApp) {
                 window.Telegram.WebApp.ready();
                 window.Telegram.WebApp.expand(); // Раскрыть на весь экран
+                console.log('Telegram WebApp инициализирован');
             }
 
             // Загружаем корзину перед инициализацией
@@ -1601,6 +1608,8 @@
             
             // Корзина
             updateCartDisplay();
+            
+            console.log('Приложение инициализировано');
         }
 
         function fillProductsGrid(gridId, productsArray) {
@@ -2171,10 +2180,10 @@
             }
         }
 
-        // Запуск приложения
-        document.addEventListener('DOMContentLoaded', loadProducts);
+        document.addEventListener('DOMContentLoaded', function() {
+            console.log('DOM загружен, начинаем загрузку товаров...');
+            loadProducts();
+        });
     </script>
 </body>
 </html>
-
-
