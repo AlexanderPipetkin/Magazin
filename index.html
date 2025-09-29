@@ -1529,11 +1529,11 @@
         }
 
         // Получение данных пользователя из Telegram
-       function getTelegramUserData() {
+        function getTelegramUserData() {
             if (window.Telegram && window.Telegram.WebApp) {
                 const webApp = window.Telegram.WebApp;
                 telegramUserData = webApp.initDataUnsafe.user || {};
-        
+
                 // Здесь вы правильно устанавливаете данные...
                 document.getElementById('profile-name').textContent =
                     telegramUserData.first_name + (telegramUserData.last_name ? ' ' + telegramUserData.last_name : '');
@@ -1541,7 +1541,7 @@
                     telegramUserData.username ? '@' + telegramUserData.username : 'Не указан';
                 document.getElementById('profile-id').textContent = telegramUserData.id || 'Не доступен';
                 document.getElementById('profile-phone').textContent = telegramUserData.phone_number || 'Не указан';
-        
+
                 // ...но потом сразу перезаписываете тестовыми данными!
                 document.getElementById('profile-name').textContent = 'Имя (не загрузило)';
                 document.getElementById('profile-username').textContent = '@тут будет юз';
@@ -2151,5 +2151,3 @@
     </script>
 </body>
 </html>
-
-
