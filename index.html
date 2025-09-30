@@ -24,10 +24,11 @@
 
         @font-face {
             font-family: 'Moscow Sans';
-            src: local('Moscow Sans'),
-                 url('fonts/MoscowSans.woff2') format('woff2'),
-                 url('fonts/MoscowSans.woff') format('woff'),
-                 url('fonts/MoscowSans.ttf') format('truetype');
+            src: url('https://fonts.cdnfonts.com/css/moscow-sans') format('woff2'),
+                 local('Moscow Sans'),
+                 url('/fonts/MoscowSans.woff2') format('woff2'),
+                 url('/fonts/MoscowSans.woff') format('woff'),
+                 url('/fonts/MoscowSans.ttf') format('truetype');
             font-weight: 400;
             font-style: normal;
             font-display: swap;
@@ -37,7 +38,7 @@
             margin: 0;
             padding: 0;
             box-sizing: border-box;
-            font-family: 'Moscow Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', system-ui, sans-serif;
+            font-family: 'Moscow Sans', 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
             -webkit-tap-highlight-color: rgba(0, 0, 0, 0.3);
         }
 
@@ -159,19 +160,26 @@
         }
         
         .section-title {
-            display: inline-block;
+            position: absolute;
+            top: 0;
+            left: 0;
+            min-width: 150px;
+            height: 30px;
             background: var(--primary-text);
             color: var(--primary-bg);
-            border-radius: 0;
+            border-radius: var(--border-radius) 0 var(--border-radius) 0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
             padding: 0 12px;
-            height: 35px;
-            line-height: 35px;
-            font-size: 16px;
-            white-space: nowrap;
+            font-size: 14px;
+            font-weight: normal;
+            border-bottom-right-radius: 0;
+            z-index: 1;
         }
         
         .section-content {
-            padding: 10px 15px !important;
+            padding: 35px 15px 15px !important;
             font-size: 16px;
             line-height: 1.4;
         }
@@ -243,6 +251,7 @@
 
         .recommendations-section {
             margin: 30px auto;
+            padding-bottom: 40px;
         }
         
         .recommendations-title {
@@ -254,12 +263,11 @@
             display: grid;
             grid-template-columns: repeat(2, 1fr);
             gap: var(--card-gap);
-            margin: 0 12px;
+            margin: 0 12px 40px;
         }
         
         .product-card {
             width: 100%;
-            max-width: var(--card-size);
             margin: 0 auto;
             transition: var(--transition);
             cursor: pointer;
@@ -292,8 +300,8 @@
         }
         
         .product-image img {
-            max-width: 100%;
-            max-height: 100%;
+            width: 100%;
+            height: 100%;
             object-fit: contain;
             transition: transform 0.3s ease;
         }
@@ -335,7 +343,7 @@
             display: grid;
             grid-template-columns: repeat(2, 1fr);
             gap: var(--card-gap);
-            margin: var(--section-margin) 12px;
+            margin: var(--section-margin) 12px 60px;
         }
         
         .cart-container {
@@ -494,24 +502,35 @@
             margin: 10px 0;
         }
         
-        .profile-header {
-            display: inline-block;
-            background: var(--primary-text);
-            color: var(--primary-bg);
-            border-radius: 0;
-            padding: 0 12px;
-            height: 35px;
-            line-height: 35px;
-            font-size: 16px;
-            white-space: nowrap;
-            margin-bottom: 15px;
-        }
-        
-        .profile-info {
+        .profile-info-card {
             border: var(--border-width) solid var(--border-color);
             border-radius: var(--border-radius);
-            padding: 15px;
-            margin-bottom: 15px;
+            margin-bottom: 20px;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .profile-header {
+            position: absolute;
+            top: 0;
+            left: 0;
+            min-width: 150px;
+            height: 30px;
+            background: var(--primary-text);
+            color: var(--primary-bg);
+            border-radius: var(--border-radius) 0 var(--border-radius) 0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 0 12px;
+            font-size: 14px;
+            font-weight: normal;
+            border-bottom-right-radius: 0;
+            z-index: 1;
+        }
+        
+        .profile-info-content {
+            padding: 40px 15px 15px;
             display: flex;
             align-items: center;
             gap: 15px;
@@ -556,7 +575,7 @@
         .seller-management-btn {
             display: block;
             width: calc(100% - 30px);
-            margin: 15px auto;
+            margin: 0 auto 15px;
             height: 50px;
             background: var(--primary-text);
             color: var(--primary-bg);
@@ -669,7 +688,7 @@
             margin-bottom: 15px;
             overflow: hidden;
             position: relative;
-            touch-action: pan-y pinch-zoom;
+            touch-action: none;
         }
         
         .product-modal-image-wrapper {
@@ -686,13 +705,12 @@
             max-width: 100%;
             max-height: 100%;
             object-fit: contain;
-            transition: transform 0.3s ease;
-            cursor: zoom-in;
+            transition: transform 0.1s ease;
+            will-change: transform;
         }
         
         .product-modal-image.zoomed {
             cursor: grab;
-            transform: scale(var(--zoom-scale, 2)) translate(var(--offset-x, 0), var(--offset-y, 0));
         }
         
         .product-modal-image.zoomed:active {
@@ -816,6 +834,12 @@
         .seller-name {
             font-size: 14px;
             font-weight: bold;
+        }
+        
+        .seller-contact {
+            font-size: 12px;
+            color: #ccc;
+            margin-top: 2px;
         }
         
         .product-modal-actions {
@@ -1058,7 +1082,7 @@
             
             .products-grid, .catalog-grid {
                 grid-template-columns: repeat(2, 1fr);
-                margin: 0 12px;
+                margin: 0 12px 40px;
             }
             
             .section-content, .order-content {
@@ -1212,6 +1236,28 @@
         .seller-profile {
             margin-top: 20px;
         }
+
+        .image-slide-enter {
+            opacity: 0;
+            transform: translateX(20px);
+        }
+
+        .image-slide-enter-active {
+            opacity: 1;
+            transform: translateX(0);
+            transition: opacity 0.3s ease, transform 0.3s ease;
+        }
+
+        .image-slide-exit {
+            opacity: 1;
+            transform: translateX(0);
+        }
+
+        .image-slide-exit-active {
+            opacity: 0;
+            transform: translateX(-20px);
+            transition: opacity 0.3s ease, transform 0.3s ease;
+        }
     </style>
 </head>
 <body>
@@ -1239,11 +1285,8 @@
                 </div>
                 
                 <div class="orders-section">
-                    <div class="orders-header">
-                        <div class="section-title">Мои актуальные заказы</div>
-                        <button class="help-btn" id="help-btn">?</button>
-                    </div>
-                    <div style="padding: 35px 15px 15px; font-size: 16px; line-height: 1.4;">
+                    <div class="section-title">Мои актуальные заказы</div>
+                    <div class="section-content">
                         №00183 — 114 позиций (Готов к получению)<br>
                         №00185 — 20 позиций (Приедет ~17 сен)<br>
                         №00186 — 190 позиций (Приедет ~43 сен)
@@ -1313,42 +1356,46 @@
             
             <div class="profile-section">
                 <!-- Профиль пользователя -->
-                <div class="profile-header">Я, как пользователь</div>
-                <div class="profile-info">
-                    <div class="profile-avatar" id="profile-avatar"></div>
-                    <div class="profile-fields">
-                        <div class="profile-field">
-                            <span class="profile-label">Имя:</span>
-                            <span id="profile-name">Загрузка...</span>
-                        </div>
-                        <div class="profile-field">
-                            <span class="profile-label">Юзернейм:</span>
-                            <span id="profile-username">@тут будет юз</span>
-                        </div>
-                        <div class="profile-field">
-                            <span class="profile-label">ID:</span>
-                            <span id="profile-id">айди не загрузилось</span>
+                <div class="profile-info-card">
+                    <div class="profile-header">Я, как пользователь</div>
+                    <div class="profile-info-content">
+                        <div class="profile-avatar" id="profile-avatar"></div>
+                        <div class="profile-fields">
+                            <div class="profile-field">
+                                <span class="profile-label">Имя:</span>
+                                <span id="profile-name">Загрузка...</span>
+                            </div>
+                            <div class="profile-field">
+                                <span class="profile-label">Юзернейм:</span>
+                                <span id="profile-username">@тут будет юз</span>
+                            </div>
+                            <div class="profile-field">
+                                <span class="profile-label">ID:</span>
+                                <span id="profile-id">айди не загрузилось</span>
+                            </div>
                         </div>
                     </div>
                 </div>
 
                 <!-- Профиль продавца -->
                 <div class="seller-profile" id="seller-profile" style="display: none;">
-                    <div class="profile-header">Я, как продавец</div>
-                    <div class="profile-info">
-                        <div class="profile-avatar" id="seller-avatar"></div>
-                        <div class="profile-fields">
-                            <div class="profile-field">
-                                <span class="profile-label">Компания:</span>
-                                <span id="seller-company">Загрузка...</span>
-                            </div>
-                            <div class="profile-field">
-                                <span class="profile-label">Контакт:</span>
-                                <span id="seller-contact">+7 XXX XXX-XX-XX</span>
+                    <div class="profile-info-card">
+                        <div class="profile-header">Я, как продавец</div>
+                        <div class="profile-info-content">
+                            <div class="profile-avatar" id="seller-avatar"></div>
+                            <div class="profile-fields">
+                                <div class="profile-field">
+                                    <span class="profile-label">Компания:</span>
+                                    <span id="seller-company">Загрузка...</span>
+                                </div>
+                                <div class="profile-field">
+                                    <span class="profile-label">Контакт:</span>
+                                    <span id="seller-contact">+7 XXX XXX-XX-XX</span>
+                                </div>
                             </div>
                         </div>
+                        <button class="seller-management-btn" id="seller-management-btn">Управление</button>
                     </div>
-                    <button class="seller-management-btn" id="seller-management-btn">Управление</button>
                 </div>
 
                 <div class="profile-actions">
@@ -1359,7 +1406,7 @@
                     <button class="profile-btn" id="about-btn">О нас</button>
                 </div>
 
-                <div class="version-info">Версия: 0.0.34</div>
+                <div class="version-info">Версия: 0.0.12</div>
             </div>
         </section>
         
@@ -1443,13 +1490,11 @@
 
         // Переменные для зума
         let scale = 1;
-        let startX = 0;
-        let startY = 0;
-        let offsetX = 0;
-        let offsetY = 0;
-        let isDragging = false;
-        let isPinching = false;
-        let initialDistance = 0;
+        let lastScale = 1;
+        let posX = 0;
+        let posY = 0;
+        let lastPosX = 0;
+        let lastPosY = 0;
 
         // Функция для безопасной загрузки корзины из localStorage
         function loadCart() {
@@ -1856,6 +1901,9 @@
             const productImages = Array.isArray(product.images) && product.images.length > 0 ? 
                 product.images : (product.image ? [product.image] : []);
             
+            // Находим продавца по ID
+            const seller = sellers.find(s => s.userId == product.sellerId);
+            
             content.innerHTML = `
                 <span class="product-modal-close">&times;</span>
                 
@@ -1913,8 +1961,16 @@
                     <div class="modal-subsection-title">Продавец</div>
                     <div class="modal-subsection-content">
                         <div class="seller-info">
-                            <div class="seller-avatar">${product.seller ? product.seller.charAt(0) : '?'}</div>
-                            <div class="seller-name">${product.seller || 'Неизвестно'}</div>
+                            <div class="seller-avatar">
+                                ${seller && seller.avatar ? 
+                                    `<img src="${seller.avatar}" alt="${seller.companyName}">` : 
+                                    (seller && seller.companyName ? seller.companyName.charAt(0) : '?')}
+                            </div>
+                            <div>
+                                <div class="seller-name">${seller ? seller.companyName : product.seller || 'Неизвестно'}</div>
+                                ${seller && seller.contactPhone ? 
+                                    `<div class="seller-contact">${seller.contactPhone}</div>` : ''}
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -1959,28 +2015,27 @@
 
         function resetZoom() {
             scale = 1;
-            offsetX = 0;
-            offsetY = 0;
-            isDragging = false;
-            isPinching = false;
-            initialDistance = 0;
+            posX = 0;
+            posY = 0;
+            lastScale = 1;
+            lastPosX = 0;
+            lastPosY = 0;
         }
 
         function setupImageZoom(imageElement, container) {
-            imageElement.style.setProperty('--zoom-scale', scale);
-            imageElement.style.setProperty('--offset-x', `${offsetX}px`);
-            imageElement.style.setProperty('--offset-y', `${offsetY}px`);
+            let isDragging = false;
+            let startX, startY;
             
-            // Одиночное нажатие для зума
+            // Сброс трансформации
+            imageElement.style.transform = `matrix(${scale}, 0, 0, ${scale}, ${posX}, ${posY})`;
+            
+            // Одиночное нажатие для сброса зума
             imageElement.addEventListener('click', (e) => {
-                if (scale === 1) {
-                    scale = 2;
-                    imageElement.classList.add('zoomed');
-                } else {
+                if (scale > 1) {
                     resetZoom();
+                    imageElement.style.transform = `matrix(${scale}, 0, 0, ${scale}, ${posX}, ${posY})`;
                     imageElement.classList.remove('zoomed');
                 }
-                applyImageTransform(imageElement);
             });
 
             // Жесты для масштабирования и панорамирования
@@ -1991,53 +2046,50 @@
             function handleTouchStart(e) {
                 if (e.touches.length === 2) {
                     // Начало жеста двумя пальцами (зум)
-                    isPinching = true;
                     const touch1 = e.touches[0];
                     const touch2 = e.touches[1];
-                    initialDistance = Math.hypot(
-                        touch1.clientX - touch2.clientX,
-                        touch1.clientY - touch2.clientY
-                    );
+                    lastScale = scale;
                 } else if (e.touches.length === 1 && scale > 1) {
                     // Начало жеста одним пальцем (панорамирование)
                     isDragging = true;
-                    startX = e.touches[0].clientX - offsetX;
-                    startY = e.touches[0].clientY - offsetY;
+                    startX = e.touches[0].clientX - posX;
+                    startY = e.touches[0].clientY - posY;
                 }
             }
 
             function handleTouchMove(e) {
-                if (isPinching && e.touches.length === 2) {
+                if (e.touches.length === 2) {
                     // Масштабирование
                     e.preventDefault();
                     const touch1 = e.touches[0];
                     const touch2 = e.touches[1];
-                    const currentDistance = Math.hypot(
+                    const distance = Math.hypot(
                         touch1.clientX - touch2.clientX,
                         touch1.clientY - touch2.clientY
                     );
                     
-                    scale = Math.max(1, Math.min(3, currentDistance / initialDistance));
+                    // Базовая дистанция для расчета масштаба
+                    const baseDistance = 100;
+                    scale = Math.max(1, Math.min(3, lastScale * distance / baseDistance));
+                    
+                    imageElement.classList.add('zoomed');
                     applyImageTransform(imageElement);
                 } else if (isDragging && e.touches.length === 1 && scale > 1) {
                     // Панорамирование
                     e.preventDefault();
-                    offsetX = e.touches[0].clientX - startX;
-                    offsetY = e.touches[0].clientY - startY;
+                    posX = e.touches[0].clientX - startX;
+                    posY = e.touches[0].clientY - startY;
                     applyImageTransform(imageElement);
                 }
             }
 
             function handleTouchEnd(e) {
                 isDragging = false;
-                isPinching = false;
             }
         }
 
         function applyImageTransform(imageElement) {
-            imageElement.style.setProperty('--zoom-scale', scale);
-            imageElement.style.setProperty('--offset-x', `${offsetX}px`);
-            imageElement.style.setProperty('--offset-y', `${offsetY}px`);
+            imageElement.style.transform = `matrix(${scale}, 0, 0, ${scale}, ${posX}, ${posY})`;
         }
 
         function setupImageSwipe(container, images, imageElement, imageCounter) {
@@ -2050,11 +2102,18 @@
                 startX = e.touches[0].clientX;
                 currentX = startX;
                 isSwiping = true;
+                
+                // Добавляем класс для анимации
+                imageElement.classList.add('image-slide-exit');
             });
 
             container.addEventListener('touchmove', (e) => {
                 if (!isSwiping || scale > 1) return;
                 currentX = e.touches[0].clientX;
+                
+                // Плавное перемещение изображения при свайпе
+                const diffX = currentX - startX;
+                imageElement.style.transform = `translateX(${diffX}px)`;
             });
 
             container.addEventListener('touchend', () => {
@@ -2064,13 +2123,27 @@
                 const swipeThreshold = 50;
                 
                 if (Math.abs(diffX) > swipeThreshold) {
-                    if (diffX > 0) {
-                        // Свайп влево - следующее изображение
-                        navigateImages(1, images, imageElement, imageCounter);
-                    } else {
-                        // Свайп вправо - предыдущее изображение
-                        navigateImages(-1, images, imageElement, imageCounter);
-                    }
+                    // Анимация смены изображения
+                    imageElement.classList.remove('image-slide-exit');
+                    imageElement.classList.add('image-slide-enter');
+                    
+                    setTimeout(() => {
+                        if (diffX > 0) {
+                            // Свайп влево - следующее изображение
+                            navigateImages(1, images, imageElement, imageCounter);
+                        } else {
+                            // Свайп вправо - предыдущее изображение
+                            navigateImages(-1, images, imageElement, imageCounter);
+                        }
+                        
+                        // Сброс трансформации и классов анимации
+                        imageElement.style.transform = '';
+                        imageElement.classList.remove('image-slide-enter');
+                    }, 150);
+                } else {
+                    // Отмена свайпа - возвращаем изображение
+                    imageElement.style.transform = '';
+                    imageElement.classList.remove('image-slide-exit');
                 }
                 
                 isSwiping = false;
