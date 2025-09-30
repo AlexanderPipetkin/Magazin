@@ -1,4 +1,4 @@
 User-agent: *
 Allow: /
 
-Sitemap: https://alexanderpipetkin.github.io/sitemap.xml
+Sitemap: https://alexanderpipetkin.github.io/Magazin/sitemap.xml
