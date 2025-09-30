@@ -23,9 +23,9 @@
         }
 
         @font-face {
-            font-family: 'Moscow Sans';
+            font-family: 'Moscow Sans Regular';
             src: url('https://fonts.cdnfonts.com/css/moscow-sans') format('woff2'),
-                 local('Moscow Sans'),
+                 local('Moscow Sans Regular'),
                  url('/fonts/MoscowSans.woff2') format('woff2'),
                  url('/fonts/MoscowSans.woff') format('woff'),
                  url('/fonts/MoscowSans.ttf') format('truetype');
@@ -38,7 +38,7 @@
             margin: 0;
             padding: 0;
             box-sizing: border-box;
-            font-family: 'Moscow Sans', 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            font-family: 'Moscow Sans Regular', 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
             -webkit-tap-highlight-color: rgba(0, 0, 0, 0.3);
         }
 
@@ -106,6 +106,7 @@
             display: flex;
             align-items: center;
             gap: 12px;
+            margin-bottom: 20px;
         }
         
         .search-input {
@@ -154,7 +155,7 @@
             min-height: 150px;
             border: var(--border-width) solid var(--border-color);
             border-radius: var(--border-radius);
-            margin: var(--section-margin) auto;
+            margin: 0 auto var(--section-margin);
             position: relative;
             overflow: hidden;
         }
@@ -213,7 +214,7 @@
             max-width: 716px;
             border: var(--border-width) solid var(--border-color);
             border-radius: var(--border-radius);
-            margin: var(--section-margin) auto;
+            margin: 0 auto var(--section-margin);
             position: relative;
             overflow: hidden;
         }
@@ -256,14 +257,14 @@
         
         .recommendations-title {
             font-size: 24px;
-            margin: 20px 12px;
+            margin: 20px 0;
         }
         
         .products-grid {
             display: grid;
             grid-template-columns: repeat(2, 1fr);
             gap: var(--card-gap);
-            margin: 0 12px 40px;
+            margin: 0 0 40px;
         }
         
         .product-card {
@@ -343,7 +344,7 @@
             display: grid;
             grid-template-columns: repeat(2, 1fr);
             gap: var(--card-gap);
-            margin: var(--section-margin) 12px 60px;
+            margin: var(--section-margin) 0 60px;
         }
         
         .cart-container {
@@ -682,7 +683,7 @@
         
         .product-modal-image-container {
             width: 100%;
-            height: 250px;
+            aspect-ratio: 1 / 1;
             background: var(--primary-text);
             border-radius: var(--border-radius);
             margin-bottom: 15px;
@@ -818,14 +819,14 @@
         }
         
         .seller-avatar {
-            width: 50px;
-            height: 50px;
+            width: 30px;
+            height: 30px;
             border-radius: 50%;
             background: var(--primary-text);
             display: flex;
             align-items: center;
             justify-content: center;
-            font-size: 16px;
+            font-size: 12px;
             font-weight: bold;
             color: var(--primary-bg);
             flex-shrink: 0;
@@ -1082,7 +1083,7 @@
             
             .products-grid, .catalog-grid {
                 grid-template-columns: repeat(2, 1fr);
-                margin: 0 12px 40px;
+                margin: 0 0 40px;
             }
             
             .section-content, .order-content {
@@ -1091,7 +1092,7 @@
             }
             
             .recommendations-title {
-                margin: 15px 12px;
+                margin: 15px 0;
             }
             
             .product-modal-content {
@@ -1100,7 +1101,8 @@
             }
             
             .product-modal-image-container {
-                height: 200px;
+                height: auto;
+                aspect-ratio: 1 / 1;
             }
             
             .product-modal-actions {
@@ -1154,7 +1156,7 @@
             .sections-row {
                 display: flex;
                 gap: var(--section-margin);
-                margin: var(--section-margin) 20px;
+                margin: var(--section-margin) 0;
             }
             
             .notifications-section, .orders-section {
@@ -1237,26 +1239,22 @@
             margin-top: 20px;
         }
 
-        .image-slide-enter {
-            opacity: 0;
-            transform: translateX(20px);
+        .image-slide-left {
+            animation: slideLeft 0.3s ease;
         }
 
-        .image-slide-enter-active {
-            opacity: 1;
-            transform: translateX(0);
-            transition: opacity 0.3s ease, transform 0.3s ease;
+        .image-slide-right {
+            animation: slideRight 0.3s ease;
         }
 
-        .image-slide-exit {
-            opacity: 1;
-            transform: translateX(0);
+        @keyframes slideLeft {
+            from { opacity: 0; transform: translateX(100%); }
+            to { opacity: 1; transform: translateX(0); }
         }
 
-        .image-slide-exit-active {
-            opacity: 0;
-            transform: translateX(-20px);
-            transition: opacity 0.3s ease, transform 0.3s ease;
+        @keyframes slideRight {
+            from { opacity: 0; transform: translateX(-100%); }
+            to { opacity: 1; transform: translateX(0); }
         }
     </style>
 </head>
@@ -1406,7 +1404,7 @@
                     <button class="profile-btn" id="about-btn">О нас</button>
                 </div>
 
-                <div class="version-info">Версия: 0.0.12</div>
+                <div class="version-info">Версия: 0.0.13</div>
             </div>
         </section>
         
@@ -1495,6 +1493,9 @@
         let posY = 0;
         let lastPosX = 0;
         let lastPosY = 0;
+        let lastTouchDistance = 0;
+        let isZoomed = false;
+        let doubleTapTimeout = null;
 
         // Функция для безопасной загрузки корзины из localStorage
         function loadCart() {
@@ -2020,22 +2021,37 @@
             lastScale = 1;
             lastPosX = 0;
             lastPosY = 0;
+            isZoomed = false;
         }
 
         function setupImageZoom(imageElement, container) {
             let isDragging = false;
             let startX, startY;
+            let lastTapTime = 0;
             
             // Сброс трансформации
             imageElement.style.transform = `matrix(${scale}, 0, 0, ${scale}, ${posX}, ${posY})`;
             
-            // Одиночное нажатие для сброса зума
+            // Двойной клик для зума
             imageElement.addEventListener('click', (e) => {
-                if (scale > 1) {
-                    resetZoom();
-                    imageElement.style.transform = `matrix(${scale}, 0, 0, ${scale}, ${posX}, ${posY})`;
-                    imageElement.classList.remove('zoomed');
+                const currentTime = new Date().getTime();
+                const tapLength = currentTime - lastTapTime;
+                
+                if (tapLength < 300 && tapLength > 0) {
+                    // Двойной клик
+                    if (scale > 1) {
+                        resetZoom();
+                        imageElement.style.transform = `matrix(${scale}, 0, 0, ${scale}, ${posX}, ${posY})`;
+                        imageElement.classList.remove('zoomed');
+                        isZoomed = false;
+                    } else {
+                        scale = 2;
+                        imageElement.style.transform = `matrix(${scale}, 0, 0, ${scale}, 0, 0)`;
+                        imageElement.classList.add('zoomed');
+                        isZoomed = true;
+                    }
                 }
+                lastTapTime = currentTime;
             });
 
             // Жесты для масштабирования и панорамирования
@@ -2048,6 +2064,10 @@
                     // Начало жеста двумя пальцами (зум)
                     const touch1 = e.touches[0];
                     const touch2 = e.touches[1];
+                    lastTouchDistance = Math.hypot(
+                        touch1.clientX - touch2.clientX,
+                        touch1.clientY - touch2.clientY
+                    );
                     lastScale = scale;
                 } else if (e.touches.length === 1 && scale > 1) {
                     // Начало жеста одним пальцем (панорамирование)
@@ -2068,23 +2088,39 @@
                         touch1.clientY - touch2.clientY
                     );
                     
-                    // Базовая дистанция для расчета масштаба
-                    const baseDistance = 100;
-                    scale = Math.max(1, Math.min(3, lastScale * distance / baseDistance));
-                    
-                    imageElement.classList.add('zoomed');
-                    applyImageTransform(imageElement);
+                    if (lastTouchDistance > 0) {
+                        scale = Math.max(1, Math.min(3, lastScale * distance / lastTouchDistance));
+                        
+                        imageElement.classList.add('zoomed');
+                        isZoomed = true;
+                        applyImageTransform(imageElement);
+                    }
                 } else if (isDragging && e.touches.length === 1 && scale > 1) {
                     // Панорамирование
                     e.preventDefault();
                     posX = e.touches[0].clientX - startX;
                     posY = e.touches[0].clientY - startY;
+                    
+                    // Ограничиваем перемещение, чтобы изображение не уходило слишком далеко
+                    const maxMove = 100;
+                    posX = Math.max(-maxMove, Math.min(maxMove, posX));
+                    posY = Math.max(-maxMove, Math.min(maxMove, posY));
+                    
                     applyImageTransform(imageElement);
                 }
             }
 
             function handleTouchEnd(e) {
                 isDragging = false;
+                lastTouchDistance = 0;
+                
+                // Если масштаб меньше 1.1, сбрасываем зум
+                if (scale < 1.1) {
+                    resetZoom();
+                    imageElement.style.transform = `matrix(${scale}, 0, 0, ${scale}, ${posX}, ${posY})`;
+                    imageElement.classList.remove('zoomed');
+                    isZoomed = false;
+                }
             }
         }
 
@@ -2098,52 +2134,39 @@
             let isSwiping = false;
 
             container.addEventListener('touchstart', (e) => {
-                if (scale > 1) return; // Не обрабатываем свайпы при зуме
+                if (isZoomed) return; // Не обрабатываем свайпы при зуме
                 startX = e.touches[0].clientX;
                 currentX = startX;
                 isSwiping = true;
-                
-                // Добавляем класс для анимации
-                imageElement.classList.add('image-slide-exit');
             });
 
             container.addEventListener('touchmove', (e) => {
-                if (!isSwiping || scale > 1) return;
+                if (!isSwiping || isZoomed) return;
                 currentX = e.touches[0].clientX;
-                
-                // Плавное перемещение изображения при свайпе
-                const diffX = currentX - startX;
-                imageElement.style.transform = `translateX(${diffX}px)`;
             });
 
             container.addEventListener('touchend', () => {
-                if (!isSwiping || scale > 1) return;
+                if (!isSwiping || isZoomed) return;
                 
                 const diffX = startX - currentX;
                 const swipeThreshold = 50;
                 
                 if (Math.abs(diffX) > swipeThreshold) {
-                    // Анимация смены изображения
-                    imageElement.classList.remove('image-slide-exit');
-                    imageElement.classList.add('image-slide-enter');
-                    
-                    setTimeout(() => {
-                        if (diffX > 0) {
-                            // Свайп влево - следующее изображение
+                    if (diffX > 0) {
+                        // Свайп влево - следующее изображение
+                        imageElement.classList.add('image-slide-left');
+                        setTimeout(() => {
                             navigateImages(1, images, imageElement, imageCounter);
-                        } else {
-                            // Свайп вправо - предыдущее изображение
+                            imageElement.classList.remove('image-slide-left');
+                        }, 150);
+                    } else {
+                        // Свайп вправо - предыдущее изображение
+                        imageElement.classList.add('image-slide-right');
+                        setTimeout(() => {
                             navigateImages(-1, images, imageElement, imageCounter);
-                        }
-                        
-                        // Сброс трансформации и классов анимации
-                        imageElement.style.transform = '';
-                        imageElement.classList.remove('image-slide-enter');
-                    }, 150);
-                } else {
-                    // Отмена свайпа - возвращаем изображение
-                    imageElement.style.transform = '';
-                    imageElement.classList.remove('image-slide-exit');
+                            imageElement.classList.remove('image-slide-right');
+                        }, 150);
+                    }
                 }
                 
                 isSwiping = false;
@@ -2155,6 +2178,7 @@
             imageElement.src = images[currentImageIndex];
             resetZoom();
             imageElement.classList.remove('zoomed');
+            isZoomed = false;
             imageCounter.textContent = `${currentImageIndex + 1} / ${images.length}`;
         }
 
