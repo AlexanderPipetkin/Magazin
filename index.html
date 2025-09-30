@@ -23,12 +23,11 @@
         }
 
         @font-face {
-            font-family: 'Moscow Sans Regular';
-            src: url('https://fonts.cdnfonts.com/css/moscow-sans') format('woff2'),
-                 local('Moscow Sans Regular'),
-                 url('/fonts/MoscowSans.woff2') format('woff2'),
-                 url('/fonts/MoscowSans.woff') format('woff'),
-                 url('/fonts/MoscowSans.ttf') format('truetype');
+            font-family: 'Moscow Sans';
+            src: local('Moscow Sans Regular'),
+                 url('fonts/MoscowSans.woff2') format('woff2'),
+                 url('fonts/MoscowSans.woff') format('woff'),
+                 url('fonts/MoscowSans.ttf') format('truetype');
             font-weight: 400;
             font-style: normal;
             font-display: swap;
@@ -38,7 +37,7 @@
             margin: 0;
             padding: 0;
             box-sizing: border-box;
-            font-family: 'Moscow Sans Regular', 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            font-family: 'Moscow Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', system-ui, sans-serif;
             -webkit-tap-highlight-color: rgba(0, 0, 0, 0.3);
         }
 
@@ -106,7 +105,6 @@
             display: flex;
             align-items: center;
             gap: 12px;
-            margin-bottom: 20px;
         }
         
         .search-input {
@@ -155,28 +153,21 @@
             min-height: 150px;
             border: var(--border-width) solid var(--border-color);
             border-radius: var(--border-radius);
-            margin: 0 auto var(--section-margin);
+            margin: var(--section-margin) auto;
             position: relative;
             overflow: hidden;
         }
         
         .section-title {
-            position: absolute;
-            top: 0;
-            left: 0;
-            min-width: 150px;
-            height: 30px;
+            display: inline-block;
             background: var(--primary-text);
             color: var(--primary-bg);
-            border-radius: var(--border-radius) 0 var(--border-radius) 0;
-            display: flex;
-            align-items: center;
-            justify-content: center;
+            border-radius: 0;
             padding: 0 12px;
-            font-size: 14px;
-            font-weight: normal;
-            border-bottom-right-radius: 0;
-            z-index: 1;
+            height: 35px;
+            line-height: 35px;
+            font-size: 16px;
+            white-space: nowrap;
         }
         
         .section-content {
@@ -214,7 +205,7 @@
             max-width: 716px;
             border: var(--border-width) solid var(--border-color);
             border-radius: var(--border-radius);
-            margin: 0 auto var(--section-margin);
+            margin: var(--section-margin) auto;
             position: relative;
             overflow: hidden;
         }
@@ -252,23 +243,24 @@
 
         .recommendations-section {
             margin: 30px auto;
-            padding-bottom: 40px;
         }
         
         .recommendations-title {
             font-size: 24px;
-            margin: 20px 0;
+            margin: 20px 12px;
         }
         
         .products-grid {
             display: grid;
             grid-template-columns: repeat(2, 1fr);
             gap: var(--card-gap);
-            margin: 0 0 40px;
+            margin: 0 12px;
+            padding-bottom: 20px;
         }
         
         .product-card {
             width: 100%;
+            max-width: var(--card-size);
             margin: 0 auto;
             transition: var(--transition);
             cursor: pointer;
@@ -301,8 +293,8 @@
         }
         
         .product-image img {
-            width: 100%;
-            height: 100%;
+            max-width: 100%;
+            max-height: 100%;
             object-fit: contain;
             transition: transform 0.3s ease;
         }
@@ -344,7 +336,8 @@
             display: grid;
             grid-template-columns: repeat(2, 1fr);
             gap: var(--card-gap);
-            margin: var(--section-margin) 0 60px;
+            margin: var(--section-margin) 12px;
+            padding-bottom: 20px;
         }
         
         .cart-container {
@@ -503,35 +496,24 @@
             margin: 10px 0;
         }
         
-        .profile-info-card {
-            border: var(--border-width) solid var(--border-color);
-            border-radius: var(--border-radius);
-            margin-bottom: 20px;
-            position: relative;
-            overflow: hidden;
-        }
-        
         .profile-header {
-            position: absolute;
-            top: 0;
-            left: 0;
-            min-width: 150px;
-            height: 30px;
+            display: inline-block;
             background: var(--primary-text);
             color: var(--primary-bg);
-            border-radius: var(--border-radius) 0 var(--border-radius) 0;
-            display: flex;
-            align-items: center;
-            justify-content: center;
+            border-radius: 0;
             padding: 0 12px;
-            font-size: 14px;
-            font-weight: normal;
-            border-bottom-right-radius: 0;
-            z-index: 1;
+            height: 35px;
+            line-height: 35px;
+            font-size: 16px;
+            white-space: nowrap;
+            margin-bottom: 15px;
         }
         
-        .profile-info-content {
-            padding: 40px 15px 15px;
+        .profile-info {
+            border: var(--border-width) solid var(--border-color);
+            border-radius: var(--border-radius);
+            padding: 15px;
+            margin-bottom: 15px;
             display: flex;
             align-items: center;
             gap: 15px;
@@ -576,7 +558,7 @@
         .seller-management-btn {
             display: block;
             width: calc(100% - 30px);
-            margin: 0 auto 15px;
+            margin: 15px auto;
             height: 50px;
             background: var(--primary-text);
             color: var(--primary-bg);
@@ -683,13 +665,13 @@
         
         .product-modal-image-container {
             width: 100%;
-            aspect-ratio: 1 / 1;
+            height: 250px;
             background: var(--primary-text);
             border-radius: var(--border-radius);
             margin-bottom: 15px;
             overflow: hidden;
             position: relative;
-            touch-action: none;
+            touch-action: pan-y pinch-zoom;
         }
         
         .product-modal-image-wrapper {
@@ -706,12 +688,13 @@
             max-width: 100%;
             max-height: 100%;
             object-fit: contain;
-            transition: transform 0.1s ease;
-            will-change: transform;
+            transition: transform 0.3s ease;
+            cursor: pointer;
         }
         
         .product-modal-image.zoomed {
             cursor: grab;
+            transform: scale(var(--zoom-scale, 2)) translate(var(--offset-x, 0), var(--offset-y, 0));
         }
         
         .product-modal-image.zoomed:active {
@@ -819,14 +802,14 @@
         }
         
         .seller-avatar {
-            width: 30px;
-            height: 30px;
+            width: 50px;
+            height: 50px;
             border-radius: 50%;
             background: var(--primary-text);
             display: flex;
             align-items: center;
             justify-content: center;
-            font-size: 12px;
+            font-size: 16px;
             font-weight: bold;
             color: var(--primary-bg);
             flex-shrink: 0;
@@ -835,12 +818,6 @@
         .seller-name {
             font-size: 14px;
             font-weight: bold;
-        }
-        
-        .seller-contact {
-            font-size: 12px;
-            color: #ccc;
-            margin-top: 2px;
         }
         
         .product-modal-actions {
@@ -1061,7 +1038,7 @@
         
         @media (max-width: 780px) {
             .header {
-                padding: 15px 12px 0;
+            margin: var(--section-margin) auto;
             }
             
             .search-container {
@@ -1083,7 +1060,7 @@
             
             .products-grid, .catalog-grid {
                 grid-template-columns: repeat(2, 1fr);
-                margin: 0 0 40px;
+                margin: 0 12px;
             }
             
             .section-content, .order-content {
@@ -1092,7 +1069,7 @@
             }
             
             .recommendations-title {
-                margin: 15px 0;
+                margin: 15px 12px;
             }
             
             .product-modal-content {
@@ -1101,8 +1078,7 @@
             }
             
             .product-modal-image-container {
-                height: auto;
-                aspect-ratio: 1 / 1;
+                height: 200px;
             }
             
             .product-modal-actions {
@@ -1156,7 +1132,7 @@
             .sections-row {
                 display: flex;
                 gap: var(--section-margin);
-                margin: var(--section-margin) 0;
+                margin: var(--section-margin) 20px;
             }
             
             .notifications-section, .orders-section {
@@ -1237,24 +1213,40 @@
 
         .seller-profile {
             margin-top: 20px;
+            border: var(--border-width) solid var(--border-color);
+            border-radius: var(--border-radius);
+            position: relative;
+            overflow: hidden;
+            padding-top: 35px;
         }
 
-        .image-slide-left {
-            animation: slideLeft 0.3s ease;
+        .seller-profile .profile-header {
+            position: absolute;
+            top: 0;
+            left: 0;
+            margin: 0;
         }
 
-        .image-slide-right {
-            animation: slideRight 0.3s ease;
+        .image-slide-enter {
+            transform: translateX(100%);
+            opacity: 0;
         }
 
-        @keyframes slideLeft {
-            from { opacity: 0; transform: translateX(100%); }
-            to { opacity: 1; transform: translateX(0); }
+        .image-slide-enter-active {
+            transform: translateX(0);
+            opacity: 1;
+            transition: transform 0.3s ease, opacity 0.3s ease;
         }
 
-        @keyframes slideRight {
-            from { opacity: 0; transform: translateX(-100%); }
-            to { opacity: 1; transform: translateX(0); }
+        .image-slide-exit {
+            transform: translateX(0);
+            opacity: 1;
+        }
+
+        .image-slide-exit-active {
+            transform: translateX(-100%);
+            opacity: 0;
+            transition: transform 0.3s ease, opacity 0.3s ease;
         }
     </style>
 </head>
@@ -1283,8 +1275,11 @@
                 </div>
                 
                 <div class="orders-section">
-                    <div class="section-title">Мои актуальные заказы</div>
-                    <div class="section-content">
+                    <div class="orders-header">
+                        <div class="section-title">Мои актуальные заказы</div>
+                        <button class="help-btn" id="help-btn">?</button>
+                    </div>
+                    <div style="padding: 35px 15px 15px; font-size: 16px; line-height: 1.4;">
                         №00183 — 114 позиций (Готов к получению)<br>
                         №00185 — 20 позиций (Приедет ~17 сен)<br>
                         №00186 — 190 позиций (Приедет ~43 сен)
@@ -1354,46 +1349,42 @@
             
             <div class="profile-section">
                 <!-- Профиль пользователя -->
-                <div class="profile-info-card">
-                    <div class="profile-header">Я, как пользователь</div>
-                    <div class="profile-info-content">
-                        <div class="profile-avatar" id="profile-avatar"></div>
-                        <div class="profile-fields">
-                            <div class="profile-field">
-                                <span class="profile-label">Имя:</span>
-                                <span id="profile-name">Загрузка...</span>
-                            </div>
-                            <div class="profile-field">
-                                <span class="profile-label">Юзернейм:</span>
-                                <span id="profile-username">@тут будет юз</span>
-                            </div>
-                            <div class="profile-field">
-                                <span class="profile-label">ID:</span>
-                                <span id="profile-id">айди не загрузилось</span>
-                            </div>
+                <div class="profile-header">Я, как пользователь</div>
+                <div class="profile-info">
+                    <div class="profile-avatar" id="profile-avatar"></div>
+                    <div class="profile-fields">
+                        <div class="profile-field">
+                            <span class="profile-label">Имя:</span>
+                            <span id="profile-name">Загрузка...</span>
+                        </div>
+                        <div class="profile-field">
+                            <span class="profile-label">Юзернейм:</span>
+                            <span id="profile-username">@тут будет юз</span>
+                        </div>
+                        <div class="profile-field">
+                            <span class="profile-label">ID:</span>
+                            <span id="profile-id">айди не загрузилось</span>
                         </div>
                     </div>
                 </div>
 
                 <!-- Профиль продавца -->
                 <div class="seller-profile" id="seller-profile" style="display: none;">
-                    <div class="profile-info-card">
-                        <div class="profile-header">Я, как продавец</div>
-                        <div class="profile-info-content">
-                            <div class="profile-avatar" id="seller-avatar"></div>
-                            <div class="profile-fields">
-                                <div class="profile-field">
-                                    <span class="profile-label">Компания:</span>
-                                    <span id="seller-company">Загрузка...</span>
-                                </div>
-                                <div class="profile-field">
-                                    <span class="profile-label">Контакт:</span>
-                                    <span id="seller-contact">+7 XXX XXX-XX-XX</span>
-                                </div>
+                    <div class="profile-header">Я, как продавец</div>
+                    <div class="profile-info">
+                        <div class="profile-avatar" id="seller-avatar"></div>
+                        <div class="profile-fields">
+                            <div class="profile-field">
+                                <span class="profile-label">Компания:</span>
+                                <span id="seller-company">Загрузка...</span>
+                            </div>
+                            <div class="profile-field">
+                                <span class="profile-label">Контакт:</span>
+                                <span id="seller-contact">+7 XXX XXX-XX-XX</span>
                             </div>
                         </div>
-                        <button class="seller-management-btn" id="seller-management-btn">Управление</button>
                     </div>
+                    <button class="seller-management-btn" id="seller-management-btn">Управление</button>
                 </div>
 
                 <div class="profile-actions">
@@ -1404,7 +1395,7 @@
                     <button class="profile-btn" id="about-btn">О нас</button>
                 </div>
 
-                <div class="version-info">Версия: 0.0.13</div>
+                <div class="version-info">Версия: 0.0.34</div>
             </div>
         </section>
         
@@ -1488,14 +1479,14 @@
 
         // Переменные для зума
         let scale = 1;
-        let lastScale = 1;
-        let posX = 0;
-        let posY = 0;
-        let lastPosX = 0;
-        let lastPosY = 0;
-        let lastTouchDistance = 0;
-        let isZoomed = false;
-        let doubleTapTimeout = null;
+        let startX = 0;
+        let startY = 0;
+        let offsetX = 0;
+        let offsetY = 0;
+        let isDragging = false;
+        let isPinching = false;
+        let initialDistance = 0;
+        let lastTap = 0;
 
         // Функция для безопасной загрузки корзины из localStorage
         function loadCart() {
@@ -1902,8 +1893,8 @@
             const productImages = Array.isArray(product.images) && product.images.length > 0 ? 
                 product.images : (product.image ? [product.image] : []);
             
-            // Находим продавца по ID
-            const seller = sellers.find(s => s.userId == product.sellerId);
+            // Получаем данные продавца по sellerId
+            const seller = sellers.find(s => s.id === product.sellerId);
             
             content.innerHTML = `
                 <span class="product-modal-close">&times;</span>
@@ -1968,9 +1959,8 @@
                                     (seller && seller.companyName ? seller.companyName.charAt(0) : '?')}
                             </div>
                             <div>
-                                <div class="seller-name">${seller ? seller.companyName : product.seller || 'Неизвестно'}</div>
-                                ${seller && seller.contactPhone ? 
-                                    `<div class="seller-contact">${seller.contactPhone}</div>` : ''}
+                                <div class="seller-name">${seller ? seller.companyName : 'Неизвестно'}</div>
+                                <div>${seller ? seller.contactPhone : ''}</div>
                             </div>
                         </div>
                     </div>
@@ -2016,95 +2006,88 @@
 
         function resetZoom() {
             scale = 1;
-            posX = 0;
-            posY = 0;
-            lastScale = 1;
-            lastPosX = 0;
-            lastPosY = 0;
-            isZoomed = false;
+            offsetX = 0;
+            offsetY = 0;
+            isDragging = false;
+            isPinching = false;
+            initialDistance = 0;
         }
 
         function setupImageZoom(imageElement, container) {
-            let isDragging = false;
-            let startX, startY;
-            let lastTapTime = 0;
+            imageElement.style.setProperty('--zoom-scale', scale);
+            imageElement.style.setProperty('--offset-x', `${offsetX}px`);
+            imageElement.style.setProperty('--offset-y', `${offsetY}px`);
             
-            // Сброс трансформации
-            imageElement.style.transform = `matrix(${scale}, 0, 0, ${scale}, ${posX}, ${posY})`;
-            
-            // Двойной клик для зума
-            imageElement.addEventListener('click', (e) => {
+            // Двойное нажатие для зума
+            imageElement.addEventListener('touchend', function(e) {
                 const currentTime = new Date().getTime();
-                const tapLength = currentTime - lastTapTime;
-                
-                if (tapLength < 300 && tapLength > 0) {
-                    // Двойной клик
-                    if (scale > 1) {
-                        resetZoom();
-                        imageElement.style.transform = `matrix(${scale}, 0, 0, ${scale}, ${posX}, ${posY})`;
-                        imageElement.classList.remove('zoomed');
-                        isZoomed = false;
-                    } else {
+                const tapLength = currentTime - lastTap;
+                if (tapLength < 500 && tapLength > 0) {
+                    // Двойной тап
+                    if (scale === 1) {
                         scale = 2;
-                        imageElement.style.transform = `matrix(${scale}, 0, 0, ${scale}, 0, 0)`;
                         imageElement.classList.add('zoomed');
-                        isZoomed = true;
+                    } else {
+                        resetZoom();
+                        imageElement.classList.remove('zoomed');
                     }
+                    applyImageTransform(imageElement);
                 }
-                lastTapTime = currentTime;
+                lastTap = currentTime;
             });
 
             // Жесты для масштабирования и панорамирования
-            container.addEventListener('touchstart', handleTouchStart);
-            container.addEventListener('touchmove', handleTouchMove);
+            container.addEventListener('touchstart', handleTouchStart, { passive: false });
+            container.addEventListener('touchmove', handleTouchMove, { passive: false });
             container.addEventListener('touchend', handleTouchEnd);
 
             function handleTouchStart(e) {
                 if (e.touches.length === 2) {
                     // Начало жеста двумя пальцами (зум)
+                    e.preventDefault();
+                    isPinching = true;
                     const touch1 = e.touches[0];
                     const touch2 = e.touches[1];
-                    lastTouchDistance = Math.hypot(
+                    initialDistance = Math.hypot(
                         touch1.clientX - touch2.clientX,
                         touch1.clientY - touch2.clientY
                     );
-                    lastScale = scale;
                 } else if (e.touches.length === 1 && scale > 1) {
                     // Начало жеста одним пальцем (панорамирование)
+                    e.preventDefault();
                     isDragging = true;
-                    startX = e.touches[0].clientX - posX;
-                    startY = e.touches[0].clientY - posY;
+                    startX = e.touches[0].clientX - offsetX;
+                    startY = e.touches[0].clientY - offsetY;
                 }
             }
 
             function handleTouchMove(e) {
-                if (e.touches.length === 2) {
+                if (isPinching && e.touches.length === 2) {
                     // Масштабирование
                     e.preventDefault();
                     const touch1 = e.touches[0];
                     const touch2 = e.touches[1];
-                    const distance = Math.hypot(
+                    const currentDistance = Math.hypot(
                         touch1.clientX - touch2.clientX,
                         touch1.clientY - touch2.clientY
                     );
                     
-                    if (lastTouchDistance > 0) {
-                        scale = Math.max(1, Math.min(3, lastScale * distance / lastTouchDistance));
-                        
-                        imageElement.classList.add('zoomed');
-                        isZoomed = true;
-                        applyImageTransform(imageElement);
-                    }
+                    scale = Math.max(1, Math.min(3, currentDistance / initialDistance));
+                    applyImageTransform(imageElement);
                 } else if (isDragging && e.touches.length === 1 && scale > 1) {
                     // Панорамирование
                     e.preventDefault();
-                    posX = e.touches[0].clientX - startX;
-                    posY = e.touches[0].clientY - startY;
+                    offsetX = e.touches[0].clientX - startX;
+                    offsetY = e.touches[0].clientY - startY;
                     
-                    // Ограничиваем перемещение, чтобы изображение не уходило слишком далеко
-                    const maxMove = 100;
-                    posX = Math.max(-maxMove, Math.min(maxMove, posX));
-                    posY = Math.max(-maxMove, Math.min(maxMove, posY));
+                    // Ограничиваем панорамирование, чтобы не увести изображение слишком далеко
+                    const imgRect = imageElement.getBoundingClientRect();
+                    const containerRect = container.getBoundingClientRect();
+                    const maxX = (imgRect.width * scale - containerRect.width) / 2;
+                    const maxY = (imgRect.height * scale - containerRect.height) / 2;
+                    
+                    offsetX = Math.max(-maxX, Math.min(maxX, offsetX));
+                    offsetY = Math.max(-maxY, Math.min(maxY, offsetY));
                     
                     applyImageTransform(imageElement);
                 }
@@ -2112,20 +2095,14 @@
 
             function handleTouchEnd(e) {
                 isDragging = false;
-                lastTouchDistance = 0;
-                
-                // Если масштаб меньше 1.1, сбрасываем зум
-                if (scale < 1.1) {
-                    resetZoom();
-                    imageElement.style.transform = `matrix(${scale}, 0, 0, ${scale}, ${posX}, ${posY})`;
-                    imageElement.classList.remove('zoomed');
-                    isZoomed = false;
-                }
+                isPinching = false;
             }
         }
 
         function applyImageTransform(imageElement) {
-            imageElement.style.transform = `matrix(${scale}, 0, 0, ${scale}, ${posX}, ${posY})`;
+            imageElement.style.setProperty('--zoom-scale', scale);
+            imageElement.style.setProperty('--offset-x', `${offsetX}px`);
+            imageElement.style.setProperty('--offset-y', `${offsetY}px`);
         }
 
         function setupImageSwipe(container, images, imageElement, imageCounter) {
@@ -2134,19 +2111,26 @@
             let isSwiping = false;
 
             container.addEventListener('touchstart', (e) => {
-                if (isZoomed) return; // Не обрабатываем свайпы при зуме
+                if (scale > 1) return; // Не обрабатываем свайпы при зуме
                 startX = e.touches[0].clientX;
                 currentX = startX;
                 isSwiping = true;
+                
+                // Добавляем классы для анимации
+                imageElement.classList.add('image-slide-exit');
             });
 
             container.addEventListener('touchmove', (e) => {
-                if (!isSwiping || isZoomed) return;
+                if (!isSwiping || scale > 1) return;
                 currentX = e.touches[0].clientX;
+                
+                // Анимация сдвига текущего изображения
+                const diffX = currentX - startX;
+                imageElement.style.transform = `translateX(${diffX}px)`;
             });
 
             container.addEventListener('touchend', () => {
-                if (!isSwiping || isZoomed) return;
+                if (!isSwiping || scale > 1) return;
                 
                 const diffX = startX - currentX;
                 const swipeThreshold = 50;
@@ -2154,32 +2138,51 @@
                 if (Math.abs(diffX) > swipeThreshold) {
                     if (diffX > 0) {
                         // Свайп влево - следующее изображение
-                        imageElement.classList.add('image-slide-left');
-                        setTimeout(() => {
-                            navigateImages(1, images, imageElement, imageCounter);
-                            imageElement.classList.remove('image-slide-left');
-                        }, 150);
+                        navigateImages(1, images, imageElement, imageCounter);
                     } else {
                         // Свайп вправо - предыдущее изображение
-                        imageElement.classList.add('image-slide-right');
-                        setTimeout(() => {
-                            navigateImages(-1, images, imageElement, imageCounter);
-                            imageElement.classList.remove('image-slide-right');
-                        }, 150);
+                        navigateImages(-1, images, imageElement, imageCounter);
                     }
+                } else {
+                    // Возвращаем изображение на место
+                    imageElement.style.transform = 'translateX(0)';
                 }
+                
+                // Убираем класс анимации
+                imageElement.classList.remove('image-slide-exit');
                 
                 isSwiping = false;
             });
         }
 
         function navigateImages(direction, images, imageElement, imageCounter) {
+            const oldIndex = currentImageIndex;
             currentImageIndex = (currentImageIndex + direction + images.length) % images.length;
-            imageElement.src = images[currentImageIndex];
-            resetZoom();
-            imageElement.classList.remove('zoomed');
-            isZoomed = false;
-            imageCounter.textContent = `${currentImageIndex + 1} / ${images.length}`;
+            
+            // Анимация смены изображения
+            imageElement.classList.add('image-slide-exit-active');
+            
+            setTimeout(() => {
+                imageElement.src = images[currentImageIndex];
+                imageElement.classList.remove('image-slide-exit', 'image-slide-exit-active');
+                imageElement.classList.add('image-slide-enter');
+                
+                // Сбрасываем трансформацию для нового изображения
+                imageElement.style.transform = direction > 0 ? 'translateX(100%)' : 'translateX(-100%)';
+                
+                setTimeout(() => {
+                    imageElement.classList.add('image-slide-enter-active');
+                    imageElement.style.transform = 'translateX(0)';
+                    
+                    setTimeout(() => {
+                        imageElement.classList.remove('image-slide-enter', 'image-slide-enter-active');
+                    }, 300);
+                }, 10);
+                
+                resetZoom();
+                imageElement.classList.remove('zoomed');
+                imageCounter.textContent = `${currentImageIndex + 1} / ${images.length}`;
+            }, 300);
         }
 
         function setupProductModalActions(product, modal) {
