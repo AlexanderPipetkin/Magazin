@@ -23,7 +23,7 @@
         "media/products/1/1.png",
         "media/products/1/2.png"
       ],
-      "seller": "BOCSH",
+      "sellerId": 1618025244,
       "quantity": 10
     },
     {
@@ -42,7 +42,7 @@
       "images": [
         "media/products/2/1.png"
       ],
-      "seller": "ИП \"Пономарёв Олег Вячеславович\"",
+      "sellerId": 1618025244,
       "quantity": 50
     },
     {
@@ -61,7 +61,7 @@
       "images": [
         "media/products/3/1.png"
       ],
-      "seller": "Лёха",
+      "sellerId": 1618025244,
       "quantity": 25
     },
     {
@@ -89,7 +89,7 @@
       "images": [
         "media/products/4/1.png"
       ],
-      "seller": "ИП \"Пономарёв Олег Вячеславович\"",
+      "sellerId": 1618025244,
       "quantity": 1
     },
     {
@@ -109,7 +109,7 @@
       "images": [
         "media/products/5/1.png"
       ],
-      "seller": "Лёха",
+      "sellerId": 1618025244,
       "quantity": 1
     },
     {
@@ -128,7 +128,7 @@
       "images": [
         "media/products/6/1.png"
       ],
-      "seller": "Кто-угодно",
+      "sellerId": 1618025244,
       "quantity": 5
     },
     {
@@ -147,7 +147,7 @@
       "images": [
         "media/products/7/1.png"
       ],
-      "seller": "Тот, кому он надоел",
+      "sellerId": 1618025244,
       "quantity": 0
     }
   ]
