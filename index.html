@@ -24,11 +24,11 @@
 
         @font-face {
             font-family: 'Moscow Sans';
-            src: url('fonts/Moscow Sans.ttf') format('truetype'),
-                 url('fonts/MoscowSans.ttf') format('truetype'),
+            src: local('Moscow Sans'),
+                 url('fonts/MoscowSans.woff2') format('woff2'),
                  url('fonts/MoscowSans.woff') format('woff'),
-                 url('fonts/MoscowSans.woff2') format('woff2');
-            font-weight: normal;
+                 url('fonts/MoscowSans.ttf') format('truetype');
+            font-weight: 400;
             font-style: normal;
             font-display: swap;
         }
@@ -37,7 +37,7 @@
             margin: 0;
             padding: 0;
             box-sizing: border-box;
-            font-family: 'Moscow Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            font-family: 'Moscow Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', system-ui, sans-serif;
             -webkit-tap-highlight-color: rgba(0, 0, 0, 0.3);
         }
 
@@ -86,13 +86,19 @@
         }
         
         .header {
-            height: var(--header-height);
-            padding: 20px 20px 0;
+            padding: 15px 12px 0;
         }
         
         .page-title {
             font-size: 24px;
-            margin-bottom: 16px;
+            margin-bottom: 8px;
+        }
+        
+        .page-description {
+            font-size: 14px;
+            color: #ccc;
+            margin-bottom: 20px;
+            line-height: 1.4;
         }
         
         .search-container {
@@ -164,6 +170,12 @@
             white-space: nowrap;
         }
         
+        .section-content {
+            padding: 10px 15px !important;
+            font-size: 16px;
+            line-height: 1.4;
+        }
+        
         .get-code-btn {
             display: block;
             width: calc(100% - 30px);
@@ -188,12 +200,6 @@
             transform: translateY(0);
         }
 
-        .section-content {
-            padding: 15px;
-            font-size: 16px;
-            line-height: 1.4;
-        }
-        
         .orders-section {
             width: 100%;
             max-width: 716px;
@@ -267,7 +273,7 @@
         
         .product-image {
             width: 100%;
-            height: var(--card-size);
+            aspect-ratio: 1 / 1;
             background: var(--primary-text);
             border-radius: var(--border-radius);
             display: flex;
@@ -276,6 +282,13 @@
             margin-bottom: 6px;
             overflow: hidden;
             position: relative;
+        }
+        
+        @media (min-width: 1024px) {
+            .product-image {
+                max-width: 200px;
+                margin: 0 auto 6px;
+            }
         }
         
         .product-image img {
@@ -361,6 +374,7 @@
             justify-content: center;
             overflow: hidden;
             flex-shrink: 0;
+            cursor: pointer;
         }
         
         .cart-item-image img {
@@ -417,6 +431,11 @@
             cursor: pointer;
             transition: var(--transition);
             font-size: 16px;
+        }
+        
+        .quantity-btn:active {
+            background: rgba(255, 255, 255, 0.2) !important;
+            transform: scale(0.95);
         }
         
         @media (hover: hover) and (pointer: fine) {
@@ -476,13 +495,16 @@
         }
         
         .profile-header {
+            display: inline-block;
             background: var(--primary-text);
             color: var(--primary-bg);
-            padding: 12px 20px;
-            font-size: 18px;
-            font-weight: bold;
+            border-radius: 0;
+            padding: 0 12px;
+            height: 35px;
+            line-height: 35px;
+            font-size: 16px;
+            white-space: nowrap;
             margin-bottom: 15px;
-            border-radius: var(--border-radius);
         }
         
         .profile-info {
@@ -529,6 +551,21 @@
             font-weight: bold;
             margin-right: 6px;
             color: #ccc;
+        }
+        
+        .seller-management-btn {
+            display: block;
+            width: calc(100% - 30px);
+            margin: 15px auto;
+            height: 50px;
+            background: var(--primary-text);
+            color: var(--primary-bg);
+            border: none;                       
+            border-radius: var(--border-radius);
+            font-size: 18px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: var(--transition);
         }
         
         .profile-actions {
@@ -654,8 +691,12 @@
         }
         
         .product-modal-image.zoomed {
-            cursor: zoom-out;
-            transform: scale(1.5);
+            cursor: grab;
+            transform: scale(var(--zoom-scale, 2)) translate(var(--offset-x, 0), var(--offset-y, 0));
+        }
+        
+        .product-modal-image.zoomed:active {
+            cursor: grabbing;
         }
         
         .image-counter {
@@ -669,37 +710,6 @@
             border-radius: 20px;
             font-size: 14px;
             z-index: 5;
-        }
-        
-        .image-nav {
-            position: absolute;
-            top: 50%;
-            transform: translateY(-50%);
-            background: rgba(0, 0, 0, 0.7);
-            color: white;
-            border: none;
-            width: 40px;
-            height: 40px;
-            border-radius: 50%;
-            cursor: pointer;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 20px;
-            z-index: 5;
-            transition: var(--transition);
-        }
-        
-        .image-nav.prev {
-            left: 10px;
-        }
-        
-        .image-nav.next {
-            right: 10px;
-        }
-        
-        .image-nav:hover {
-            background: rgba(0, 0, 0, 0.9);
         }
         
         .product-modal-name {
@@ -1273,6 +1283,7 @@
         <section id="cart" class="page">
             <div class="header">
                 <h1 class="page-title">Корзина</h1>
+                <p class="page-description">То, что вы уже выбрали. Оформляйте заказ, когда будете готовы.</p>
             </div>
             
             <div class="cart-container">
@@ -1297,6 +1308,7 @@
         <section id="profile" class="page">
             <div class="header">
                 <h1 class="page-title">Профиль</h1>
+                <p class="page-description">Это ваш профиль. Здесь вы можете управлять заказами и настройками.</p>
             </div>
             
             <div class="profile-section">
@@ -1336,7 +1348,7 @@
                             </div>
                         </div>
                     </div>
-                    <button class="profile-btn" id="seller-management-btn">Управление</button>
+                    <button class="seller-management-btn" id="seller-management-btn">Управление</button>
                 </div>
 
                 <div class="profile-actions">
@@ -1347,7 +1359,7 @@
                     <button class="profile-btn" id="about-btn">О нас</button>
                 </div>
 
-                <div class="version-info">Версия: 0.0.38</div>
+                <div class="version-info">Версия: 0.0.34</div>
             </div>
         </section>
         
@@ -1427,7 +1439,17 @@
         let telegramUserData = null;
         let sellers = [];
         let currentImageIndex = 0;
-        let isZoomed = false;
+        let currentSearchQuery = '';
+
+        // Переменные для зума
+        let scale = 1;
+        let startX = 0;
+        let startY = 0;
+        let offsetX = 0;
+        let offsetY = 0;
+        let isDragging = false;
+        let isPinching = false;
+        let initialDistance = 0;
 
         // Функция для безопасной загрузки корзины из localStorage
         function loadCart() {
@@ -1825,7 +1847,7 @@
         function openProductModal(product) {
             currentProduct = product;
             currentImageIndex = 0;
-            isZoomed = false;
+            resetZoom();
             
             const modal = document.getElementById('product-modal');
             const content = modal.querySelector('.product-modal-content');
@@ -1846,11 +1868,9 @@
                             product.fullName}
                     </div>
                     
-                    ${productImages.length > 1 ? `
-                        <button class="image-nav prev">‹</button>
-                        <button class="image-nav next">›</button>
-                        <div class="image-counter">1 / ${productImages.length}</div>
-                    ` : ''}
+                    ${productImages.length > 1 ? 
+                        `<div class="image-counter">1 / ${productImages.length}</div>` : 
+                        ''}
                 </div>
                 
                 <h2 class="product-modal-name">${product.fullName}</h2>
@@ -1919,101 +1939,149 @@
                 closeBtn.addEventListener('click', () => hideModal(modal));
             }
 
-            // Обработчики для навигации по изображениям
-            if (productImages.length > 1) {
-                const prevBtn = content.querySelector('.image-nav.prev');
-                const nextBtn = content.querySelector('.image-nav.next');
-                const imageElement = content.querySelector('.product-modal-image');
-                const imageCounter = content.querySelector('.image-counter');
-                
-                prevBtn.addEventListener('click', (e) => {
-                    e.stopPropagation();
-                    navigateImages(-1, productImages, imageElement, imageCounter);
-                });
-                
-                nextBtn.addEventListener('click', (e) => {
-                    e.stopPropagation();
-                    navigateImages(1, productImages, imageElement, imageCounter);
-                });
-                
-                // Свайпы для мобильных устройств
-                let startX = 0;
-                const imageContainer = content.querySelector('.product-modal-image-container');
-                
-                imageContainer.addEventListener('touchstart', (e) => {
-                    startX = e.touches[0].clientX;
-                });
-                
-                imageContainer.addEventListener('touchend', (e) => {
-                    if (!startX) return;
-                    
-                    const endX = e.changedTouches[0].clientX;
-                    const diffX = startX - endX;
-                    
-                    if (Math.abs(diffX) > 50) { // Минимальное расстояние свайпа
-                        if (diffX > 0) {
-                            navigateImages(1, productImages, imageElement, imageCounter);
-                        } else {
-                            navigateImages(-1, productImages, imageElement, imageCounter);
-                        }
-                    }
-                    
-                    startX = 0;
-                });
+            // Обработчики для изображений
+            const imageElement = content.querySelector('.product-modal-image');
+            const imageContainer = content.querySelector('.product-modal-image-container');
+            const imageCounter = content.querySelector('.image-counter');
+            
+            if (imageElement && imageElement.tagName === 'IMG') {
+                setupImageZoom(imageElement, imageContainer);
             }
 
-            // Приближение изображения
-            const imageElement = content.querySelector('.product-modal-image');
-            if (imageElement && imageElement.tagName === 'IMG') {
-                imageElement.addEventListener('click', (e) => {
-                    e.stopPropagation();
-                    toggleImageZoom(imageElement);
-                });
-                
-                // Масштабирование двумя пальцами
-                let initialDistance = 0;
-                
-                content.querySelector('.product-modal-image-container').addEventListener('touchstart', (e) => {
-                    if (e.touches.length === 2) {
-                        initialDistance = getDistance(e.touches[0], e.touches[1]);
-                    }
-                });
-                
-                content.querySelector('.product-modal-image-container').addEventListener('touchmove', (e) => {
-                    if (e.touches.length === 2 && initialDistance > 0) {
-                        e.preventDefault();
-                        const currentDistance = getDistance(e.touches[0], e.touches[1]);
-                        const scale = currentDistance / initialDistance;
-                        
-                        if (scale > 1.2 && !isZoomed) {
-                            toggleImageZoom(imageElement);
-                        } else if (scale < 0.8 && isZoomed) {
-                            toggleImageZoom(imageElement);
-                        }
-                    }
-                });
+            // Свайпы для переключения изображений
+            if (productImages.length > 1) {
+                setupImageSwipe(imageContainer, productImages, imageElement, imageCounter);
             }
 
             setupProductModalActions(product, modal);
             showModal(modal);
         }
 
-        function getDistance(touch1, touch2) {
-            const dx = touch1.clientX - touch2.clientX;
-            const dy = touch1.clientY - touch2.clientY;
-            return Math.sqrt(dx * dx + dy * dy);
+        function resetZoom() {
+            scale = 1;
+            offsetX = 0;
+            offsetY = 0;
+            isDragging = false;
+            isPinching = false;
+            initialDistance = 0;
         }
 
-        function toggleImageZoom(imageElement) {
-            isZoomed = !isZoomed;
-            imageElement.classList.toggle('zoomed', isZoomed);
+        function setupImageZoom(imageElement, container) {
+            imageElement.style.setProperty('--zoom-scale', scale);
+            imageElement.style.setProperty('--offset-x', `${offsetX}px`);
+            imageElement.style.setProperty('--offset-y', `${offsetY}px`);
+            
+            // Одиночное нажатие для зума
+            imageElement.addEventListener('click', (e) => {
+                if (scale === 1) {
+                    scale = 2;
+                    imageElement.classList.add('zoomed');
+                } else {
+                    resetZoom();
+                    imageElement.classList.remove('zoomed');
+                }
+                applyImageTransform(imageElement);
+            });
+
+            // Жесты для масштабирования и панорамирования
+            container.addEventListener('touchstart', handleTouchStart);
+            container.addEventListener('touchmove', handleTouchMove);
+            container.addEventListener('touchend', handleTouchEnd);
+
+            function handleTouchStart(e) {
+                if (e.touches.length === 2) {
+                    // Начало жеста двумя пальцами (зум)
+                    isPinching = true;
+                    const touch1 = e.touches[0];
+                    const touch2 = e.touches[1];
+                    initialDistance = Math.hypot(
+                        touch1.clientX - touch2.clientX,
+                        touch1.clientY - touch2.clientY
+                    );
+                } else if (e.touches.length === 1 && scale > 1) {
+                    // Начало жеста одним пальцем (панорамирование)
+                    isDragging = true;
+                    startX = e.touches[0].clientX - offsetX;
+                    startY = e.touches[0].clientY - offsetY;
+                }
+            }
+
+            function handleTouchMove(e) {
+                if (isPinching && e.touches.length === 2) {
+                    // Масштабирование
+                    e.preventDefault();
+                    const touch1 = e.touches[0];
+                    const touch2 = e.touches[1];
+                    const currentDistance = Math.hypot(
+                        touch1.clientX - touch2.clientX,
+                        touch1.clientY - touch2.clientY
+                    );
+                    
+                    scale = Math.max(1, Math.min(3, currentDistance / initialDistance));
+                    applyImageTransform(imageElement);
+                } else if (isDragging && e.touches.length === 1 && scale > 1) {
+                    // Панорамирование
+                    e.preventDefault();
+                    offsetX = e.touches[0].clientX - startX;
+                    offsetY = e.touches[0].clientY - startY;
+                    applyImageTransform(imageElement);
+                }
+            }
+
+            function handleTouchEnd(e) {
+                isDragging = false;
+                isPinching = false;
+            }
+        }
+
+        function applyImageTransform(imageElement) {
+            imageElement.style.setProperty('--zoom-scale', scale);
+            imageElement.style.setProperty('--offset-x', `${offsetX}px`);
+            imageElement.style.setProperty('--offset-y', `${offsetY}px`);
+        }
+
+        function setupImageSwipe(container, images, imageElement, imageCounter) {
+            let startX = 0;
+            let currentX = 0;
+            let isSwiping = false;
+
+            container.addEventListener('touchstart', (e) => {
+                if (scale > 1) return; // Не обрабатываем свайпы при зуме
+                startX = e.touches[0].clientX;
+                currentX = startX;
+                isSwiping = true;
+            });
+
+            container.addEventListener('touchmove', (e) => {
+                if (!isSwiping || scale > 1) return;
+                currentX = e.touches[0].clientX;
+            });
+
+            container.addEventListener('touchend', () => {
+                if (!isSwiping || scale > 1) return;
+                
+                const diffX = startX - currentX;
+                const swipeThreshold = 50;
+                
+                if (Math.abs(diffX) > swipeThreshold) {
+                    if (diffX > 0) {
+                        // Свайп влево - следующее изображение
+                        navigateImages(1, images, imageElement, imageCounter);
+                    } else {
+                        // Свайп вправо - предыдущее изображение
+                        navigateImages(-1, images, imageElement, imageCounter);
+                    }
+                }
+                
+                isSwiping = false;
+            });
         }
 
         function navigateImages(direction, images, imageElement, imageCounter) {
             currentImageIndex = (currentImageIndex + direction + images.length) % images.length;
             imageElement.src = images[currentImageIndex];
+            resetZoom();
             imageElement.classList.remove('zoomed');
-            isZoomed = false;
             imageCounter.textContent = `${currentImageIndex + 1} / ${images.length}`;
         }
 
@@ -2039,39 +2107,39 @@
             // Назначаем обработчики
             const addToCartBtn = actionsContainer.querySelector('.add-to-cart-btn');
             if (addToCartBtn) {
-                addToCartBtn.onclick = function(e) {
+                addToCartBtn.addEventListener('click', function(e) {
                     e.stopPropagation();
                     addToCart(product);
                     setupProductModalActions(product, modal);
-                };
+                });
             }
 
             const goToCartBtn = actionsContainer.querySelector('.go-to-cart-btn');
             if (goToCartBtn) {
-                goToCartBtn.onclick = function(e) {
+                goToCartBtn.addEventListener('click', function(e) {
                     e.stopPropagation();
                     hideModal(modal);
                     setTimeout(() => switchPage('cart'), 300);
-                };
+                });
             }
 
             const minusBtn = actionsContainer.querySelector('.minus');
             const plusBtn = actionsContainer.querySelector('.plus');
             
             if (minusBtn) {
-                minusBtn.onclick = function(e) {
+                minusBtn.addEventListener('click', function(e) {
                     e.stopPropagation();
                     decreaseQuantity(product.id);
                     setupProductModalActions(product, modal);
-                };
+                });
             }
             
             if (plusBtn) {
-                plusBtn.onclick = function(e) {
+                plusBtn.addEventListener('click', function(e) {
                     e.stopPropagation();
                     increaseQuantity(product.id);
                     setupProductModalActions(product, modal);
-                };
+                });
             }
         }
 
@@ -2184,24 +2252,32 @@
                     </div>
                 `;
                 
+                // Добавляем обработчик клика на изображение в корзине
+                const imageElement = cartItem.querySelector('.cart-item-image');
+                imageElement.addEventListener('click', () => {
+                    const product = products.find(p => p.id === item.id);
+                    if (product) {
+                        openProductModal(product);
+                    }
+                });
+                
                 cartItems.appendChild(cartItem);
             });
             
             if (cartTotal) cartTotal.textContent = `Итого: ${total} ₽`;
             
-            setTimeout(() => {
-                document.querySelectorAll('.quantity-btn.minus').forEach(btn => {
-                    btn.onclick = function() {
-                        decreaseQuantity(parseInt(this.getAttribute('data-id')));
-                    };
+            // Перепривязываем обработчики для кнопок +/-
+            document.querySelectorAll('.quantity-btn.minus').forEach(btn => {
+                btn.addEventListener('click', function() {
+                    decreaseQuantity(parseInt(this.getAttribute('data-id')));
                 });
-                
-                document.querySelectorAll('.quantity-btn.plus').forEach(btn => {
-                    btn.onclick = function() {
-                        increaseQuantity(parseInt(this.getAttribute('data-id')));
-                    };
+            });
+            
+            document.querySelectorAll('.quantity-btn.plus').forEach(btn => {
+                btn.addEventListener('click', function() {
+                    increaseQuantity(parseInt(this.getAttribute('data-id')));
                 });
-            }, 100);
+            });
         }
 
         function increaseQuantity(productId) {
@@ -2252,6 +2328,12 @@
             
             if (pageId === 'cart') {
                 updateCartDisplay();
+            } else if (pageId === 'catalog' && currentSearchQuery) {
+                // При переключении на каталог, если есть активный поиск, заполняем поле
+                setTimeout(() => {
+                    document.getElementById('catalog-search').value = currentSearchQuery;
+                    performSearchActual(currentSearchQuery);
+                }, 100);
             }
         }
 
@@ -2260,21 +2342,30 @@
                 if (switchToCatalog) {
                     switchPage('catalog');
                 }
-                document.querySelectorAll('.product-card').forEach(card => {
-                    if (card) card.style.display = 'block';
-                });
+                showAllProducts();
                 return;
             }
             
+            currentSearchQuery = query.trim();
+            
             if (switchToCatalog) {
+                // Очищаем поле в главной
+                document.getElementById('home-search').value = '';
                 switchPage('catalog');
-                // Даем время на переключение страницы перед поиском
+                // Ждем переключения страницы и затем выполняем поиск
                 setTimeout(() => {
-                    performSearchActual(query);
+                    document.getElementById('catalog-search').value = currentSearchQuery;
+                    performSearchActual(currentSearchQuery);
                 }, 100);
             } else {
-                performSearchActual(query);
+                performSearchActual(currentSearchQuery);
             }
+        }
+
+        function showAllProducts() {
+            document.querySelectorAll('.product-card').forEach(card => {
+                if (card) card.style.display = 'block';
+            });
         }
 
         function performSearchActual(query) {
