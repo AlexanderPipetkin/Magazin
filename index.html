@@ -1746,14 +1746,17 @@
         }
 
         function setFallbackProfileData() {
-            document.getElementById('profile-name').textContent = 'Гость';
-            document.getElementById('profile-username').textContent = 'Неизвестно';
+            document.getElementById('profile-name').textContent = 'Telegram не доступен';
+            document.getElementById('profile-username').textContent = '@откройте в Telegram';
             document.getElementById('profile-id').textContent = '---';
         }
 
         function initializeApp() {
             // Загружаем корзину перед инициализацией
             loadCart();
+
+            // Получаем данные пользователя из Telegram
+            getTelegramUserData();
             
             // Загружаем уведомления только если в Telegram
             loadNotifications();
