@@ -105,6 +105,7 @@
             align-items: center;
             gap: 12px;
             position: relative;
+            margin-bottom: 12px;
         }
         
         .search-input {
@@ -351,7 +352,7 @@
             display: grid;
             grid-template-columns: repeat(2, 1fr);
             gap: var(--card-gap);
-            margin: 20px 12px 40px;
+            margin: 0 12px 40px;
         }
         
         .cart-container {
@@ -1143,8 +1144,8 @@
         }
         
         @media (max-width: 480px) {
-            .products-grid, .catalog-grid {
-                grid-template-columns: 1fr;
+            .catalog-grid {
+                grid-template-columns: repeat(2, 1fr);
             }
             
             .product-card {
@@ -1388,7 +1389,7 @@
                     <button class="profile-btn" id="about-btn">О нас</button>
                 </div>
 
-                <div class="version-info">Версия: 0.0.19</div>
+                <div class="version-info">Версия: 0.0.20</div>
             </div>
         </section>
         
@@ -1881,7 +1882,10 @@
             });
             
             homeSearchBtn.addEventListener('click', () => {
-                performSearch(homeSearchInput.value, true);
+                const query = homeSearchInput.value;
+                homeSearchInput.value = '';
+                homeClear.style.display = 'none';
+                performSearch(query, true);
             });
             
             // Обработчики для каталога
@@ -1903,7 +1907,15 @@
                 if (input) {
                     input.addEventListener('keypress', function(e) {
                         if (e.key === 'Enter') {
-                            performSearch(this.value, this.id === 'home-search');
+                            if (this.id === 'home-search') {
+                                const query = this.value;
+                                this.value = '';
+                                const clearBtn = document.getElementById('home-search-clear');
+                                if (clearBtn) clearBtn.style.display = 'none';
+                                performSearch(query, true);
+                            } else {
+                                performSearch(this.value, false);
+                            }
                         }
                     });
                 }
@@ -2032,11 +2044,12 @@
             showModal(modal);
         }
 
-        // 2.3.1 Упрощенная анимация переключения фото
+        // 2.3.1 Улучшенная анимация переключения фото
         function setupImageSwipe(container, images, counter) {
             let startX = 0;
             let currentX = 0;
             let isSwiping = false;
+            let currentTranslate = -currentImageIndex * 100;
 
             container.addEventListener('touchstart', (e) => {
                 startX = e.touches[0].clientX;
@@ -2049,7 +2062,7 @@
                 if (!isSwiping) return;
                 currentX = e.touches[0].clientX;
                 const diff = currentX - startX;
-                container.style.transform = `translateX(${diff}px)`;
+                container.style.transform = `translateX(${currentTranslate + diff}px)`;
             });
 
             container.addEventListener('touchend', () => {
@@ -2060,18 +2073,18 @@
                 
                 if (Math.abs(diffX) > swipeThreshold) {
                     if (diffX > 0 && currentImageIndex < images.length - 1) {
-                        navigateImages(1, images, container, counter);
+                        currentImageIndex++;
                     } else if (diffX < 0 && currentImageIndex > 0) {
-                        navigateImages(-1, images, container, counter);
-                    } else {
-                        // Возвращаем на текущую позицию если достигли границы
-                        container.style.transition = 'transform 0.3s ease';
-                        container.style.transform = `translateX(${-currentImageIndex * 100}%)`;
+                        currentImageIndex--;
                     }
-                } else {
-                    // Возвращаем на текущую позицию если свайп недостаточно сильный
-                    container.style.transition = 'transform 0.3s ease';
-                    container.style.transform = `translateX(${-currentImageIndex * 100}%)`;
+                }
+                
+                currentTranslate = -currentImageIndex * 100;
+                container.style.transition = 'transform 0.3s ease';
+                container.style.transform = `translateX(${currentTranslate}%)`;
+                
+                if (counter) {
+                    counter.textContent = `${currentImageIndex + 1} / ${images.length}`;
                 }
                 
                 isSwiping = false;
@@ -2089,7 +2102,7 @@
                 if (!isSwiping) return;
                 currentX = e.clientX;
                 const diff = currentX - startX;
-                container.style.transform = `translateX(${diff}px)`;
+                container.style.transform = `translateX(${currentTranslate + diff}px)`;
             });
 
             container.addEventListener('mouseup', () => {
@@ -2100,16 +2113,18 @@
                 
                 if (Math.abs(diffX) > swipeThreshold) {
                     if (diffX > 0 && currentImageIndex < images.length - 1) {
-                        navigateImages(1, images, container, counter);
+                        currentImageIndex++;
                     } else if (diffX < 0 && currentImageIndex > 0) {
-                        navigateImages(-1, images, container, counter);
-                    } else {
-                        container.style.transition = 'transform 0.3s ease';
-                        container.style.transform = `translateX(${-currentImageIndex * 100}%)`;
+                        currentImageIndex--;
                     }
-                } else {
-                    container.style.transition = 'transform 0.3s ease';
-                    container.style.transform = `translateX(${-currentImageIndex * 100}%)`;
+                }
+                
+                currentTranslate = -currentImageIndex * 100;
+                container.style.transition = 'transform 0.3s ease';
+                container.style.transform = `translateX(${currentTranslate}%)`;
+                
+                if (counter) {
+                    counter.textContent = `${currentImageIndex + 1} / ${images.length}`;
                 }
                 
                 isSwiping = false;
@@ -2118,21 +2133,10 @@
             container.addEventListener('mouseleave', () => {
                 if (isSwiping) {
                     container.style.transition = 'transform 0.3s ease';
-                    container.style.transform = `translateX(${-currentImageIndex * 100}%)`;
+                    container.style.transform = `translateX(${currentTranslate}%)`;
                     isSwiping = false;
                 }
             });
-        }
-
-        function navigateImages(direction, images, container, counter) {
-            currentImageIndex += direction;
-            
-            container.style.transition = 'transform 0.3s ease';
-            container.style.transform = `translateX(${-currentImageIndex * 100}%)`;
-            
-            if (counter) {
-                counter.textContent = `${currentImageIndex + 1} / ${images.length}`;
-            }
         }
 
         function setupProductModalActions(product, modal) {
@@ -2400,6 +2404,8 @@
                 // Ждем переключения страницы и затем выполняем поиск
                 setTimeout(() => {
                     document.getElementById('catalog-search').value = currentSearchQuery;
+                    const catalogClear = document.getElementById('catalog-search-clear');
+                    if (catalogClear) catalogClear.style.display = 'block';
                     performSearchActual(currentSearchQuery);
                 }, 100);
             } else {
