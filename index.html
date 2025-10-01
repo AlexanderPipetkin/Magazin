@@ -1302,31 +1302,9 @@
             width: 20px;
             height: 20px;
         }
-
-        .telegram-warning {
-            display: none;
-        }
-
-        .app-container, .bottom-nav {
-            display: block;
-        }
-
-        body:not(.in-telegram) .app-container,
-        body:not(.in-telegram) .bottom-nav {
-            display: none !important;
-        }
-
-        body:not(.in-telegram) #telegram-check {
-            display: flex !important;
-        }
     </style>
 </head>
 <body>
-    <div id="telegram-check" style="display: none; text-align: center; padding: 50px 20px; background: #000; color: #fff; min-height: 100vh; display: flex; flex-direction: column; justify-content: center; align-items: center; position: fixed; top: 0; left: 0; right: 0; bottom: 0; z-index: 10000;">
-        <h2 style="margin-bottom: 20px; font-size: 24px;">Откройте магазин через мини-апп в Telegram</h2>
-        <a id="open-mini-app-btn" href="https://t.me/yeahmagazplusgoydaaaa_bot?start" style="display: inline-block; padding: 15px 30px; background: #0088cc; color: white; text-decoration: none; border-radius: 10px; font-size: 18px; font-weight: bold;">Открыть мини-апп</a>
-    </div>
-
     <div class="app-container">
         <!-- Главная страница -->
         <section id="home" class="page active">
@@ -1565,42 +1543,6 @@
     <div class="notification" id="notification"></div>
     
     <script>
-        function checkTelegramEnvironment() {
-            // Проверяем различные признаки Telegram WebApp
-            const isTelegramWebView = window.Telegram && window.Telegram.WebApp;
-            const hasTelegramInitData = window.Telegram && window.Telegram.WebApp && window.Telegram.WebApp.initData;
-            const urlParams = new URLSearchParams(window.location.search);
-            const hasTelegramParams = urlParams.has('tgWebAppPlatform');
-            
-            console.log('Telegram WebApp detected:', isTelegramWebView);
-            console.log('Has init data:', hasTelegramInitData);
-            console.log('Has Telegram params:', hasTelegramParams);
-            
-            // Если не в Telegram WebApp, показываем сообщение
-            if (!isTelegramWebView && !hasTelegramParams) {
-                document.getElementById('telegram-check').style.display = 'flex';
-                document.querySelector('.app-container').style.display = 'none';
-                document.querySelector('.bottom-nav').style.display = 'none';
-                return false;
-            }
-            
-            // Если в Telegram WebApp, скрываем сообщение и показываем приложение
-            document.getElementById('telegram-check').style.display = 'none';
-            document.querySelector('.app-container').style.display = 'block';
-            document.querySelector('.bottom-nav').style.display = 'flex';
-            return true;
-        }
-
-        // Запускаем проверку при загрузке
-        document.addEventListener('DOMContentLoaded', function() {
-            const isTelegram = checkTelegramEnvironment();
-            
-            if (isTelegram) {
-                // Загружаем приложение только если в Telegram
-                loadProducts();
-            }
-        });
-
         // Полный скрипт из предыдущего ответа здесь
         let products = [];
         let cart = [];
@@ -1735,75 +1677,48 @@
 
         // Получение данных пользователя из Telegram
         function getTelegramUserData() {
-            // Проверяем наличие объекта WebApp и его основных свойств
-            const isRealTelegramWebApp = window.Telegram && 
-                                        window.Telegram.WebApp && 
-                                        window.Telegram.WebApp.platform;
-            
-            console.log('isRealTelegramWebApp:', isRealTelegramWebApp);
-            console.log('WebApp object:', window.Telegram?.WebApp);
-            
-            if (!isRealTelegramWebApp) {
-                console.log('Не настоящий Telegram WebApp');
-                showTelegramWarning();
-                return null;
-            }
-            
-            const webApp = window.Telegram.WebApp;
-            telegramUserData = webApp.initDataUnsafe.user || {};
-            
-            // Если дошли до сюда - мы в настоящем Telegram WebApp
-            console.log('В настоящем Telegram WebApp, платформа:', webApp.platform);
-            
-            if (telegramUserData && telegramUserData.id) {
-                // Реальные данные из Telegram
-                const fullName = telegramUserData.first_name + 
-                    (telegramUserData.last_name ? ' ' + telegramUserData.last_name : '');
-                const username = telegramUserData.username ? '@' + telegramUserData.username : 'Не указан';
-                const userId = telegramUserData.id || 'Не доступен';
+            if (window.Telegram && window.Telegram.WebApp) {
+                const webApp = window.Telegram.WebApp;
+                telegramUserData = webApp.initDataUnsafe.user || {};
                 
-                document.getElementById('profile-name').textContent = fullName;
-                document.getElementById('profile-username').textContent = username;
-                document.getElementById('profile-id').textContent = userId;
-                
-                // Аватар
-                const avatarElement = document.getElementById('profile-avatar');
-                if (telegramUserData.photo_url) {
-                    avatarElement.innerHTML = `<img src="${telegramUserData.photo_url}" alt="Аватар">`;
+                if (telegramUserData && Object.keys(telegramUserData).length > 0) {
+                    // Реальные данные из Telegram
+                    const fullName = telegramUserData.first_name + 
+                        (telegramUserData.last_name ? ' ' + telegramUserData.last_name : '');
+                    const username = telegramUserData.username ? '@' + telegramUserData.username : 'Не указан';
+                    const userId = telegramUserData.id || 'Не доступен';
+                    
+                    document.getElementById('profile-name').textContent = fullName;
+                    document.getElementById('profile-username').textContent = username;
+                    document.getElementById('profile-id').textContent = userId;
+                    
+                    // Аватар
+                    const avatarElement = document.getElementById('profile-avatar');
+                    if (telegramUserData.photo_url) {
+                        avatarElement.innerHTML = `<img src="${telegramUserData.photo_url}" alt="Аватар">`;
+                    } else {
+                        avatarElement.textContent = telegramUserData.first_name ? 
+                            telegramUserData.first_name.charAt(0).toUpperCase() : 'U';
+                    }
+                    
+                    // Проверяем, является ли пользователь продавцом
+                    checkSellerProfile();
+                    
                 } else {
-                    avatarElement.textContent = telegramUserData.first_name ? 
-                        telegramUserData.first_name.charAt(0).toUpperCase() : 'U';
+                    setFallbackProfileData();
                 }
                 
-                // Проверяем, является ли пользователь продавцом
-                checkSellerProfile();
+                // Инициализируем WebApp
+                try {
+                    webApp.ready();
+                    webApp.expand();
+                } catch (e) {
+                    console.log('Ошибка инициализации WebApp:', e);
+                }
                 
             } else {
-                // Если в WebApp, но данных пользователя нет
                 setFallbackProfileData();
             }
-            
-            // Скрываем предупреждение и показываем приложение
-            document.getElementById('telegram-check').style.display = 'none';
-            document.querySelector('.app-container').style.display = 'block';
-            document.querySelector('.bottom-nav').style.display = 'flex';
-            
-            // Инициализируем WebApp
-            try {
-                webApp.ready();
-                webApp.expand();
-            } catch (e) {
-                console.log('Ошибка инициализации WebApp:', e);
-            }
-            
-            return telegramUserData;
-        }
-
-        // Функция показа предупреждения
-        function showTelegramWarning() {
-            document.getElementById('telegram-check').style.display = 'flex';
-            document.querySelector('.app-container').style.display = 'none';
-            document.querySelector('.bottom-nav').style.display = 'none';
         }
 
         // Проверка профиля продавца
@@ -1831,25 +1746,14 @@
         }
 
         function setFallbackProfileData() {
-            document.getElementById('profile-name').textContent = 'Telegram не доступен';
-            document.getElementById('profile-username').textContent = '@откройте в Telegram';
+            document.getElementById('profile-name').textContent = 'Гость';
+            document.getElementById('profile-username').textContent = 'Неизвестно';
             document.getElementById('profile-id').textContent = '---';
-            
-            showTelegramWarning();
         }
 
         function initializeApp() {
             // Загружаем корзину перед инициализацией
             loadCart();
-
-            // Получаем данные пользователя из Telegram
-            const userData = getTelegramUserData();
-            
-            // Если нет данных пользователя (не в Telegram), останавливаем инициализацию
-            if (!userData || !userData.id) {
-                console.log('Приложение запущено вне Telegram WebApp');
-                return;
-            }
             
             // Загружаем уведомления только если в Telegram
             loadNotifications();
@@ -2734,5 +2638,3 @@
     </script>
 </body>
 </html>
-
-
