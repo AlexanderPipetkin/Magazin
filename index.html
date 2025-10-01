@@ -25,9 +25,7 @@
         @font-face {
             font-family: 'Moscow Sans';
             src: local('Moscow Sans'),
-                 url('fonts/MoscowSans.woff2') format('woff2'),
-                 url('fonts/MoscowSans.woff') format('woff'),
-                 url('fonts/MoscowSans.ttf') format('truetype');
+                 url('fonts/MOSCOWSANSREGULAR.TTF') format('truetype');
             font-weight: 400;
             font-style: normal;
             font-display: swap;
@@ -1304,6 +1302,23 @@
             width: 20px;
             height: 20px;
         }
+
+        .telegram-warning {
+            display: none;
+        }
+
+        .app-container, .bottom-nav {
+            display: block;
+        }
+
+        body:not(.in-telegram) .app-container,
+        body:not(.in-telegram) .bottom-nav {
+            display: none !important;
+        }
+
+        body:not(.in-telegram) #telegram-check {
+            display: flex !important;
+        }
     </style>
 </head>
 <body>
@@ -1477,7 +1492,7 @@
                     <button class="profile-btn" id="about-btn">О нас</button>
                 </div>
 
-                <div class="version-info">Версия: 0.0.37</div>
+                <div class="version-info">Версия: 0.0.36</div>
             </div>
         </section>
         
@@ -1724,6 +1739,12 @@
                 const webApp = window.Telegram.WebApp;
                 telegramUserData = webApp.initDataUnsafe.user || {};
                 
+                // Если нет ID пользователя - значит не в Telegram WebApp
+                if (!telegramUserData.id) {
+                    showTelegramWarning();
+                    return null;
+                }
+                
                 if (telegramUserData && Object.keys(telegramUserData).length > 0) {
                     // Реальные данные из Telegram
                     const fullName = telegramUserData.first_name + 
@@ -1747,8 +1768,14 @@
                     // Проверяем, является ли пользователь продавцом
                     checkSellerProfile();
                     
+                    // Скрываем предупреждение и показываем приложение
+                    document.getElementById('telegram-check').style.display = 'none';
+                    document.querySelector('.app-container').style.display = 'block';
+                    document.querySelector('.bottom-nav').style.display = 'flex';
+                    
                 } else {
                     setFallbackProfileData();
+                    showTelegramWarning();
                 }
                 
                 // Инициализируем WebApp
@@ -1761,7 +1788,17 @@
                 
             } else {
                 setFallbackProfileData();
+                showTelegramWarning();
             }
+            
+            return telegramUserData;
+        }
+
+        // Функция показа предупреждения
+        function showTelegramWarning() {
+            document.getElementById('telegram-check').style.display = 'flex';
+            document.querySelector('.app-container').style.display = 'none';
+            document.querySelector('.bottom-nav').style.display = 'none';
         }
 
         // Проверка профиля продавца
@@ -1792,6 +1829,8 @@
             document.getElementById('profile-name').textContent = 'Telegram не доступен';
             document.getElementById('profile-username').textContent = '@откройте в Telegram';
             document.getElementById('profile-id').textContent = '---';
+            
+            showTelegramWarning();
         }
 
         function initializeApp() {
@@ -1799,9 +1838,15 @@
             loadCart();
 
             // Получаем данные пользователя из Telegram
-            getTelegramUserData();
+            const userData = getTelegramUserData();
             
-            // Загружаем уведомления
+            // Если нет данных пользователя (не в Telegram), останавливаем инициализацию
+            if (!userData || !userData.id) {
+                console.log('Приложение запущено вне Telegram WebApp');
+                return;
+            }
+            
+            // Загружаем уведомления только если в Telegram
             loadNotifications();
             
             // Заполнение рекомендаций
