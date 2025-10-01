@@ -58,7 +58,6 @@
         }
         
         .app-container {
-            max-width: 780px;
             margin: 0 auto;
             min-height: 100vh;
             position: relative;
@@ -86,7 +85,7 @@
         }
         
         .header {
-            padding: 15px 12px 0;
+            padding: 15px 6px 0;
         }
         
         .page-title {
@@ -180,19 +179,30 @@
             overflow: hidden;
             display: flex;
             flex-direction: column;
+            padding: 15px 6px 0;
+        }
+
+        .sections-row {
+            padding: 6px 6px 0;
         }
         
         .section-title {
-            display: inline-block;
+            position: absolute;
+            top: 0;
+            left: 0;
+            min-width: 150px;
+            height: 35px;
             background: var(--primary-text);
             color: var(--primary-bg);
             border-radius: 0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
             padding: 0 12px;
-            height: 35px;
-            line-height: 35px;
-            font-size: 16px;
-            white-space: nowrap;
+            font-size: 14px;
             font-weight: bold;
+            border-bottom-right-radius: 0;
+            z-index: 1;
         }
         
         .section-content {
@@ -261,7 +271,7 @@
        .help-btn {
             height: 36px;
             width: 36px;
-            margin: -1px 3px;                
+            margin: -1px 182px 3px;                
             border: 1px solid #fff;
             background: #fff;
             color: #000;
@@ -1120,7 +1130,7 @@
             
             .products-grid, .catalog-grid {
                 grid-template-columns: repeat(2, 1fr);
-                margin: 0;
+                margin: 5px 5px 15px;
             }
             
             .section-content, .order-content {
@@ -1199,6 +1209,7 @@
                 flex: 1;
                 max-width: none;
                 margin: 0;
+                margin: var(--section-margin) 12px; 
             }
             
             .products-grid, .catalog-grid {
@@ -1433,7 +1444,7 @@
                         <div class="section-title">Я, как продавец</div>
                         <button class="settings-btn" id="seller-settings-btn">
                             <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                                <path d="M12 15.5A3.5 3.5 0 1 1 15.5 12 3.5 3.5 0 0 1 12 15.5zm0-2A1.5 1.5 0 1 0 13.5 12 1.5 1.5 0 0 0 12 13.5zM19.4 9.6l-1.2-1.2 1.6-1.6a1 1 0 0 0 0-1.4l-1.4-1.4a1 1 0 0 0-1.4 0l-1.6 1.6-1.2-1.2a1 1 0 0 0-1.4 0l-1.8 1.8a1 1 0 0 0 0 1.4l1.2 1.2-4.8 4.8-1.2-1.2a1 1 0 0 0-1.4 0l-1.8 1.8a1 1 0 0 0 0 1.4l1.2 1.2-1.6 1.6a1 1 0 0 0 0 1.4l1.4 1.4a1 1 0 0 0 1.4 0l1.6-1.6 1.2 1.2a1 1 0 0 0 1.4 0l1.8-1.8a1 1 0 0 0 0-1.4l-1.2-1.2 4.8-4.8 1.2 1.2a1 1 0 0 0 1.4 0l1.8-1.8a1 1 0 0 0 0-1.4z" fill="black"/>
+                                <path xmlns="http://www.w3.org/2000/svg" d="M20.281 9.25l-2.125 2.156c0.563 0.875 0.969 1.875 1.156 2.938h3.094v3.313h-3.094c-0.188 1.063-0.594 2.031-1.156 2.906l2.125 2.188-2.344 2.344-2.156-2.156c-0.875 0.563-1.844 1-2.906 1.188v3.063h-3.344v-3.063c-1.063-0.188-2.031-0.625-2.906-1.188l-2.188 2.156-2.313-2.344 2.125-2.188c-0.563-0.875-1-1.844-1.188-2.906h-3.063v-3.313h3.063c0.188-1.063 0.625-2.063 1.188-2.938l-2.125-2.156 2.313-2.344 2.188 2.156c0.875-0.563 1.844-1 2.906-1.188v-3.094h3.344v3.094c1.063 0.188 2.031 0.625 2.906 1.188l2.156-2.156zM11.188 20.625c2.563 0 4.656-2.063 4.656-4.625s-2.094-4.656-4.656-4.656-4.594 2.094-4.594 4.656 2.031 4.625 4.594 4.625z" fill="black"/>
                             </svg>
                         </button>
                     </div>
