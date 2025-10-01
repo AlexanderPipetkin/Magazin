@@ -1735,78 +1735,65 @@
 
         // Получение данных пользователя из Telegram
         function getTelegramUserData() {
-            if (window.Telegram && window.Telegram.WebApp) {
-                const webApp = window.Telegram.WebApp;
-                telegramUserData = webApp.initDataUnsafe.user || {};
+            // Проверяем наличие объекта WebApp и его основных свойств
+            const isRealTelegramWebApp = window.Telegram && 
+                                        window.Telegram.WebApp && 
+                                        window.Telegram.WebApp.platform;
+            
+            console.log('isRealTelegramWebApp:', isRealTelegramWebApp);
+            console.log('WebApp object:', window.Telegram?.WebApp);
+            
+            if (!isRealTelegramWebApp) {
+                console.log('Не настоящий Telegram WebApp');
+                showTelegramWarning();
+                return null;
+            }
+            
+            const webApp = window.Telegram.WebApp;
+            telegramUserData = webApp.initDataUnsafe.user || {};
+            
+            // Если дошли до сюда - мы в настоящем Telegram WebApp
+            console.log('В настоящем Telegram WebApp, платформа:', webApp.platform);
+            
+            if (telegramUserData && telegramUserData.id) {
+                // Реальные данные из Telegram
+                const fullName = telegramUserData.first_name + 
+                    (telegramUserData.last_name ? ' ' + telegramUserData.last_name : '');
+                const username = telegramUserData.username ? '@' + telegramUserData.username : 'Не указан';
+                const userId = telegramUserData.id || 'Не доступен';
                 
-                console.log('Telegram WebApp данные:', telegramUserData);
-                console.log('initDataUnsafe:', webApp.initDataUnsafe);
+                document.getElementById('profile-name').textContent = fullName;
+                document.getElementById('profile-username').textContent = username;
+                document.getElementById('profile-id').textContent = userId;
                 
-                // ⭐⭐ УЛУЧШЕННАЯ ПРОВЕРКА ⭐⭐
-                // Проверяем несколько полей, которые ДОЛЖНЫ быть в настоящем Telegram WebApp
-                const hasValidUserData = telegramUserData && 
-                    (telegramUserData.id || 
-                    telegramUserData.first_name || 
-                    telegramUserData.username ||
-                    webApp.initData);
-                
-                // Дополнительная проверка - есть ли initData (основной признак WebApp)
-                const hasInitData = webApp.initData && webApp.initData.length > 0;
-                
-                console.log('hasValidUserData:', hasValidUserData);
-                console.log('hasInitData:', hasInitData);
-                
-                if (!hasValidUserData && !hasInitData) {
-                    console.log('Не в Telegram WebApp - нет данных пользователя');
-                    showTelegramWarning();
-                    return null;
-                }
-                
-                if (telegramUserData && telegramUserData.id) {
-                    // Реальные данные из Telegram
-                    const fullName = telegramUserData.first_name + 
-                        (telegramUserData.last_name ? ' ' + telegramUserData.last_name : '');
-                    const username = telegramUserData.username ? '@' + telegramUserData.username : 'Не указан';
-                    const userId = telegramUserData.id || 'Не доступен';
-                    
-                    document.getElementById('profile-name').textContent = fullName;
-                    document.getElementById('profile-username').textContent = username;
-                    document.getElementById('profile-id').textContent = userId;
-                    
-                    // Аватар
-                    const avatarElement = document.getElementById('profile-avatar');
-                    if (telegramUserData.photo_url) {
-                        avatarElement.innerHTML = `<img src="${telegramUserData.photo_url}" alt="Аватар">`;
-                    } else {
-                        avatarElement.textContent = telegramUserData.first_name ? 
-                            telegramUserData.first_name.charAt(0).toUpperCase() : 'U';
-                    }
-                    
-                    // Проверяем, является ли пользователь продавцом
-                    checkSellerProfile();
-                    
+                // Аватар
+                const avatarElement = document.getElementById('profile-avatar');
+                if (telegramUserData.photo_url) {
+                    avatarElement.innerHTML = `<img src="${telegramUserData.photo_url}" alt="Аватар">`;
                 } else {
-                    // Если в WebApp, но данных пользователя нет (пользователь не авторизован)
-                    setFallbackProfileData();
+                    avatarElement.textContent = telegramUserData.first_name ? 
+                        telegramUserData.first_name.charAt(0).toUpperCase() : 'U';
                 }
                 
-                // Скрываем предупреждение и показываем приложение (если дошли до сюда)
-                document.getElementById('telegram-check').style.display = 'none';
-                document.querySelector('.app-container').style.display = 'block';
-                document.querySelector('.bottom-nav').style.display = 'flex';
-                
-                // Инициализируем WebApp
-                try {
-                    webApp.ready();
-                    webApp.expand();
-                } catch (e) {
-                    console.log('Ошибка инициализации WebApp:', e);
-                }
+                // Проверяем, является ли пользователь продавцом
+                checkSellerProfile();
                 
             } else {
-                console.log('Telegram WebApp не обнаружен');
+                // Если в WebApp, но данных пользователя нет
                 setFallbackProfileData();
-                showTelegramWarning();
+            }
+            
+            // Скрываем предупреждение и показываем приложение
+            document.getElementById('telegram-check').style.display = 'none';
+            document.querySelector('.app-container').style.display = 'block';
+            document.querySelector('.bottom-nav').style.display = 'flex';
+            
+            // Инициализируем WebApp
+            try {
+                webApp.ready();
+                webApp.expand();
+            } catch (e) {
+                console.log('Ошибка инициализации WebApp:', e);
             }
             
             return telegramUserData;
@@ -2747,4 +2734,5 @@
     </script>
 </body>
 </html>
+
 
