@@ -1550,7 +1550,6 @@
     <div class="notification" id="notification"></div>
     
     <script>
-        // Полный скрипт из предыдущего ответа здесь
         let products = [];
         let cart = [];
         let currentProduct = null;
@@ -1560,7 +1559,6 @@
         let currentImageIndex = 0;
         let currentSearchQuery = '';
 
-        // Переменные для зума
         let scale = 1;
         let startX = 0;
         let startY = 0;
@@ -1603,7 +1601,6 @@
         // Улучшенная функция загрузки данных с обработкой CORS
         async function fetchData(url) {
             try {
-                // Для Telegram Mini App используем абсолютные пути
                 const fullUrl = window.location.hostname.includes('telegram.org') ? 
                     `${window.location.origin}${url}` : url;
                 
@@ -1621,7 +1618,6 @@
             } catch (error) {
                 console.error('Ошибка загрузки данных:', error);
                 
-                // Возвращаем заглушки если данные не загрузились
                 if (url.includes('products')) {
                     return getFallbackProducts();
                 } else if (url.includes('sellers')) {
@@ -1640,7 +1636,6 @@
                 const data = await fetchData('db/products.json');
                 products = data.products || data || getFallbackProducts();
                 
-                // Загружаем продавцов после загрузки товаров
                 await loadSellers();
                 initializeApp();
             } catch (error) {
@@ -1685,13 +1680,12 @@
                 return;
             }
             
-            // Фильтруем уведомления по ID пользователя
+            // Фильтр уведомления по ID пользователя
             const userNotifications = telegramUserData && telegramUserData.id ? 
                 notifications.filter(notification => 
                     !notification.userId || notification.userId === telegramUserData.id
                 ) : notifications;
             
-            // Берем 3 последних уведомления (новые сверху) и НЕ переворачиваем
             const recentNotifications = userNotifications.slice(-3);
             
             let html = '<ul class="notifications-list">';
@@ -1716,15 +1710,12 @@
                 const webApp = window.Telegram.WebApp;
                 
                 try {
-                    // Инициализируем WebApp
                     webApp.ready();
                     webApp.expand();
                     
-                    // Получаем данные пользователя
                     telegramUserData = webApp.initDataUnsafe.user || {};
                     
                     if (telegramUserData && Object.keys(telegramUserData).length > 0) {
-                        // Реальные данные из Telegram
                         const fullName = telegramUserData.first_name + 
                             (telegramUserData.last_name ? ' ' + telegramUserData.last_name : '');
                         const username = telegramUserData.username ? '@' + telegramUserData.username : 'Не указан';
@@ -1734,7 +1725,6 @@
                         document.getElementById('profile-username').textContent = username;
                         document.getElementById('profile-id').textContent = userId;
                         
-                        // Аватар
                         const avatarElement = document.getElementById('profile-avatar');
                         if (telegramUserData.photo_url) {
                             avatarElement.innerHTML = `<img src="${telegramUserData.photo_url}" alt="Аватар" onerror="this.style.display='none'; this.parentNode.innerHTML='${fullName.charAt(0)}'">`;
@@ -1743,7 +1733,6 @@
                                 telegramUserData.first_name.charAt(0).toUpperCase() : 'U';
                         }
                         
-                        // Проверяем, является ли пользователь продавцом
                         checkSellerProfile();
                         
                     } else {
@@ -1756,7 +1745,6 @@
                 }
                 
             } else {
-                // Если не в Telegram, используем заглушки
                 setFallbackProfileData();
             }
         }
@@ -1768,7 +1756,7 @@
                 telegramUserData = webApp.initDataUnsafe.user || {};
                 
                 if (telegramUserData && Object.keys(telegramUserData).length > 0) {
-                    // Реальные данные из Telegram
+
                     const fullName = telegramUserData.first_name + 
                         (telegramUserData.last_name ? ' ' + telegramUserData.last_name : '');
                     const username = telegramUserData.username ? '@' + telegramUserData.username : 'Не указан';
@@ -1778,7 +1766,6 @@
                     document.getElementById('profile-username').textContent = username;
                     document.getElementById('profile-id').textContent = userId;
                     
-                    // Аватар
                     const avatarElement = document.getElementById('profile-avatar');
                     if (telegramUserData.photo_url) {
                         avatarElement.innerHTML = `<img src="${telegramUserData.photo_url}" alt="Аватар">`;
@@ -1787,14 +1774,12 @@
                             telegramUserData.first_name.charAt(0).toUpperCase() : 'U';
                     }
                     
-                    // Проверяем, является ли пользователь продавцом
                     checkSellerProfile();
                     
                 } else {
                     setFallbackProfileData();
                 }
                 
-                // Инициализируем WebApp
                 try {
                     webApp.ready();
                     webApp.expand();
@@ -1812,7 +1797,7 @@
             if (!telegramUserData || !telegramUserData.id) return;
             
             const seller = sellers.find(s => s.userId == telegramUserData.id);
-            const sellerSection = document.querySelector('.orders-section'); // Секция продавца
+            const sellerSection = document.querySelector('.orders-section');
             
             if (seller && sellerSection) {
                 sellerSection.style.display = 'block';
@@ -2052,7 +2037,6 @@
                         if (e.key === 'Enter') performSearch(this.value, this.id === 'home-search');
                     });
                     
-                    // Следим за изменениями в поле поиска для отображения крестика
                     input.addEventListener('input', function() {
                         const clearBtn = this.parentNode.querySelector('.clear-search');
                         if (clearBtn) {
@@ -2072,7 +2056,6 @@
                         input.value = '';
                         this.style.display = 'none';
                         
-                        // Если мы в каталоге, сбрасываем фильтрацию
                         if (document.getElementById('catalog').classList.contains('active')) {
                             showAllProducts();
                         }
@@ -2094,13 +2077,12 @@
                 product.images : (product.image ? [product.image] : []);
             
             productImages.forEach((imgSrc, index) => {
-                if (index > 0) { // Первое изображение уже загружается
+                if (index > 0) {
                     const img = new Image();
                     img.src = imgSrc;
                 }
             });
             
-            // Находим продавца по sellerId
             const seller = sellers.find(s => s.userId == product.sellerId);
             const sellerName = seller ? seller.companyName : 'Неизвестно';
             const sellerAvatar = seller && seller.avatar ? seller.avatar : null;
@@ -2304,7 +2286,7 @@
             let isSwiping = false;
 
             container.addEventListener('touchstart', (e) => {
-                if (scale > 1) return; // Не обрабатываем свайпы при зуме
+                if (scale > 1) return;
                 startX = e.touches[0].clientX;
                 currentX = startX;
                 isSwiping = true;
@@ -2554,7 +2536,6 @@
             
             if (cartTotal) cartTotal.textContent = `Итого: ${total} ₽`;
             
-            // Перепривязываем обработчики для кнопок +/-
             document.querySelectorAll('.quantity-btn.minus').forEach(btn => {
                 btn.addEventListener('click', function() {
                     decreaseQuantity(parseInt(this.getAttribute('data-id')));
@@ -2733,4 +2714,3 @@
     </script>
 </body>
 </html>
-
