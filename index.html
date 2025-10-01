@@ -36,7 +36,7 @@
             margin: 0;
             padding: 0;
             box-sizing: border-box;
-            font-family: 'Moscow Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', system-ui, sans-serif;
+            font-family: 'Moscow Sans', sans-serif, -apple-system, BlinkMacSystemFont, 'Segoe UI', system-ui;
             -webkit-tap-highlight-color: rgba(0, 0, 0, 0.3);
         }
 
@@ -124,22 +124,6 @@
             box-shadow: 0 0 10px rgba(255, 255, 255, 0.5);
         }
         
-        .search-clear {
-            position: absolute;
-            right: 70px;
-            top: 50%;
-            transform: translateY(-50%);
-            background: none;
-            border: none;
-            color: #ccc;
-            font-size: 18px;
-            cursor: pointer;
-            display: none;
-            width: 20px;
-            height: 20px;
-            z-index: 2;
-        }
-        
         .search-btn {
             height: 45px;
             padding: 0 20px;
@@ -154,6 +138,10 @@
             cursor: pointer;
             transition: var(--transition);
             white-space: nowrap;
+        }
+        
+        .search-btn.clear {
+            background: rgba(255, 255, 255, 0.1);
         }
         
         @media (hover: hover) and (pointer: fine) {
@@ -183,6 +171,7 @@
             height: 35px;
             line-height: 35px;
             font-size: 16px;
+            font-weight: bold;
             white-space: nowrap;
         }
         
@@ -254,6 +243,7 @@
             cursor: pointer;
             display: flex;
             align-items: center;
+            font-weight: bold;
             justify-content: center;
         }
 
@@ -774,7 +764,7 @@
             justify-content: center;
             padding: 0 12px;
             font-size: 14px;
-            font-weight: normal;
+            font-weight: bold;
             border-bottom-right-radius: 0;
             z-index: 1;
         }
@@ -1266,7 +1256,6 @@
                 <h1 class="page-title">Главная</h1>
                 <div class="search-container">
                     <input type="text" class="search-input" placeholder="Поиск товаров..." id="home-search">
-                    <button class="search-clear" id="home-search-clear">&times;</button>
                     <button class="search-btn" id="home-search-btn">
                         <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
                             <path d="M15.5 14H14.71L14.43 13.73C15.41 12.59 16 11.11 16 9.5C16 5.91 13.09 3 9.5 3C5.91 3 3 5.91 3 9.5C3 13.09 5.91 16 9.5 16C11.11 16 12.59 15.41 13.73 14.43L14 14.71V15.5L19 20.49L20.49 19L15.5 14ZM9.5 14C7.01 14 5 11.99 5 9.5C5 7.01 7.01 5 9.5 5C11.99 5 14 7.01 14 9.5C14 11.99 11.99 14 9.5 14Z" fill="white"/>
@@ -1288,7 +1277,7 @@
                         <div class="section-title">Мои актуальные заказы</div>
                         <button class="help-btn" id="help-btn">?</button>
                     </div>
-                    <div style="padding: 35px 15px 15px; font-size: 16px; line-height: 1.4;">
+                    <div style="padding: 15px 15px 15px; font-size: 16px; line-height: 1.4;">
                         №00183 — 114 позиций (Готов к получению)<br>
                         №00185 — 20 позиций (Приедет ~17 сен)<br>
                         №00186 — 190 позиций (Приедет ~43 сен)
@@ -1311,7 +1300,6 @@
                 <h1 class="page-title">Каталог</h1>
                 <div class="search-container">
                     <input type="text" class="search-input" placeholder="Поиск товаров..." id="catalog-search">
-                    <button class="search-clear" id="catalog-search-clear">&times;</button>
                     <button class="search-btn" id="catalog-search-btn">
                         <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
                             <path d="M15.5 14H14.71L14.43 13.73C15.41 12.59 16 11.11 16 9.5C16 5.91 13.09 3 9.5 3C5.91 3 3 5.91 3 9.5C3 13.09 5.91 16 9.5 16C11.11 16 12.59 15.41 13.73 14.43L14 14.71V15.5L19 20.49L20.49 19L15.5 14ZM9.5 14C7.01 14 5 11.99 5 9.5C5 7.01 7.01 5 9.5 5C11.99 5 14 7.01 14 9.5C14 11.99 11.99 14 9.5 14Z" fill="white"/>
@@ -1406,7 +1394,7 @@
                     <button class="profile-btn" id="about-btn">О нас</button>
                 </div>
 
-                <div class="version-info">Версия: 0.0.15</div>
+                <div class="version-info">Версия: 0.0.16</div>
             </div>
         </section>
         
@@ -1723,7 +1711,6 @@
             
             // Поиск
             setupSearch();
-            setupSearchClear(); // 3.2 Добавляем кнопки очистки
             
             // Корзина
             updateCartDisplay();
@@ -1889,63 +1876,77 @@
             const catalogSearchBtn = document.getElementById('catalog-search-btn');
             const catalogSearchInput = document.getElementById('catalog-search');
             
+            function updateSearchButton(input, button) {
+                if (input.value.trim() !== '') {
+                    button.innerHTML = `
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                            <path d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z" fill="white"/>
+                        </svg>
+                        Стереть
+                    `;
+                    button.classList.add('clear');
+                } else {
+                    button.innerHTML = `
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                            <path d="M15.5 14H14.71L14.43 13.73C15.41 12.59 16 11.11 16 9.5C16 5.91 13.09 3 9.5 3C5.91 3 3 5.91 3 9.5C3 13.09 5.91 16 9.5 16C11.11 16 12.59 15.41 13.73 14.43L14 14.71V15.5L19 20.49L20.49 19L15.5 14ZM9.5 14C7.01 14 5 11.99 5 9.5C5 7.01 7.01 5 9.5 5C11.99 5 14 7.01 14 9.5C14 11.99 11.99 14 9.5 14Z" fill="white"/>
+                        </svg>
+                        Поиск
+                    `;
+                    button.classList.remove('clear');
+                }
+            }
+            
             if (homeSearchBtn && homeSearchInput) {
-                homeSearchBtn.addEventListener('click', () => performSearch(homeSearchInput.value, true));
+                homeSearchInput.addEventListener('input', () => {
+                    updateSearchButton(homeSearchInput, homeSearchBtn);
+                });
+                
+                homeSearchBtn.addEventListener('click', () => {
+                    if (homeSearchInput.value.trim() !== '') {
+                        // Если есть текст - очищаем
+                        homeSearchInput.value = '';
+                        updateSearchButton(homeSearchInput, homeSearchBtn);
+                        showAllProducts();
+                    } else {
+                        // Если текста нет - выполняем поиск
+                        performSearch(homeSearchInput.value, true);
+                    }
+                });
             }
             
             if (catalogSearchBtn && catalogSearchInput) {
-                catalogSearchBtn.addEventListener('click', () => performSearch(catalogSearchInput.value, false));
+                catalogSearchInput.addEventListener('input', () => {
+                    updateSearchButton(catalogSearchInput, catalogSearchBtn);
+                });
+                
+                catalogSearchBtn.addEventListener('click', () => {
+                    if (catalogSearchInput.value.trim() !== '') {
+                        // Если есть текст - очищаем
+                        catalogSearchInput.value = '';
+                        updateSearchButton(catalogSearchInput, catalogSearchBtn);
+                        showAllProducts();
+                    } else {
+                        // Если текста нет - выполняем поиск
+                        performSearch(catalogSearchInput.value, false);
+                    }
+                });
             }
             
             document.querySelectorAll('.search-input').forEach(input => {
                 if (input) {
                     input.addEventListener('keypress', function(e) {
-                        if (e.key === 'Enter') performSearch(this.value, this.id === 'home-search');
+                        if (e.key === 'Enter') {
+                            if (this.value.trim() !== '') {
+                                performSearch(this.value, this.id === 'home-search');
+                            }
+                        }
                     });
                 }
             });
-        }
-
-        // 3.2 Кнопка очистки поиска
-        function setupSearchClear() {
-            const homeSearch = document.getElementById('home-search');
-            const homeClear = document.getElementById('home-search-clear');
-            const catalogSearch = document.getElementById('catalog-search');
-            const catalogClear = document.getElementById('catalog-search-clear');
             
-            function toggleClearButton(input, clearBtn) {
-                if (input.value.trim() !== '') {
-                    clearBtn.style.display = 'block';
-                } else {
-                    clearBtn.style.display = 'none';
-                }
-            }
-            
-            // Обработчики для главной страницы
-            homeSearch.addEventListener('input', () => {
-                toggleClearButton(homeSearch, homeClear);
-            });
-            
-            homeClear.addEventListener('click', () => {
-                homeSearch.value = '';
-                homeClear.style.display = 'none';
-                showAllProducts();
-            });
-            
-            // Обработчики для каталога
-            catalogSearch.addEventListener('input', () => {
-                toggleClearButton(catalogSearch, catalogClear);
-            });
-            
-            catalogClear.addEventListener('click', () => {
-                catalogSearch.value = '';
-                catalogClear.style.display = 'none';
-                showAllProducts();
-            });
-            
-            // Инициализация состояния кнопок
-            toggleClearButton(homeSearch, homeClear);
-            toggleClearButton(catalogSearch, catalogClear);
+            // Инициализация кнопок
+            updateSearchButton(homeSearchInput, homeSearchBtn);
+            updateSearchButton(catalogSearchInput, catalogSearchBtn);
         }
 
         function openProductModal(product) {
@@ -2219,9 +2220,10 @@
             }, 300);
         }
 
-        // 2.3.3 Улучшенный зум с двойным нажатием
+        // 2.3.3 Упрощенный зум как в стандартных приложениях
         function setupImageZoom(imageElement, container) {
             let lastTap = 0;
+            let currentScale = 1;
             
             // Двойное нажатие для зума
             imageElement.addEventListener('click', (e) => {
@@ -2232,14 +2234,15 @@
                     // Двойное нажатие
                     e.preventDefault();
                     
-                    if (scale === 1) {
-                        scale = 2;
+                    if (currentScale === 1) {
+                        currentScale = 2;
+                        imageElement.style.transform = `scale(${currentScale})`;
                         imageElement.classList.add('zoomed');
                     } else {
-                        resetZoom();
+                        currentScale = 1;
+                        imageElement.style.transform = `scale(${currentScale})`;
                         imageElement.classList.remove('zoomed');
                     }
-                    applyImageTransform(imageElement);
                     
                     lastTap = 0;
                 } else {
@@ -2247,32 +2250,20 @@
                 }
             });
 
-            // Жесты для масштабирования и панорамирования
-            container.addEventListener('touchstart', handleTouchStart);
-            container.addEventListener('touchmove', handleTouchMove);
-            container.addEventListener('touchend', handleTouchEnd);
-
-            function handleTouchStart(e) {
+            // Простой зум двумя пальцами
+            container.addEventListener('touchstart', (e) => {
                 if (e.touches.length === 2) {
-                    // Начало жеста двумя пальцами (зум)
-                    isPinching = true;
                     const touch1 = e.touches[0];
                     const touch2 = e.touches[1];
                     initialDistance = Math.hypot(
                         touch1.clientX - touch2.clientX,
                         touch1.clientY - touch2.clientY
                     );
-                } else if (e.touches.length === 1 && scale > 1) {
-                    // Начало жеста одним пальцем (панорамирование)
-                    isDragging = true;
-                    startX = e.touches[0].clientX - offsetX;
-                    startY = e.touches[0].clientY - offsetY;
                 }
-            }
+            });
 
-            function handleTouchMove(e) {
-                if (isPinching && e.touches.length === 2) {
-                    // Масштабирование
+            container.addEventListener('touchmove', (e) => {
+                if (e.touches.length === 2) {
                     e.preventDefault();
                     const touch1 = e.touches[0];
                     const touch2 = e.touches[1];
@@ -2281,27 +2272,16 @@
                         touch1.clientY - touch2.clientY
                     );
                     
-                    scale = Math.max(1, Math.min(3, currentDistance / initialDistance));
-                    applyImageTransform(imageElement);
-                } else if (isDragging && e.touches.length === 1 && scale > 1) {
-                    // Панорамирование
-                    e.preventDefault();
-                    offsetX = e.touches[0].clientX - startX;
-                    offsetY = e.touches[0].clientY - startY;
-                    applyImageTransform(imageElement);
+                    currentScale = Math.max(1, Math.min(3, currentDistance / initialDistance));
+                    imageElement.style.transform = `scale(${currentScale})`;
+                    
+                    if (currentScale > 1) {
+                        imageElement.classList.add('zoomed');
+                    } else {
+                        imageElement.classList.remove('zoomed');
+                    }
                 }
-            }
-
-            function handleTouchEnd(e) {
-                isDragging = false;
-                isPinching = false;
-            }
-        }
-
-        function applyImageTransform(imageElement) {
-            imageElement.style.setProperty('--zoom-scale', scale);
-            imageElement.style.setProperty('--offset-x', `${offsetX}px`);
-            imageElement.style.setProperty('--offset-y', `${offsetY}px`);
+            });
         }
 
         function setupProductModalActions(product, modal) {
@@ -2547,12 +2527,6 @@
             
             if (pageId === 'cart') {
                 updateCartDisplay();
-            } else if (pageId === 'catalog' && currentSearchQuery) {
-                // При переключении на каталог, если есть активный поиск, заполняем поле
-                setTimeout(() => {
-                    document.getElementById('catalog-search').value = currentSearchQuery;
-                    performSearchActual(currentSearchQuery);
-                }, 100);
             }
         }
 
@@ -2561,6 +2535,9 @@
                 if (switchToCatalog) {
                     switchPage('catalog');
                 }
+                // 3.1 Не фильтруем мини-каталоги
+                fillProductsGrid('recommended-products', homeRecommendations);
+                fillProductsGrid('cart-recommended-products', cartRecommendations);
                 showAllProducts();
                 return;
             }
@@ -2568,14 +2545,10 @@
             currentSearchQuery = query.trim();
             
             if (switchToCatalog) {
-                // Очищаем поле в главной
-                document.getElementById('home-search').value = '';
-                document.getElementById('home-search-clear').style.display = 'none';
                 switchPage('catalog');
                 // Ждем переключения страницы и затем выполняем поиск
                 setTimeout(() => {
                     document.getElementById('catalog-search').value = currentSearchQuery;
-                    document.getElementById('catalog-search-clear').style.display = 'block';
                     performSearchActual(currentSearchQuery);
                 }, 100);
             } else {
@@ -2584,9 +2557,8 @@
         }
 
         function showAllProducts() {
-            document.querySelectorAll('.product-card').forEach(card => {
-                if (card) card.style.display = 'block';
-            });
+            // 3.1 Восстанавливаем только основной каталог, мини-каталоги не трогаем
+            fillProductsGrid('catalog-products', products);
         }
 
         function performSearchActual(query) {
@@ -2596,24 +2568,23 @@
             // Разбиваем запрос на слова для более гибкого поиска
             const searchWords = searchTerm.split(/\s+/).filter(word => word.length > 0);
             
-            document.querySelectorAll('.product-card').forEach(card => {
-                if (card) {
-                    const productName = card.querySelector('.product-name');
-                    if (productName) {
-                        const nameText = productName.textContent.toLowerCase();
-                        
-                        // Проверяем, содержит ли название все слова запроса
-                        const matches = searchWords.every(word => nameText.includes(word));
-                        
-                        if (matches) {
-                            card.style.display = 'block';
-                            foundAny = true;
-                        } else {
-                            card.style.display = 'none';
-                        }
-                    }
-                } 
-            });
+            // 3.1 Фильтруем только основной каталог
+            const catalogProducts = document.getElementById('catalog-products');
+            if (catalogProducts) {
+                catalogProducts.innerHTML = '';
+                
+                const filteredProducts = products.filter(product => {
+                    const nameText = product.shortName.toLowerCase();
+                    return searchWords.every(word => nameText.includes(word));
+                });
+                
+                if (filteredProducts.length > 0) {
+                    fillProductsGrid('catalog-products', filteredProducts);
+                    foundAny = true;
+                } else {
+                    showEmptyState('catalog-products', 'Товары по вашему запросу не найдены');
+                }
+            }
             
             if (!foundAny) {
                 showNotification('Товары по вашему запросу не найдены');
