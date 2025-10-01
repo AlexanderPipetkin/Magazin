@@ -272,8 +272,6 @@
         
         .product-card {
             width: 100%;
-            max-width: var(--card-size);
-            margin: 0 auto;
             transition: var(--transition);
             cursor: pointer;
         }
@@ -286,7 +284,7 @@
         
         .product-image {
             width: 100%;
-            height: 120px;
+            aspect-ratio: 1 / 1;
             background: var(--primary-text);
             border-radius: var(--border-radius);
             display: flex;
@@ -1329,7 +1327,7 @@
                     <h2 class="cart-recommendations-title">А может...</h2>
                     <div class="products-grid" id="cart-recommended-products">
                     </div>
-                    <a href="#" class="catalog-link-back" data-page="catalog">👈 Остальное в каталоге</a>
+                    <a href="#" class="catalog-link-back" data-page="catalog">Остальное в каталоге</a>
                 </div>
             </div>
         </section>
@@ -1389,7 +1387,7 @@
                     <button class="profile-btn" id="about-btn">О нас</button>
                 </div>
 
-                <div class="version-info">Версия: 0.0.20</div>
+                <div class="version-info">Версия: 0.0.21</div>
             </div>
         </section>
         
@@ -2044,7 +2042,7 @@
             showModal(modal);
         }
 
-        // 2.3.1 Улучшенная анимация переключения фото
+        // 2.3.1 Исправленная анимация переключения фото с циклическим переходом
         function setupImageSwipe(container, images, counter) {
             let startX = 0;
             let currentX = 0;
@@ -2072,10 +2070,12 @@
                 const swipeThreshold = 50;
                 
                 if (Math.abs(diffX) > swipeThreshold) {
-                    if (diffX > 0 && currentImageIndex < images.length - 1) {
-                        currentImageIndex++;
-                    } else if (diffX < 0 && currentImageIndex > 0) {
-                        currentImageIndex--;
+                    if (diffX > 0) {
+                        // Свайп вправо - следующий слайд
+                        currentImageIndex = (currentImageIndex + 1) % images.length;
+                    } else {
+                        // Свайп влево - предыдущий слайд
+                        currentImageIndex = (currentImageIndex - 1 + images.length) % images.length;
                     }
                 }
                 
@@ -2112,10 +2112,12 @@
                 const swipeThreshold = 50;
                 
                 if (Math.abs(diffX) > swipeThreshold) {
-                    if (diffX > 0 && currentImageIndex < images.length - 1) {
-                        currentImageIndex++;
-                    } else if (diffX < 0 && currentImageIndex > 0) {
-                        currentImageIndex--;
+                    if (diffX > 0) {
+                        // Свайп вправо - следующий слайд
+                        currentImageIndex = (currentImageIndex + 1) % images.length;
+                    } else {
+                        // Свайп влево - предыдущий слайд
+                        currentImageIndex = (currentImageIndex - 1 + images.length) % images.length;
                     }
                 }
                 
@@ -2437,6 +2439,7 @@
                 if (filteredProducts.length > 0) {
                     fillProductsGrid('catalog-products', filteredProducts);
                 } else {
+                    showNotification('Товары по вашему запросу не найдены');
                     showEmptyState('catalog-products', 'Товары по вашему запросу не найдены');
                 }
             }
