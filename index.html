@@ -1739,13 +1739,30 @@
                 const webApp = window.Telegram.WebApp;
                 telegramUserData = webApp.initDataUnsafe.user || {};
                 
-                // Если нет ID пользователя - значит не в Telegram WebApp
-                if (!telegramUserData.id) {
+                console.log('Telegram WebApp данные:', telegramUserData);
+                console.log('initDataUnsafe:', webApp.initDataUnsafe);
+                
+                // ⭐⭐ УЛУЧШЕННАЯ ПРОВЕРКА ⭐⭐
+                // Проверяем несколько полей, которые ДОЛЖНЫ быть в настоящем Telegram WebApp
+                const hasValidUserData = telegramUserData && 
+                    (telegramUserData.id || 
+                    telegramUserData.first_name || 
+                    telegramUserData.username ||
+                    webApp.initData);
+                
+                // Дополнительная проверка - есть ли initData (основной признак WebApp)
+                const hasInitData = webApp.initData && webApp.initData.length > 0;
+                
+                console.log('hasValidUserData:', hasValidUserData);
+                console.log('hasInitData:', hasInitData);
+                
+                if (!hasValidUserData && !hasInitData) {
+                    console.log('Не в Telegram WebApp - нет данных пользователя');
                     showTelegramWarning();
                     return null;
                 }
                 
-                if (telegramUserData && Object.keys(telegramUserData).length > 0) {
+                if (telegramUserData && telegramUserData.id) {
                     // Реальные данные из Telegram
                     const fullName = telegramUserData.first_name + 
                         (telegramUserData.last_name ? ' ' + telegramUserData.last_name : '');
@@ -1768,15 +1785,15 @@
                     // Проверяем, является ли пользователь продавцом
                     checkSellerProfile();
                     
-                    // Скрываем предупреждение и показываем приложение
-                    document.getElementById('telegram-check').style.display = 'none';
-                    document.querySelector('.app-container').style.display = 'block';
-                    document.querySelector('.bottom-nav').style.display = 'flex';
-                    
                 } else {
+                    // Если в WebApp, но данных пользователя нет (пользователь не авторизован)
                     setFallbackProfileData();
-                    showTelegramWarning();
                 }
+                
+                // Скрываем предупреждение и показываем приложение (если дошли до сюда)
+                document.getElementById('telegram-check').style.display = 'none';
+                document.querySelector('.app-container').style.display = 'block';
+                document.querySelector('.bottom-nav').style.display = 'flex';
                 
                 // Инициализируем WebApp
                 try {
@@ -1787,6 +1804,7 @@
                 }
                 
             } else {
+                console.log('Telegram WebApp не обнаружен');
                 setFallbackProfileData();
                 showTelegramWarning();
             }
@@ -2729,3 +2747,4 @@
     </script>
 </body>
 </html>
+
