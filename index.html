@@ -24,9 +24,10 @@
 
         @font-face {
             font-family: 'Moscow Sans';
-            src: local('Moscow Sans Regular'), 
-                 local('MoscowSans-Regular'),
-                 url('fonts/Moscow Sans.ttf') format('truetype');
+            src: local('Moscow Sans'),
+                 url('fonts/MoscowSans.woff2') format('woff2'),
+                 url('fonts/MoscowSans.woff') format('woff'),
+                 url('fonts/MoscowSans.ttf') format('truetype');
             font-weight: 400;
             font-style: normal;
             font-display: swap;
@@ -36,7 +37,7 @@
             margin: 0;
             padding: 0;
             box-sizing: border-box;
-            font-family: 'Moscow Sans', sans-serif, -apple-system, BlinkMacSystemFont, 'Segoe UI', system-ui;
+            font-family: 'Moscow Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', system-ui, sans-serif;
             -webkit-tap-highlight-color: rgba(0, 0, 0, 0.3);
         }
 
@@ -104,8 +105,6 @@
             display: flex;
             align-items: center;
             gap: 12px;
-            position: relative;
-            margin-bottom: 12px;
         }
         
         .search-input {
@@ -115,31 +114,14 @@
             border-radius: var(--border-radius);
             background: transparent;
             color: var(--primary-text);
-            padding: 0 40px 0 15px;
+            padding: 0 15px;
             font-size: 16px;
             transition: var(--transition);
-            position: relative;
         }
         
         .search-input:focus {
             outline: none;
             box-shadow: 0 0 10px rgba(255, 255, 255, 0.5);
-        }
-        
-        .search-clear {
-            position: absolute;
-            right: 15px;
-            top: 50%;
-            transform: translateY(-50%);
-            background: none;
-            border: none;
-            color: #ccc;
-            font-size: 18px;
-            cursor: pointer;
-            display: none;
-            width: 20px;
-            height: 20px;
-            z-index: 2;
         }
         
         .search-btn {
@@ -166,12 +148,12 @@
         }
         
         .notifications-section {
-            width: calc(100% - 24px);
+            width: 100%;
             max-width: 716px;
             min-height: 150px;
             border: var(--border-width) solid var(--border-color);
             border-radius: var(--border-radius);
-            margin: var(--section-margin) 12px;
+            margin: var(--section-margin) 15px 15px 0;
             position: relative;
             overflow: hidden;
         }
@@ -185,8 +167,13 @@
             height: 35px;
             line-height: 35px;
             font-size: 16px;
-            font-weight: bold;
             white-space: nowrap;
+        }
+        
+        .section-content {
+            padding: 10px 15px !important;
+            font-size: 16px;
+            line-height: 1.4;
         }
         
         .get-code-btn {
@@ -214,11 +201,11 @@
         }
 
         .orders-section {
-            width: calc(100% - 24px);
+            width: 100%;
             max-width: 716px;
             border: var(--border-width) solid var(--border-color);
             border-radius: var(--border-radius);
-            margin: var(--section-margin) 12px;
+            margin: var(--section-margin) auto;
             position: relative;
             overflow: hidden;
         }
@@ -267,11 +254,13 @@
             display: grid;
             grid-template-columns: repeat(2, 1fr);
             gap: var(--card-gap);
-            margin: 20px 12px 40px;
+            margin: 0 12px;
         }
         
         .product-card {
             width: 100%;
+            max-width: var(--card-size);
+            margin: 0 auto;
             transition: var(--transition);
             cursor: pointer;
         }
@@ -295,9 +284,16 @@
             position: relative;
         }
         
+        @media (min-width: 1024px) {
+            .product-image {
+                max-width: 200px;
+                margin: 0 auto 6px;
+            }
+        }
+        
         .product-image img {
-            width: 100%;
-            height: 100%;
+            max-width: 100%;
+            max-height: 100%;
             object-fit: contain;
             transition: transform 0.3s ease;
         }
@@ -329,19 +325,8 @@
             transition: var(--transition);
         }
         
-        .catalog-link-back {
-            display: block;
-            text-align: center;
-            font-size: 14px;
-            margin: 60px 0;
-            color: var(--primary-text);
-            text-decoration: none;
-            transition: var(--transition);
-        }
-        
         @media (hover: hover) and (pointer: fine) {
-            .catalog-link:hover,
-            .catalog-link-back:hover {
+            .catalog-link:hover {
                 text-decoration: underline;
             }
         }
@@ -350,7 +335,7 @@
             display: grid;
             grid-template-columns: repeat(2, 1fr);
             gap: var(--card-gap);
-            margin: 0 12px 40px;
+            margin: var(--section-margin) 12px;
         }
         
         .cart-container {
@@ -393,8 +378,8 @@
         }
         
         .cart-item-image img {
-            width: 100%;
-            height: 100%;
+            max-width: 100%;
+            max-height: 100%;
             object-fit: contain;
         }
         
@@ -506,19 +491,24 @@
         }
         
         .profile-section {
-            margin: 10px 12px;
+            margin: 10px 0;
         }
         
-        .profile-subsection {
-            width: 100%;
-            border: var(--border-width) solid var(--border-color);
-            border-radius: var(--border-radius);
-            margin: var(--section-margin) 0;
-            position: relative;
-            overflow: hidden;
+        .profile-header {
+            display: inline-block;
+            background: var(--primary-text);
+            color: var(--primary-bg);
+            border-radius: 0;
+            padding: 0 12px;
+            height: 35px;
+            line-height: 35px;
+            font-size: 16px;
+            white-space: nowrap;
+            margin-bottom: 15px;
         }
         
         .profile-info {
+            border: var(--border-width) solid var(--border-color);
             border-radius: var(--border-radius);
             padding: 15px;
             margin-bottom: 15px;
@@ -606,7 +596,6 @@
             text-align: center;
             font-size: 12px;
             margin-top: 30px;
-            margin-bottom: 30px;
             color: #ccc;
         }
         
@@ -660,7 +649,7 @@
             border-radius: 50%;
             background: rgba(0, 0, 0, 0.8);
             color: white;
-            z-index: 1001;
+            z-index: 10;
             transition: var(--transition);
             border: 2px solid white;
         }
@@ -674,34 +663,40 @@
         
         .product-modal-image-container {
             width: 100%;
-            aspect-ratio: 1 / 1;
+            height: 250px;
             background: var(--primary-text);
             border-radius: var(--border-radius);
             margin-bottom: 15px;
             overflow: hidden;
             position: relative;
+            touch-action: pan-y pinch-zoom;
         }
         
-        .product-modal-images-wrapper {
-            display: flex;
+        .product-modal-image-wrapper {
             width: 100%;
-            height: 100%;
-            transition: transform 0.3s ease;
-        }
-        
-        .product-modal-image-slide {
-            min-width: 100%;
             height: 100%;
             display: flex;
             align-items: center;
             justify-content: center;
             overflow: hidden;
+            position: relative;
         }
         
         .product-modal-image {
-            width: 100%;
-            height: 100%;
+            max-width: 100%;
+            max-height: 100%;
             object-fit: contain;
+            transition: transform 0.3s ease;
+            cursor: zoom-in;
+        }
+        
+        .product-modal-image.zoomed {
+            cursor: grab;
+            transform: scale(var(--zoom-scale, 2)) translate(var(--offset-x, 0), var(--offset-y, 0));
+        }
+        
+        .product-modal-image.zoomed:active {
+            cursor: grabbing;
         }
         
         .image-counter {
@@ -750,7 +745,7 @@
             justify-content: center;
             padding: 0 12px;
             font-size: 14px;
-            font-weight: bold;
+            font-weight: normal;
             border-bottom-right-radius: 0;
             z-index: 1;
         }
@@ -776,19 +771,12 @@
             font-size: 14px;
             display: flex;
             justify-content: space-between;
-            align-items: flex-start;
             padding: 3px 0;
         }
         
         .characteristics-list li span:first-child {
             font-weight: bold;
             margin-right: 8px;
-        }
-        
-        .characteristics-list li span:last-child {
-            text-align: right;
-            flex: 1;
-            margin-left: 10px;
         }
         
         .review {
@@ -823,23 +811,11 @@
             font-weight: bold;
             color: var(--primary-bg);
             flex-shrink: 0;
-            overflow: hidden;
-        }
-        
-        .seller-avatar img {
-            width: 100%;
-            height: 100%;
-            object-fit: cover;
         }
         
         .seller-name {
             font-size: 14px;
             font-weight: bold;
-        }
-        
-        .seller-contact {
-            font-size: 12px;
-            color: #ccc;
         }
         
         .product-modal-actions {
@@ -1060,7 +1036,7 @@
         
         @media (max-width: 780px) {
             .header {
-            margin: var(--section-margin) auto;
+                padding: 15px 12px 0;
             }
             
             .search-container {
@@ -1082,7 +1058,12 @@
             
             .products-grid, .catalog-grid {
                 grid-template-columns: repeat(2, 1fr);
-                margin: 20px 12px 40px;
+                margin: 0 12px;
+            }
+            
+            .section-content, .order-content {
+                font-size: 16px;
+                padding: 35px 15px 15px !important;
             }
             
             .recommendations-title {
@@ -1138,16 +1119,6 @@
                 flex: 2;
                 min-width: auto;
                 margin-left: 10px;
-            }
-        }
-        
-        @media (max-width: 480px) {
-            .catalog-grid {
-                grid-template-columns: repeat(2, 1fr);
-            }
-            
-            .product-card {
-                max-width: 100%;
             }
         }
         
@@ -1237,6 +1208,10 @@
             color: #ff6b6b;
             font-size: 16px;
         }
+
+        .seller-profile {
+            margin-top: 20px;
+        }
     </style>
 </head>
 <body>
@@ -1247,7 +1222,6 @@
                 <h1 class="page-title">Главная</h1>
                 <div class="search-container">
                     <input type="text" class="search-input" placeholder="Поиск товаров..." id="home-search">
-                    <button class="search-clear" id="home-search-clear">&times;</button>
                     <button class="search-btn" id="home-search-btn">
                         <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
                             <path d="M15.5 14H14.71L14.43 13.73C15.41 12.59 16 11.11 16 9.5C16 5.91 13.09 3 9.5 3C5.91 3 3 5.91 3 9.5C3 13.09 5.91 16 9.5 16C11.11 16 12.59 15.41 13.73 14.43L14 14.71V15.5L19 20.49L20.49 19L15.5 14ZM9.5 14C7.01 14 5 11.99 5 9.5C5 7.01 7.01 5 9.5 5C11.99 5 14 7.01 14 9.5C14 11.99 11.99 14 9.5 14Z" fill="white"/>
@@ -1260,7 +1234,7 @@
             <div class="sections-row">
                 <div class="notifications-section">
                     <div class="section-title">Уведомления</div>
-                    <div id="notifications-content" style="padding: 15px; font-size: 16px; line-height: 1.4;">
+                    <div class="section-content" id="notifications-content">
                     </div>
                 </div>
                 
@@ -1269,7 +1243,7 @@
                         <div class="section-title">Мои актуальные заказы</div>
                         <button class="help-btn" id="help-btn">?</button>
                     </div>
-                    <div style="padding: 15px; font-size: 16px; line-height: 1.4;">
+                    <div style="padding: 35px 15px 15px; font-size: 16px; line-height: 1.4;">
                         №00183 — 114 позиций (Готов к получению)<br>
                         №00185 — 20 позиций (Приедет ~17 сен)<br>
                         №00186 — 190 позиций (Приедет ~43 сен)
@@ -1292,7 +1266,6 @@
                 <h1 class="page-title">Каталог</h1>
                 <div class="search-container">
                     <input type="text" class="search-input" placeholder="Поиск товаров..." id="catalog-search">
-                    <button class="search-clear" id="catalog-search-clear">&times;</button>
                     <button class="search-btn" id="catalog-search-btn">
                         <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
                             <path d="M15.5 14H14.71L14.43 13.73C15.41 12.59 16 11.11 16 9.5C16 5.91 13.09 3 9.5 3C5.91 3 3 5.91 3 9.5C3 13.09 5.91 16 9.5 16C11.11 16 12.59 15.41 13.73 14.43L14 14.71V15.5L19 20.49L20.49 19L15.5 14ZM9.5 14C7.01 14 5 11.99 5 9.5C5 7.01 7.01 5 9.5 5C11.99 5 14 7.01 14 9.5C14 11.99 11.99 14 9.5 14Z" fill="white"/>
@@ -1327,7 +1300,6 @@
                     <h2 class="cart-recommendations-title">А может...</h2>
                     <div class="products-grid" id="cart-recommended-products">
                     </div>
-                    <a href="#" class="catalog-link-back" data-page="catalog">Остальное в каталоге</a>
                 </div>
             </div>
         </section>
@@ -1340,29 +1312,29 @@
             </div>
             
             <div class="profile-section">
-                <div class="profile-subsection">
-                    <div class="section-title">Я, как пользователь</div>
-                    <div class="profile-info">
-                        <div class="profile-avatar" id="profile-avatar"></div>
-                        <div class="profile-fields">
-                            <div class="profile-field">
-                                <span class="profile-label">Имя:</span>
-                                <span id="profile-name">Загрузка...</span>
-                            </div>
-                            <div class="profile-field">
-                                <span class="profile-label">Юзернейм:</span>
-                                <span id="profile-username">@тут будет юз</span>
-                            </div>
-                            <div class="profile-field">
-                                <span class="profile-label">ID:</span>
-                                <span id="profile-id">айди не загрузилось</span>
-                            </div>
+                <!-- Профиль пользователя -->
+                <div class="profile-header">Я, как пользователь</div>
+                <div class="profile-info">
+                    <div class="profile-avatar" id="profile-avatar"></div>
+                    <div class="profile-fields">
+                        <div class="profile-field">
+                            <span class="profile-label">Имя:</span>
+                            <span id="profile-name">Загрузка...</span>
+                        </div>
+                        <div class="profile-field">
+                            <span class="profile-label">Юзернейм:</span>
+                            <span id="profile-username">@тут будет юз</span>
+                        </div>
+                        <div class="profile-field">
+                            <span class="profile-label">ID:</span>
+                            <span id="profile-id">айди не загрузилось</span>
                         </div>
                     </div>
                 </div>
 
-                <div class="profile-subsection" id="seller-profile" style="display: none;">
-                    <div class="section-title">Я, как продавец</div>
+                <!-- Профиль продавца -->
+                <div class="seller-profile" id="seller-profile" style="display: none;">
+                    <div class="profile-header">Я, как продавец</div>
                     <div class="profile-info">
                         <div class="profile-avatar" id="seller-avatar"></div>
                         <div class="profile-fields">
@@ -1387,7 +1359,7 @@
                     <button class="profile-btn" id="about-btn">О нас</button>
                 </div>
 
-                <div class="version-info">Версия: 0.0.21</div>
+                <div class="version-info">Версия: 0.0.34</div>
             </div>
         </section>
         
@@ -1469,9 +1441,15 @@
         let currentImageIndex = 0;
         let currentSearchQuery = '';
 
-        // 3.1 Фиксированные наборы товаров для мини-каталогов
-        let homeRecommendations = [];
-        let cartRecommendations = [];
+        // Переменные для зума
+        let scale = 1;
+        let startX = 0;
+        let startY = 0;
+        let offsetX = 0;
+        let offsetY = 0;
+        let isDragging = false;
+        let isPinching = false;
+        let initialDistance = 0;
 
         // Функция для безопасной загрузки корзины из localStorage
         function loadCart() {
@@ -1511,10 +1489,6 @@
                 const data = await response.json();
                 products = data.products || data;
                 
-                // 3.1 Создаем фиксированные наборы для рекомендаций
-                homeRecommendations = products.slice(0, 4);
-                cartRecommendations = products.slice(2, 6);
-                
                 // Загружаем продавцов после загрузки товаров
                 await loadSellers();
                 initializeApp();
@@ -1537,11 +1511,6 @@
                 console.error('Ошибка загрузки продавцов:', error);
                 sellers = [];
             }
-        }
-
-        // Получение данных продавца по ID
-        function getSellerById(sellerId) {
-            return sellers.find(seller => seller.userId == sellerId);
         }
 
         // Загрузка уведомлений из JSON
@@ -1654,7 +1623,7 @@
                 
                 const sellerAvatar = document.getElementById('seller-avatar');
                 if (seller.avatar) {
-                    sellerAvatar.innerHTML = `<img src="${seller.avatar}" alt="Аватар продавца" onerror="this.style.display='none'; this.parentNode.innerHTML='${seller.companyName ? seller.companyName.charAt(0).toUpperCase() : 'S'}'">`;
+                    sellerAvatar.innerHTML = `<img src="${seller.avatar}" alt="Аватар продавца">`;
                 } else {
                     sellerAvatar.textContent = seller.companyName ? 
                         seller.companyName.charAt(0).toUpperCase() : 'S';
@@ -1680,10 +1649,16 @@
             // Загружаем уведомления
             loadNotifications();
             
-            // Заполнение рекомендаций фиксированными наборами
-            fillProductsGrid('recommended-products', homeRecommendations);
-            fillProductsGrid('catalog-products', products);
-            fillProductsGrid('cart-recommended-products', cartRecommendations);
+            // Заполнение рекомендаций
+            if (products.length > 0) {
+                fillProductsGrid('recommended-products', products.slice(0, 4));
+                fillProductsGrid('catalog-products', products);
+                fillProductsGrid('cart-recommended-products', products.slice(2, 6));
+            } else {
+                showEmptyState('recommended-products', 'Рекомендуемые товары появятся скоро');
+                showEmptyState('catalog-products', 'Каталог пуст');
+                showEmptyState('cart-recommended-products', 'Рекомендации появятся скоро');
+            }
 
             // Навигация
             setupNavigation();
@@ -1696,12 +1671,6 @@
             
             // Корзина
             updateCartDisplay();
-            
-            // 3.3 Обработчик для ссылки в корзине
-            document.querySelector('.catalog-link-back').addEventListener('click', function(e) {
-                e.preventDefault();
-                switchPage('catalog');
-            });
         }
 
         function showEmptyState(elementId, message) {
@@ -1855,78 +1824,30 @@
         function setupSearch() {
             const homeSearchBtn = document.getElementById('home-search-btn');
             const homeSearchInput = document.getElementById('home-search');
-            const homeClear = document.getElementById('home-search-clear');
             const catalogSearchBtn = document.getElementById('catalog-search-btn');
             const catalogSearchInput = document.getElementById('catalog-search');
-            const catalogClear = document.getElementById('catalog-search-clear');
             
-            function toggleClearButton(input, clearBtn) {
-                if (input.value.trim() !== '') {
-                    clearBtn.style.display = 'block';
-                } else {
-                    clearBtn.style.display = 'none';
-                }
+            if (homeSearchBtn && homeSearchInput) {
+                homeSearchBtn.addEventListener('click', () => performSearch(homeSearchInput.value, true));
             }
             
-            // Обработчики для главной страницы
-            homeSearchInput.addEventListener('input', () => {
-                toggleClearButton(homeSearchInput, homeClear);
-            });
-            
-            homeClear.addEventListener('click', () => {
-                homeSearchInput.value = '';
-                homeClear.style.display = 'none';
-                performSearch('', true);
-            });
-            
-            homeSearchBtn.addEventListener('click', () => {
-                const query = homeSearchInput.value;
-                homeSearchInput.value = '';
-                homeClear.style.display = 'none';
-                performSearch(query, true);
-            });
-            
-            // Обработчики для каталога
-            catalogSearchInput.addEventListener('input', () => {
-                toggleClearButton(catalogSearchInput, catalogClear);
-            });
-            
-            catalogClear.addEventListener('click', () => {
-                catalogSearchInput.value = '';
-                catalogClear.style.display = 'none';
-                performSearch('', false);
-            });
-            
-            catalogSearchBtn.addEventListener('click', () => {
-                performSearch(catalogSearchInput.value, false);
-            });
+            if (catalogSearchBtn && catalogSearchInput) {
+                catalogSearchBtn.addEventListener('click', () => performSearch(catalogSearchInput.value, false));
+            }
             
             document.querySelectorAll('.search-input').forEach(input => {
                 if (input) {
                     input.addEventListener('keypress', function(e) {
-                        if (e.key === 'Enter') {
-                            if (this.id === 'home-search') {
-                                const query = this.value;
-                                this.value = '';
-                                const clearBtn = document.getElementById('home-search-clear');
-                                if (clearBtn) clearBtn.style.display = 'none';
-                                performSearch(query, true);
-                            } else {
-                                performSearch(this.value, false);
-                            }
-                        }
+                        if (e.key === 'Enter') performSearch(this.value, this.id === 'home-search');
                     });
                 }
             });
-            
-            // Инициализация состояния кнопок
-            toggleClearButton(homeSearchInput, homeClear);
-            toggleClearButton(catalogSearchInput, catalogClear);
         }
 
         function openProductModal(product) {
             currentProduct = product;
             currentImageIndex = 0;
+            resetZoom();
             
             const modal = document.getElementById('product-modal');
             const content = modal.querySelector('.product-modal-content');
@@ -1935,21 +1856,16 @@
             const productImages = Array.isArray(product.images) && product.images.length > 0 ? 
                 product.images : (product.image ? [product.image] : []);
             
-            // 2.3.6 Получаем данные продавца
-            const seller = getSellerById(product.sellerId);
-            
             content.innerHTML = `
                 <span class="product-modal-close">&times;</span>
                 
                 <div class="product-modal-image-container">
-                    <div class="product-modal-images-wrapper" id="product-images-wrapper" style="transform: translateX(0);">
-                        ${productImages.map((image, index) => `
-                            <div class="product-modal-image-slide">
-                                <img src="${image}" alt="${product.fullName}" 
-                                     class="product-modal-image" 
-                                     onerror="this.style.display='none'; this.parentNode.innerHTML='${product.fullName}'">
-                            </div>
-                        `).join('')}
+                    <div class="product-modal-image-wrapper">
+                        ${productImages.length > 0 ? 
+                            `<img src="${productImages[0]}" alt="${product.fullName}" 
+                                 class="product-modal-image" 
+                                 onerror="this.style.display='none'; this.parentNode.innerHTML='${product.fullName}'">` : 
+                            product.fullName}
                     </div>
                     
                     ${productImages.length > 1 ? 
@@ -1988,7 +1904,7 @@
                                     <div>${review.text}</div>
                                 </div>
                             `).join('') : 
-                            '<div>Отзывов пока нет</div>'
+                            '<div>Пока нет отзывов</div>'
                         }
                     </div>
                 </div>
@@ -1997,15 +1913,8 @@
                     <div class="modal-subsection-title">Продавец</div>
                     <div class="modal-subsection-content">
                         <div class="seller-info">
-                            <div class="seller-avatar">
-                                ${seller && seller.avatar ? 
-                                    `<img src="${seller.avatar}" alt="${seller.companyName}" onerror="this.style.display='none'; this.parentNode.innerHTML='${seller.companyName ? seller.companyName.charAt(0).toUpperCase() : 'S'}'">` : 
-                                    (seller && seller.companyName ? seller.companyName.charAt(0).toUpperCase() : '?')}
-                            </div>
-                            <div>
-                                <div class="seller-name">${seller ? seller.companyName : 'Неизвестно'}</div>
-                                <div class="seller-contact">${seller ? seller.contactPhone : 'Контакт не указан'}</div>
-                            </div>
+                            <div class="seller-avatar">${product.seller ? product.seller.charAt(0) : '?'}</div>
+                            <div class="seller-name">${product.seller || 'Неизвестно'}</div>
                         </div>
                     </div>
                 </div>
@@ -2031,114 +1940,149 @@
             }
 
             // Обработчики для изображений
-            const imagesWrapper = content.querySelector('#product-images-wrapper');
+            const imageElement = content.querySelector('.product-modal-image');
+            const imageContainer = content.querySelector('.product-modal-image-container');
             const imageCounter = content.querySelector('.image-counter');
             
-            if (imagesWrapper && productImages.length > 1) {
-                setupImageSwipe(imagesWrapper, productImages, imageCounter);
+            if (imageElement && imageElement.tagName === 'IMG') {
+                setupImageZoom(imageElement, imageContainer);
+            }
+
+            // Свайпы для переключения изображений
+            if (productImages.length > 1) {
+                setupImageSwipe(imageContainer, productImages, imageElement, imageCounter);
             }
 
             setupProductModalActions(product, modal);
             showModal(modal);
         }
 
-        // 2.3.1 Исправленная анимация переключения фото с циклическим переходом
-        function setupImageSwipe(container, images, counter) {
+        function resetZoom() {
+            scale = 1;
+            offsetX = 0;
+            offsetY = 0;
+            isDragging = false;
+            isPinching = false;
+            initialDistance = 0;
+        }
+
+        function setupImageZoom(imageElement, container) {
+            imageElement.style.setProperty('--zoom-scale', scale);
+            imageElement.style.setProperty('--offset-x', `${offsetX}px`);
+            imageElement.style.setProperty('--offset-y', `${offsetY}px`);
+            
+            // Одиночное нажатие для зума
+            imageElement.addEventListener('click', (e) => {
+                if (scale === 1) {
+                    scale = 2;
+                    imageElement.classList.add('zoomed');
+                } else {
+                    resetZoom();
+                    imageElement.classList.remove('zoomed');
+                }
+                applyImageTransform(imageElement);
+            });
+
+            // Жесты для масштабирования и панорамирования
+            container.addEventListener('touchstart', handleTouchStart);
+            container.addEventListener('touchmove', handleTouchMove);
+            container.addEventListener('touchend', handleTouchEnd);
+
+            function handleTouchStart(e) {
+                if (e.touches.length === 2) {
+                    // Начало жеста двумя пальцами (зум)
+                    isPinching = true;
+                    const touch1 = e.touches[0];
+                    const touch2 = e.touches[1];
+                    initialDistance = Math.hypot(
+                        touch1.clientX - touch2.clientX,
+                        touch1.clientY - touch2.clientY
+                    );
+                } else if (e.touches.length === 1 && scale > 1) {
+                    // Начало жеста одним пальцем (панорамирование)
+                    isDragging = true;
+                    startX = e.touches[0].clientX - offsetX;
+                    startY = e.touches[0].clientY - offsetY;
+                }
+            }
+
+            function handleTouchMove(e) {
+                if (isPinching && e.touches.length === 2) {
+                    // Масштабирование
+                    e.preventDefault();
+                    const touch1 = e.touches[0];
+                    const touch2 = e.touches[1];
+                    const currentDistance = Math.hypot(
+                        touch1.clientX - touch2.clientX,
+                        touch1.clientY - touch2.clientY
+                    );
+                    
+                    scale = Math.max(1, Math.min(3, currentDistance / initialDistance));
+                    applyImageTransform(imageElement);
+                } else if (isDragging && e.touches.length === 1 && scale > 1) {
+                    // Панорамирование
+                    e.preventDefault();
+                    offsetX = e.touches[0].clientX - startX;
+                    offsetY = e.touches[0].clientY - startY;
+                    applyImageTransform(imageElement);
+                }
+            }
+
+            function handleTouchEnd(e) {
+                isDragging = false;
+                isPinching = false;
+            }
+        }
+
+        function applyImageTransform(imageElement) {
+            imageElement.style.setProperty('--zoom-scale', scale);
+            imageElement.style.setProperty('--offset-x', `${offsetX}px`);
+            imageElement.style.setProperty('--offset-y', `${offsetY}px`);
+        }
+
+        function setupImageSwipe(container, images, imageElement, imageCounter) {
             let startX = 0;
             let currentX = 0;
             let isSwiping = false;
-            let currentTranslate = -currentImageIndex * 100;
 
             container.addEventListener('touchstart', (e) => {
+                if (scale > 1) return; // Не обрабатываем свайпы при зуме
                 startX = e.touches[0].clientX;
                 currentX = startX;
                 isSwiping = true;
-                container.style.transition = 'none';
             });
 
             container.addEventListener('touchmove', (e) => {
-                if (!isSwiping) return;
+                if (!isSwiping || scale > 1) return;
                 currentX = e.touches[0].clientX;
-                const diff = currentX - startX;
-                container.style.transform = `translateX(${currentTranslate + diff}px)`;
             });
 
             container.addEventListener('touchend', () => {
-                if (!isSwiping) return;
+                if (!isSwiping || scale > 1) return;
                 
                 const diffX = startX - currentX;
                 const swipeThreshold = 50;
                 
                 if (Math.abs(diffX) > swipeThreshold) {
                     if (diffX > 0) {
-                        // Свайп вправо - следующий слайд
-                        currentImageIndex = (currentImageIndex + 1) % images.length;
+                        // Свайп влево - следующее изображение
+                        navigateImages(1, images, imageElement, imageCounter);
                     } else {
-                        // Свайп влево - предыдущий слайд
-                        currentImageIndex = (currentImageIndex - 1 + images.length) % images.length;
+                        // Свайп вправо - предыдущее изображение
+                        navigateImages(-1, images, imageElement, imageCounter);
                     }
-                }
-                
-                currentTranslate = -currentImageIndex * 100;
-                container.style.transition = 'transform 0.3s ease';
-                container.style.transform = `translateX(${currentTranslate}%)`;
-                
-                if (counter) {
-                    counter.textContent = `${currentImageIndex + 1} / ${images.length}`;
                 }
                 
                 isSwiping = false;
             });
+        }
 
-            // Обработчики для мыши
-            container.addEventListener('mousedown', (e) => {
-                startX = e.clientX;
-                currentX = startX;
-                isSwiping = true;
-                container.style.transition = 'none';
-            });
-
-            container.addEventListener('mousemove', (e) => {
-                if (!isSwiping) return;
-                currentX = e.clientX;
-                const diff = currentX - startX;
-                container.style.transform = `translateX(${currentTranslate + diff}px)`;
-            });
-
-            container.addEventListener('mouseup', () => {
-                if (!isSwiping) return;
-                
-                const diffX = startX - currentX;
-                const swipeThreshold = 50;
-                
-                if (Math.abs(diffX) > swipeThreshold) {
-                    if (diffX > 0) {
-                        // Свайп вправо - следующий слайд
-                        currentImageIndex = (currentImageIndex + 1) % images.length;
-                    } else {
-                        // Свайп влево - предыдущий слайд
-                        currentImageIndex = (currentImageIndex - 1 + images.length) % images.length;
-                    }
-                }
-                
-                currentTranslate = -currentImageIndex * 100;
-                container.style.transition = 'transform 0.3s ease';
-                container.style.transform = `translateX(${currentTranslate}%)`;
-                
-                if (counter) {
-                    counter.textContent = `${currentImageIndex + 1} / ${images.length}`;
-                }
-                
-                isSwiping = false;
-            });
-
-            container.addEventListener('mouseleave', () => {
-                if (isSwiping) {
-                    container.style.transition = 'transform 0.3s ease';
-                    container.style.transform = `translateX(${currentTranslate}%)`;
-                    isSwiping = false;
-                }
-            });
+        function navigateImages(direction, images, imageElement, imageCounter) {
+            currentImageIndex = (currentImageIndex + direction + images.length) % images.length;
+            imageElement.src = images[currentImageIndex];
+            resetZoom();
+            imageElement.classList.remove('zoomed');
+            imageCounter.textContent = `${currentImageIndex + 1} / ${images.length}`;
         }
 
         function setupProductModalActions(product, modal) {
@@ -2153,9 +2097,9 @@
                         <button class="quantity-btn minus" data-id="${product.id}">-</button>
                         <span class="quantity-display">${cartItem.quantity}</span>
                         <button class="quantity-btn plus" data-id="${product.id}">+</button>
-                        </div>
-                        <button class="go-to-cart-btn">Перейти в корзину</button>
-                    `;
+                    </div>
+                    <button class="go-to-cart-btn">Перейти в корзину</button>
+                `;
             } else {
                 actionsContainer.innerHTML = `<button class="add-to-cart-btn">Добавить в корзину</button>`;
             }
@@ -2384,6 +2328,12 @@
             
             if (pageId === 'cart') {
                 updateCartDisplay();
+            } else if (pageId === 'catalog' && currentSearchQuery) {
+                // При переключении на каталог, если есть активный поиск, заполняем поле
+                setTimeout(() => {
+                    document.getElementById('catalog-search').value = currentSearchQuery;
+                    performSearchActual(currentSearchQuery);
+                }, 100);
             }
         }
 
@@ -2392,9 +2342,6 @@
                 if (switchToCatalog) {
                     switchPage('catalog');
                 }
-                // 3.1 Не фильтруем мини-каталоги
-                fillProductsGrid('recommended-products', homeRecommendations);
-                fillProductsGrid('cart-recommended-products', cartRecommendations);
                 showAllProducts();
                 return;
             }
@@ -2402,12 +2349,12 @@
             currentSearchQuery = query.trim();
             
             if (switchToCatalog) {
+                // Очищаем поле в главной
+                document.getElementById('home-search').value = '';
                 switchPage('catalog');
                 // Ждем переключения страницы и затем выполняем поиск
                 setTimeout(() => {
                     document.getElementById('catalog-search').value = currentSearchQuery;
-                    const catalogClear = document.getElementById('catalog-search-clear');
-                    if (catalogClear) catalogClear.style.display = 'block';
                     performSearchActual(currentSearchQuery);
                 }, 100);
             } else {
@@ -2416,32 +2363,39 @@
         }
 
         function showAllProducts() {
-            // 3.1 Восстанавливаем только основной каталог, мини-каталоги не трогаем
-            fillProductsGrid('catalog-products', products);
+            document.querySelectorAll('.product-card').forEach(card => {
+                if (card) card.style.display = 'block';
+            });
         }
 
         function performSearchActual(query) {
             const searchTerm = query.toLowerCase().trim();
+            let foundAny = false;
             
             // Разбиваем запрос на слова для более гибкого поиска
             const searchWords = searchTerm.split(/\s+/).filter(word => word.length > 0);
             
-            // 3.1 Фильтруем только основной каталог
-            const catalogProducts = document.getElementById('catalog-products');
-            if (catalogProducts) {
-                catalogProducts.innerHTML = '';
-                
-                const filteredProducts = products.filter(product => {
-                    const nameText = product.shortName.toLowerCase();
-                    return searchWords.every(word => nameText.includes(word));
-                });
-                
-                if (filteredProducts.length > 0) {
-                    fillProductsGrid('catalog-products', filteredProducts);
-                } else {
-                    showNotification('Товары по вашему запросу не найдены');
-                    showEmptyState('catalog-products', 'Товары по вашему запросу не найдены');
-                }
+            document.querySelectorAll('.product-card').forEach(card => {
+                if (card) {
+                    const productName = card.querySelector('.product-name');
+                    if (productName) {
+                        const nameText = productName.textContent.toLowerCase();
+                        
+                        // Проверяем, содержит ли название все слова запроса
+                        const matches = searchWords.every(word => nameText.includes(word));
+                        
+                        if (matches) {
+                            card.style.display = 'block';
+                            foundAny = true;
+                        } else {
+                            card.style.display = 'none';
+                        }
+                    }
+                } 
+            });
+            
+            if (!foundAny) {
+                showNotification('Товары по вашему запросу не найдены');
             }
         }
 
