@@ -271,7 +271,7 @@
        .help-btn {
             height: 36px;
             width: 36px;
-            margin: -1px 182px 3px;                
+            margin: -1px 0px 3px 182px;                
             border: 1px solid #fff;
             background: #fff;
             color: #000;
@@ -1108,7 +1108,7 @@
         
         @media (max-width: 780px) {
             .header {
-                padding: 15px 12px 0;
+                padding: 15px 6px 0;
             }
             
             .search-container {
@@ -1130,7 +1130,7 @@
             
             .products-grid, .catalog-grid {
                 grid-template-columns: repeat(2, 1fr);
-                margin: 5px 5px 15px;
+                margin: 10px 5px 15px;
             }
             
             .section-content, .order-content {
@@ -1201,8 +1201,6 @@
             
             .sections-row {
                 display: flex;
-                gap: var(--section-margin);
-                margin: var(--section-margin) 0;
             }
             
             .notifications-section, .orders-section {
@@ -1309,6 +1307,11 @@
     </style>
 </head>
 <body>
+    <div id="telegram-check" style="display: none; text-align: center; padding: 50px 20px; background: #000; color: #fff; min-height: 100vh; display: flex; flex-direction: column; justify-content: center; align-items: center; position: fixed; top: 0; left: 0; right: 0; bottom: 0; z-index: 10000;">
+        <h2 style="margin-bottom: 20px; font-size: 24px;">Откройте магазин через мини-апп в Telegram</h2>
+        <a id="open-mini-app-btn" href="https://t.me/yeahmagazplusgoydaaaa_bot?start" style="display: inline-block; padding: 15px 30px; background: #0088cc; color: white; text-decoration: none; border-radius: 10px; font-size: 18px; font-weight: bold;">Открыть мини-апп</a>
+    </div>
+
     <div class="app-container">
         <!-- Главная страница -->
         <section id="home" class="page active">
@@ -1474,7 +1477,7 @@
                     <button class="profile-btn" id="about-btn">О нас</button>
                 </div>
 
-                <div class="version-info">Версия: 0.0.36</div>
+                <div class="version-info">Версия: 0.0.37</div>
             </div>
         </section>
         
@@ -1547,7 +1550,42 @@
     <div class="notification" id="notification"></div>
     
     <script>
-        // ... (скрипт остается без изменений, как в предыдущей версии)
+        function checkTelegramEnvironment() {
+            // Проверяем различные признаки Telegram WebApp
+            const isTelegramWebView = window.Telegram && window.Telegram.WebApp;
+            const hasTelegramInitData = window.Telegram && window.Telegram.WebApp && window.Telegram.WebApp.initData;
+            const urlParams = new URLSearchParams(window.location.search);
+            const hasTelegramParams = urlParams.has('tgWebAppPlatform');
+            
+            console.log('Telegram WebApp detected:', isTelegramWebView);
+            console.log('Has init data:', hasTelegramInitData);
+            console.log('Has Telegram params:', hasTelegramParams);
+            
+            // Если не в Telegram WebApp, показываем сообщение
+            if (!isTelegramWebView && !hasTelegramParams) {
+                document.getElementById('telegram-check').style.display = 'flex';
+                document.querySelector('.app-container').style.display = 'none';
+                document.querySelector('.bottom-nav').style.display = 'none';
+                return false;
+            }
+            
+            // Если в Telegram WebApp, скрываем сообщение и показываем приложение
+            document.getElementById('telegram-check').style.display = 'none';
+            document.querySelector('.app-container').style.display = 'block';
+            document.querySelector('.bottom-nav').style.display = 'flex';
+            return true;
+        }
+
+        // Запускаем проверку при загрузке
+        document.addEventListener('DOMContentLoaded', function() {
+            const isTelegram = checkTelegramEnvironment();
+            
+            if (isTelegram) {
+                // Загружаем приложение только если в Telegram
+                loadProducts();
+            }
+        });
+
         // Полный скрипт из предыдущего ответа здесь
         let products = [];
         let cart = [];
@@ -2529,17 +2567,27 @@
             
             if (pageId === 'cart') {
                 updateCartDisplay();
-            } else if (pageId === 'catalog' && currentSearchQuery) {
-                // При переключении на каталог, если есть активный поиск, заполняем поле
-                setTimeout(() => {
-                    document.getElementById('catalog-search').value = currentSearchQuery;
+            } else if (pageId === 'catalog') {
+                // Восстанавливаем состояние поиска при возврате в каталог
+                const catalogSearchInput = document.getElementById('catalog-search');
+                if (catalogSearchInput && currentSearchQuery) {
+                    catalogSearchInput.value = currentSearchQuery;
+                    // Показываем кнопку очистки если есть текст
+                    const clearBtn = catalogSearchInput.parentNode.querySelector('.clear-search');
+                    if (clearBtn) {
+                        clearBtn.style.display = currentSearchQuery ? 'flex' : 'none';
+                    }
+                    // Применяем фильтрацию
                     performSearchActual(currentSearchQuery);
-                }, 100);
+                } else {
+                    // Если поиска нет, показываем все товары
+                    showAllProducts();
+                }
             }
             
             // Сбрасываем поиск на главной и в корзине
             if (pageId === 'home' || pageId === 'cart') {
-                currentSearchQuery = '';
+                // Не сбрасываем currentSearchQuery полностью, только очищаем поля
                 document.getElementById('home-search').value = '';
                 document.getElementById('catalog-search').value = '';
                 
@@ -2553,6 +2601,23 @@
                     fillProductsGrid('recommended-products', products.slice(0, 4));
                 } else if (pageId === 'cart') {
                     fillProductsGrid('cart-recommended-products', products.slice(2, 6));
+                }
+            }
+        }
+
+        function refreshCatalogDisplay() {
+            const catalogGrid = document.getElementById('catalog-products');
+            if (catalogGrid && products.length > 0) {
+                if (currentSearchQuery) {
+                    // Фильтруем товары по текущему запросу
+                    const filteredProducts = products.filter(product => 
+                        product.shortName.toLowerCase().includes(currentSearchQuery.toLowerCase()) ||
+                        product.fullName.toLowerCase().includes(currentSearchQuery.toLowerCase())
+                    );
+                    fillProductsGrid('catalog-products', filteredProducts);
+                } else {
+                    // Показываем все товары
+                    fillProductsGrid('catalog-products', products);
                 }
             }
         }
@@ -2590,31 +2655,26 @@
 
         function performSearchActual(query) {
             const searchTerm = query.toLowerCase().trim();
-            let foundAny = false;
+            currentSearchQuery = searchTerm; // Сохраняем запрос
             
-            // Разбиваем запрос на слова для более гибкого поиска
-            const searchWords = searchTerm.split(/\s+/).filter(word => word.length > 0);
+            if (!searchTerm) {
+                showAllProducts();
+                // Перерисовываем каталог чтобы показать все товары
+                fillProductsGrid('catalog-products', products);
+                return;
+            }
             
-            document.querySelectorAll('.product-card').forEach(card => {
-                if (card) {
-                    const productName = card.querySelector('.product-name');
-                    if (productName) {
-                        const nameText = productName.textContent.toLowerCase();
-                        
-                        // Проверяем, содержит ли название все слова запроса
-                        const matches = searchWords.every(word => nameText.includes(word));
-                        
-                        if (matches) {
-                            card.style.display = 'block';
-                            foundAny = true;
-                        } else {
-                            card.style.display = 'none';
-                        }
-                    }
-                } 
-            });
+            // Фильтруем товары
+            const filteredProducts = products.filter(product => 
+                product.shortName.toLowerCase().includes(searchTerm) ||
+                product.fullName.toLowerCase().includes(searchTerm) ||
+                (product.description && product.description.toLowerCase().includes(searchTerm))
+            );
             
-            if (!foundAny) {
+            // Перерисовываем каталог отфильтрованными товарами
+            fillProductsGrid('catalog-products', filteredProducts);
+            
+            if (filteredProducts.length === 0) {
                 showNotification('Товары по вашему запросу не найдены');
             }
         }
