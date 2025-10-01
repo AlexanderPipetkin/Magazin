@@ -285,29 +285,6 @@
         margin: 0;
         }
 
-        .settings-btn {
-            height: 36px;
-            width: 36px;
-            border: 1px solid #fff;
-            background: #fff;
-            color: #000;
-            font-size: 18px;
-            cursor: pointer;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-weight: bold;
-            position: absolute;
-            top: 0;
-            right: 0;
-            margin: 0;
-        }
-
-        .settings-btn svg {
-            width: 20px;
-            height: 20px;
-        }
-
         .recommendations-section {
             margin: 30px auto;
         }
@@ -1313,7 +1290,6 @@
         .settings-btn {
             height: 36px;
             width: 36px;
-            margin: -1px 3px;                
             border: 1px solid #fff;
             background: #fff;
             color: #000;
@@ -1323,11 +1299,15 @@
             align-items: center;
             justify-content: center;
             font-weight: bold;
+            position: absolute;
+            top: 0;
+            right: 0;
+            margin: 0;
         }
-        
-        .settings-btn svg {
-            width: 20px;
-            height: 20px;
+
+        .settings-btn img {
+            width: 25px;
+            height: 25px;
         }
     </style>
 </head>
@@ -1465,7 +1445,9 @@
                  <div class="orders-section">
                     <div class="orders-header">
                         <div class="section-title">Я, как продавец</div>
-                        <button class="help-btn" id="help-btn">?</button>
+                        <button class="settings-btn" id="seller-settings-btn">
+                            <img src="media/icons/settings.png" alt="Настройки"/>
+                        </button>
                     </div>
                     <div class="section-content" style="padding: 55px 15px 15px !important;">
                         <div class="profile-info" style="border: none; padding: 0; margin: 0;">
@@ -1495,7 +1477,7 @@
                     <button class="profile-btn" id="about-btn">О нас</button>
                 </div>
 
-                <div class="version-info">Версия: 0.0.36</div>
+                <div class="version-info">Версия: 0.0.37</div>
             </div>
         </section>
         
@@ -1681,7 +1663,8 @@
                     !notification.userId || notification.userId === telegramUserData.id
                 ) : notifications;
             
-            const recentNotifications = userNotifications.slice(-3).reverse();
+            // Берем 3 последних уведомления (новые сверху) и НЕ переворачиваем
+            const recentNotifications = userNotifications.slice(-3);
             
             let html = '<ul class="notifications-list">';
             recentNotifications.forEach(notification => {
