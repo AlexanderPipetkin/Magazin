@@ -1477,7 +1477,7 @@
                     <button class="profile-btn" id="about-btn">О нас</button>
                 </div>
 
-                <div class="version-info">Версия: 0.0.37</div>
+                <div class="version-info">Версия: 0.0.36</div>
             </div>
         </section>
         
@@ -1600,20 +1600,52 @@
             }
         }
 
+        // Улучшенная функция загрузки данных с обработкой CORS
+        async function fetchData(url) {
+            try {
+                // Для Telegram Mini App используем абсолютные пути
+                const fullUrl = window.location.hostname.includes('telegram.org') ? 
+                    `${window.location.origin}${url}` : url;
+                
+                const response = await fetch(fullUrl, {
+                    method: 'GET',
+                    mode: 'cors',
+                    credentials: 'same-origin'
+                });
+                
+                if (!response.ok) {
+                    throw new Error(`HTTP error! status: ${response.status}`);
+                }
+                
+                return await response.json();
+            } catch (error) {
+                console.error('Ошибка загрузки данных:', error);
+                
+                // Возвращаем заглушки если данные не загрузились
+                if (url.includes('products')) {
+                    return getFallbackProducts();
+                } else if (url.includes('sellers')) {
+                    return getFallbackSellers();
+                } else if (url.includes('notifications')) {
+                    return getFallbackNotifications();
+                }
+                
+                return [];
+            }
+        }
+
         // Загрузка каталога из JSON
         async function loadProducts() {
             try {
-                const response = await fetch('db/products.json');
-                if (!response.ok) throw new Error('Ошибка загрузки каталога');
-                const data = await response.json();
-                products = data.products || data;
+                const data = await fetchData('db/products.json');
+                products = data.products || data || getFallbackProducts();
                 
                 // Загружаем продавцов после загрузки товаров
                 await loadSellers();
                 initializeApp();
             } catch (error) {
                 console.error('Ошибка загрузки товаров:', error);
-                products = [];
+                products = getFallbackProducts();
                 await loadSellers();
                 initializeApp();
             }
@@ -1622,27 +1654,23 @@
         // Загрузка данных продавцов
         async function loadSellers() {
             try {
-                const response = await fetch('db/sellers.json');
-                if (!response.ok) throw new Error('Ошибка загрузки данных продавцов');
-                const data = await response.json();
-                sellers = data.sellers || data;
+                const data = await fetchData('db/sellers.json');
+                sellers = data.sellers || data || getFallbackSellers();
             } catch (error) {
                 console.error('Ошибка загрузки продавцов:', error);
-                sellers = [];
+                sellers = getFallbackSellers();
             }
         }
 
         // Загрузка уведомлений из JSON
         async function loadNotifications() {
             try {
-                const response = await fetch('db/notifications.json');
-                if (!response.ok) throw new Error('Ошибка загрузки уведомлений');
-                const data = await response.json();
-                notifications = data.notifications || data;
+                const data = await fetchData('db/notifications.json');
+                notifications = data.notifications || data || getFallbackNotifications();
                 displayNotifications();
             } catch (error) {
                 console.error('Ошибка загрузки уведомлений:', error);
-                notifications = [];
+                notifications = getFallbackNotifications();
                 displayNotifications();
             }
         }
@@ -1681,6 +1709,56 @@
             html += '</ul>';
             
             notificationsContent.innerHTML = html;
+        }
+
+        function initTelegramWebApp() {
+            if (window.Telegram && window.Telegram.WebApp) {
+                const webApp = window.Telegram.WebApp;
+                
+                try {
+                    // Инициализируем WebApp
+                    webApp.ready();
+                    webApp.expand();
+                    
+                    // Получаем данные пользователя
+                    telegramUserData = webApp.initDataUnsafe.user || {};
+                    
+                    if (telegramUserData && Object.keys(telegramUserData).length > 0) {
+                        // Реальные данные из Telegram
+                        const fullName = telegramUserData.first_name + 
+                            (telegramUserData.last_name ? ' ' + telegramUserData.last_name : '');
+                        const username = telegramUserData.username ? '@' + telegramUserData.username : 'Не указан';
+                        const userId = telegramUserData.id || 'Не доступен';
+                        
+                        document.getElementById('profile-name').textContent = fullName;
+                        document.getElementById('profile-username').textContent = username;
+                        document.getElementById('profile-id').textContent = userId;
+                        
+                        // Аватар
+                        const avatarElement = document.getElementById('profile-avatar');
+                        if (telegramUserData.photo_url) {
+                            avatarElement.innerHTML = `<img src="${telegramUserData.photo_url}" alt="Аватар" onerror="this.style.display='none'; this.parentNode.innerHTML='${fullName.charAt(0)}'">`;
+                        } else {
+                            avatarElement.textContent = telegramUserData.first_name ? 
+                                telegramUserData.first_name.charAt(0).toUpperCase() : 'U';
+                        }
+                        
+                        // Проверяем, является ли пользователь продавцом
+                        checkSellerProfile();
+                        
+                    } else {
+                        setFallbackProfileData();
+                    }
+                    
+                } catch (error) {
+                    console.error('Ошибка инициализации Telegram WebApp:', error);
+                    setFallbackProfileData();
+                }
+                
+            } else {
+                // Если не в Telegram, используем заглушки
+                setFallbackProfileData();
+            }
         }
 
         // Получение данных пользователя из Telegram
@@ -1734,39 +1812,45 @@
             if (!telegramUserData || !telegramUserData.id) return;
             
             const seller = sellers.find(s => s.userId == telegramUserData.id);
-            const sellerProfile = document.getElementById('seller-profile');
+            const sellerSection = document.querySelector('.orders-section'); // Секция продавца
             
-            if (seller) {
-                sellerProfile.style.display = 'block';
+            if (seller && sellerSection) {
+                sellerSection.style.display = 'block';
                 document.getElementById('seller-company').textContent = seller.companyName || 'Не указано';
                 document.getElementById('seller-contact').textContent = seller.contactPhone || 'Не указан';
                 
                 const sellerAvatar = document.getElementById('seller-avatar');
                 if (seller.avatar) {
-                    sellerAvatar.innerHTML = `<img src="${seller.avatar}" alt="Аватар продавца">`;
+                    sellerAvatar.innerHTML = `<img src="${seller.avatar}" alt="${seller.companyName}" onerror="this.style.display='none'; this.parentNode.innerHTML='${seller.companyName.charAt(0)}'">`;
                 } else {
                     sellerAvatar.textContent = seller.companyName ? 
                         seller.companyName.charAt(0).toUpperCase() : 'S';
                 }
-            } else {
-                sellerProfile.style.display = 'none';
+            } else if (sellerSection) {
+                sellerSection.style.display = 'none';
             }
         }
 
         function setFallbackProfileData() {
-            document.getElementById('profile-name').textContent = 'Telegram не доступен';
-            document.getElementById('profile-username').textContent = '@откройте в Telegram';
-            document.getElementById('profile-id').textContent = '---';
+            document.getElementById('profile-name').textContent = 'Гость';
+            document.getElementById('profile-username').textContent = '@username';
+            document.getElementById('profile-id').textContent = '000000000';
+            
+            const avatarElement = document.getElementById('profile-avatar');
+            if (avatarElement) {
+                avatarElement.textContent = 'П';
+            }
         }
 
+
         function initializeApp() {
+            // Инициализируем Telegram WebApp
+            initTelegramWebApp();
+
             // Загружаем корзину перед инициализацией
             loadCart();
-
-            // Получаем данные пользователя из Telegram
-            getTelegramUserData();
             
-            // Загружаем уведомления только если в Telegram
+            // Загружаем уведомления
             loadNotifications();
             
             // Заполнение рекомендаций
