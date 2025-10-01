@@ -24,7 +24,7 @@
 
         @font-face {
             font-family: 'Moscow Sans';
-            src: local('Moscow Sans Regular'),
+            src: local('Moscow Sans'),
                  url('fonts/MoscowSans.woff2') format('woff2'),
                  url('fonts/MoscowSans.woff') format('woff'),
                  url('fonts/MoscowSans.ttf') format('truetype');
@@ -171,7 +171,7 @@
         }
         
         .section-content {
-            padding: 35px 15px 15px !important;
+            padding: 10px 15px !important;
             font-size: 16px;
             line-height: 1.4;
         }
@@ -255,7 +255,6 @@
             grid-template-columns: repeat(2, 1fr);
             gap: var(--card-gap);
             margin: 0 12px;
-            padding-bottom: 20px;
         }
         
         .product-card {
@@ -337,7 +336,6 @@
             grid-template-columns: repeat(2, 1fr);
             gap: var(--card-gap);
             margin: var(--section-margin) 12px;
-            padding-bottom: 20px;
         }
         
         .cart-container {
@@ -689,7 +687,7 @@
             max-height: 100%;
             object-fit: contain;
             transition: transform 0.3s ease;
-            cursor: pointer;
+            cursor: zoom-in;
         }
         
         .product-modal-image.zoomed {
@@ -1213,40 +1211,6 @@
 
         .seller-profile {
             margin-top: 20px;
-            border: var(--border-width) solid var(--border-color);
-            border-radius: var(--border-radius);
-            position: relative;
-            overflow: hidden;
-            padding-top: 35px;
-        }
-
-        .seller-profile .profile-header {
-            position: absolute;
-            top: 0;
-            left: 0;
-            margin: 0;
-        }
-
-        .image-slide-enter {
-            transform: translateX(100%);
-            opacity: 0;
-        }
-
-        .image-slide-enter-active {
-            transform: translateX(0);
-            opacity: 1;
-            transition: transform 0.3s ease, opacity 0.3s ease;
-        }
-
-        .image-slide-exit {
-            transform: translateX(0);
-            opacity: 1;
-        }
-
-        .image-slide-exit-active {
-            transform: translateX(-100%);
-            opacity: 0;
-            transition: transform 0.3s ease, opacity 0.3s ease;
         }
     </style>
 </head>
@@ -1395,7 +1359,7 @@
                     <button class="profile-btn" id="about-btn">О нас</button>
                 </div>
 
-                <div class="version-info">Версия: 0.0.34</div>
+                <div class="version-info">Версия: 0.0.14</div>
             </div>
         </section>
         
@@ -1486,7 +1450,6 @@
         let isDragging = false;
         let isPinching = false;
         let initialDistance = 0;
-        let lastTap = 0;
 
         // Функция для безопасной загрузки корзины из localStorage
         function loadCart() {
@@ -1893,9 +1856,6 @@
             const productImages = Array.isArray(product.images) && product.images.length > 0 ? 
                 product.images : (product.image ? [product.image] : []);
             
-            // Получаем данные продавца по sellerId
-            const seller = sellers.find(s => s.id === product.sellerId);
-            
             content.innerHTML = `
                 <span class="product-modal-close">&times;</span>
                 
@@ -1953,15 +1913,8 @@
                     <div class="modal-subsection-title">Продавец</div>
                     <div class="modal-subsection-content">
                         <div class="seller-info">
-                            <div class="seller-avatar">
-                                ${seller && seller.avatar ? 
-                                    `<img src="${seller.avatar}" alt="${seller.companyName}">` : 
-                                    (seller && seller.companyName ? seller.companyName.charAt(0) : '?')}
-                            </div>
-                            <div>
-                                <div class="seller-name">${seller ? seller.companyName : 'Неизвестно'}</div>
-                                <div>${seller ? seller.contactPhone : ''}</div>
-                            </div>
+                            <div class="seller-avatar">${product.seller ? product.seller.charAt(0) : '?'}</div>
+                            <div class="seller-name">${product.seller || 'Неизвестно'}</div>
                         </div>
                     </div>
                 </div>
@@ -2018,33 +1971,26 @@
             imageElement.style.setProperty('--offset-x', `${offsetX}px`);
             imageElement.style.setProperty('--offset-y', `${offsetY}px`);
             
-            // Двойное нажатие для зума
-            imageElement.addEventListener('touchend', function(e) {
-                const currentTime = new Date().getTime();
-                const tapLength = currentTime - lastTap;
-                if (tapLength < 500 && tapLength > 0) {
-                    // Двойной тап
-                    if (scale === 1) {
-                        scale = 2;
-                        imageElement.classList.add('zoomed');
-                    } else {
-                        resetZoom();
-                        imageElement.classList.remove('zoomed');
-                    }
-                    applyImageTransform(imageElement);
+            // Одиночное нажатие для зума
+            imageElement.addEventListener('click', (e) => {
+                if (scale === 1) {
+                    scale = 2;
+                    imageElement.classList.add('zoomed');
+                } else {
+                    resetZoom();
+                    imageElement.classList.remove('zoomed');
                 }
-                lastTap = currentTime;
+                applyImageTransform(imageElement);
             });
 
             // Жесты для масштабирования и панорамирования
-            container.addEventListener('touchstart', handleTouchStart, { passive: false });
-            container.addEventListener('touchmove', handleTouchMove, { passive: false });
+            container.addEventListener('touchstart', handleTouchStart);
+            container.addEventListener('touchmove', handleTouchMove);
             container.addEventListener('touchend', handleTouchEnd);
 
             function handleTouchStart(e) {
                 if (e.touches.length === 2) {
                     // Начало жеста двумя пальцами (зум)
-                    e.preventDefault();
                     isPinching = true;
                     const touch1 = e.touches[0];
                     const touch2 = e.touches[1];
@@ -2054,7 +2000,6 @@
                     );
                 } else if (e.touches.length === 1 && scale > 1) {
                     // Начало жеста одним пальцем (панорамирование)
-                    e.preventDefault();
                     isDragging = true;
                     startX = e.touches[0].clientX - offsetX;
                     startY = e.touches[0].clientY - offsetY;
@@ -2079,16 +2024,6 @@
                     e.preventDefault();
                     offsetX = e.touches[0].clientX - startX;
                     offsetY = e.touches[0].clientY - startY;
-                    
-                    // Ограничиваем панорамирование, чтобы не увести изображение слишком далеко
-                    const imgRect = imageElement.getBoundingClientRect();
-                    const containerRect = container.getBoundingClientRect();
-                    const maxX = (imgRect.width * scale - containerRect.width) / 2;
-                    const maxY = (imgRect.height * scale - containerRect.height) / 2;
-                    
-                    offsetX = Math.max(-maxX, Math.min(maxX, offsetX));
-                    offsetY = Math.max(-maxY, Math.min(maxY, offsetY));
-                    
                     applyImageTransform(imageElement);
                 }
             }
@@ -2115,18 +2050,11 @@
                 startX = e.touches[0].clientX;
                 currentX = startX;
                 isSwiping = true;
-                
-                // Добавляем классы для анимации
-                imageElement.classList.add('image-slide-exit');
             });
 
             container.addEventListener('touchmove', (e) => {
                 if (!isSwiping || scale > 1) return;
                 currentX = e.touches[0].clientX;
-                
-                // Анимация сдвига текущего изображения
-                const diffX = currentX - startX;
-                imageElement.style.transform = `translateX(${diffX}px)`;
             });
 
             container.addEventListener('touchend', () => {
@@ -2143,46 +2071,18 @@
                         // Свайп вправо - предыдущее изображение
                         navigateImages(-1, images, imageElement, imageCounter);
                     }
-                } else {
-                    // Возвращаем изображение на место
-                    imageElement.style.transform = 'translateX(0)';
                 }
-                
-                // Убираем класс анимации
-                imageElement.classList.remove('image-slide-exit');
                 
                 isSwiping = false;
             });
         }
 
         function navigateImages(direction, images, imageElement, imageCounter) {
-            const oldIndex = currentImageIndex;
             currentImageIndex = (currentImageIndex + direction + images.length) % images.length;
-            
-            // Анимация смены изображения
-            imageElement.classList.add('image-slide-exit-active');
-            
-            setTimeout(() => {
-                imageElement.src = images[currentImageIndex];
-                imageElement.classList.remove('image-slide-exit', 'image-slide-exit-active');
-                imageElement.classList.add('image-slide-enter');
-                
-                // Сбрасываем трансформацию для нового изображения
-                imageElement.style.transform = direction > 0 ? 'translateX(100%)' : 'translateX(-100%)';
-                
-                setTimeout(() => {
-                    imageElement.classList.add('image-slide-enter-active');
-                    imageElement.style.transform = 'translateX(0)';
-                    
-                    setTimeout(() => {
-                        imageElement.classList.remove('image-slide-enter', 'image-slide-enter-active');
-                    }, 300);
-                }, 10);
-                
-                resetZoom();
-                imageElement.classList.remove('zoomed');
-                imageCounter.textContent = `${currentImageIndex + 1} / ${images.length}`;
-            }, 300);
+            imageElement.src = images[currentImageIndex];
+            resetZoom();
+            imageElement.classList.remove('zoomed');
+            imageCounter.textContent = `${currentImageIndex + 1} / ${images.length}`;
         }
 
         function setupProductModalActions(product, modal) {
