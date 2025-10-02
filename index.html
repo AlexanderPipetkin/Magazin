@@ -1794,10 +1794,14 @@
 
         // Проверка профиля продавца
         function checkSellerProfile() {
+            const sellerSection = document.getElementById('seller-profile');
+            if (sellerSection) {
+                sellerSection.style.display = 'none';
+            }
+            
             if (!telegramUserData || !telegramUserData.id) return;
             
             const seller = sellers.find(s => s.userId == telegramUserData.id);
-            const sellerSection = document.querySelector('.orders-section');
             
             if (seller && sellerSection) {
                 sellerSection.style.display = 'block';
@@ -1811,8 +1815,6 @@
                     sellerAvatar.textContent = seller.companyName ? 
                         seller.companyName.charAt(0).toUpperCase() : 'S';
                 }
-            } else if (sellerSection) {
-                sellerSection.style.display = 'none';
             }
         }
 
