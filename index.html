@@ -3,7 +3,6 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="preload" href="fonts/MOSCOWSANSREGULAR.TTF" as="font" type="font/truetype" crossorigin>
     <title>Магазин в Telegram</title>
     <script src="https://telegram.org/js/telegram-web-app.js"></script>
     <style>
@@ -21,7 +20,7 @@
             --card-gap: 20px;
             --nav-height: 60px;
             --transition: all 0.3s ease;
-            --main-font: 'Moscow Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', system-ui, sans-serif;
+            --main-font: Moscow Sans, -apple-system, BlinkMacSystemFont, 'Segoe UI', system-ui, sans-serif;
         }
 
         @font-face {
@@ -296,7 +295,6 @@
             max-width: 100%;
             max-height: 100%;
             object-fit: contain;
-            transition: transform 0.3s ease;
         }
         
         .product-info {
@@ -323,7 +321,6 @@
             margin: 60px 0;
             color: var(--primary-text);
             text-decoration: none;
-            transition: var(--transition);
         }
         
         .catalog-grid {
@@ -410,6 +407,7 @@
             gap: 10px;
             margin-left: auto;
             align-self: center;
+            position: relative;
         }
         
         .quantity-btn {
@@ -425,6 +423,15 @@
             cursor: pointer;
             transition: var(--transition);
             font-size: 16px;
+            flex-shrink: 0;
+        }
+        
+        .quantity-display {
+            font-size: 16px;
+            font-weight: bold;
+            min-width: 20px;
+            text-align: center;
+            padding: 0 5px;
         }
         
         .quantity-input {
@@ -435,52 +442,49 @@
             background: transparent;
             color: var(--primary-text);
             text-align: center;
-            font-size: 16px;
-            font-weight: bold;
-        }
-        
-        .quantity-display {
-            font-size: 16px;
-            font-weight: bold;
-            min-width: 40px;
-            text-align: center;
-            cursor: pointer;
-        }
-        
-        .bulk-panel {
-            position: absolute;
-            background: var(--primary-bg);
-            border: var(--border-width) solid var(--border-color);
-            border-radius: var(--border-radius);
-            padding: 10px;
+            font-size: 14px;
             display: none;
-            flex-wrap: wrap;
-            gap: 5px;
-            z-index: 100;
+        }
+        
+        .quick-select-panel {
+            position: absolute;
             bottom: 100%;
             left: 50%;
             transform: translateX(-50%);
+            background: var(--primary-bg);
+            border: var(--border-width) solid var(--border-color);
+            border-radius: var(--border-radius);
+            padding: 8px;
+            display: none;
+            gap: 5px;
+            z-index: 100;
             margin-bottom: 5px;
-            animation: fadeIn 0.2s ease;
+            flex-direction: column;
+            align-items: center;
+            width: max-content;
+            opacity: 0;
+            transform: translateX(-50%) translateY(10px);
+            transition: all 0.3s ease;
         }
         
-        .bulk-panel.active {
+        .quick-select-panel.show {
             display: flex;
+            opacity: 1;
+            transform: translateX(-50%) translateY(0);
         }
         
-        .bulk-btn {
-            padding: 5px 10px;
+        .quick-select-btn {
+            padding: 8px 12px;
             border: var(--border-width) solid var(--border-color);
             border-radius: var(--border-radius-small);
             background: transparent;
             color: var(--primary-text);
-            cursor: pointer;
             font-size: 12px;
+            cursor: pointer;
             transition: var(--transition);
-        }
-        
-        .bulk-btn:hover {
-            background: rgba(255, 255, 255, 0.1);
+            white-space: nowrap;
+            width: 60px;
+            text-align: center;
         }
         
         .cart-total {
@@ -506,7 +510,6 @@
         .checkout-btn:disabled {
             opacity: 0.5;
             cursor: not-allowed;
-            transform: none;
         }
         
         .profile-section {
@@ -635,6 +638,11 @@
             animation: fadeOut 0.3s ease forwards;
         }
         
+        @keyframes fadeOut {
+            from { opacity: 1; transform: translateY(0); }
+            to { opacity: 0; transform: translateY(10px); }
+        }
+        
         .product-modal-content {
             background: var(--primary-bg);
             border: var(--border-width) solid var(--border-color);
@@ -704,6 +712,10 @@
         .product-modal-image.zoomed {
             cursor: grab;
             transform: scale(var(--zoom-scale, 2)) translate(var(--offset-x, 0), var(--offset-y, 0));
+        }
+        
+        .product-modal-image.zoomed:active {
+            cursor: grabbing;
         }
         
         .image-counter {
@@ -865,8 +877,6 @@
             transition: all 0.3s ease;
             animation: slideInControls 0.3s ease;
             position: relative;
-            min-width: 140px;
-            justify-content: center;
         }
         
         @keyframes slideInControls {
@@ -1095,6 +1105,10 @@
             color: #ff6b6b;
             font-size: 16px;
         }
+
+        .seller-profile {
+            margin-top: 20px;
+        }
         
         .settings-btn {
             height: 36px;
@@ -1117,6 +1131,14 @@
         .settings-btn img {
             width: 25px;
             height: 25px;
+        }
+        
+        .remove-confirm-modal {
+            display: none;
+        }
+        
+        .remove-confirm-modal.active {
+            display: flex;
         }
 
         @media (max-width: 780px) {
@@ -1169,18 +1191,9 @@
                 flex-wrap: wrap;
             }
             
-            .quantity-controls {
-                flex: 1;
-                max-width: none;
-                justify-content: center;
-                min-width: 140px;
-            }
-            
-            .go-to-cart-btn {
-                flex: 2;
-                min-width: auto;
-                margin-left: 10px;
-                height: 45px;
+            .add-to-cart-btn, .go-to-cart-btn {
+                min-width: 100%;
+                height: 40px;
             }
             
             .cart-item {
@@ -1195,6 +1208,24 @@
             
             .cart-item-controls {
                 justify-content: flex-end;
+            }
+            
+            .product-modal-actions {
+                flex-direction: row;
+                align-items: center;
+                justify-content: space-between;
+            }
+            
+            .quantity-controls {
+                flex: 1;
+                max-width: 120px;
+                justify-content: center;
+            }
+            
+            .go-to-cart-btn {
+                flex: 2;
+                min-width: auto;
+                margin-left: 10px;
             }
         }
         
@@ -1423,6 +1454,19 @@
             </div>
         </div>
         
+        <!-- Модальное окно подтверждения удаления -->
+        <div class="modal remove-confirm-modal" id="remove-confirm-modal">
+            <div class="modal-content">
+                <span class="modal-close" id="remove-modal-close">&times;</span>
+                <h2 class="modal-title">Удаление товара</h2>
+                <p class="modal-text">Удалить этот товар из корзины?</p>
+                <div style="display: flex; gap: 10px; margin-top: 20px;">
+                    <button class="modal-btn" id="remove-cancel-btn" style="background: transparent; border: 1px solid white;">Отмена</button>
+                    <button class="modal-btn" id="remove-confirm-btn">Удалить</button>
+                </div>
+            </div>
+        </div>
+        
         <!-- Модальное окно товара -->
         <div class="product-modal" id="product-modal">
             <div class="product-modal-content">
@@ -1470,8 +1514,16 @@
         let sellers = [];
         let currentImageIndex = 0;
         let currentSearchQuery = '';
-        let pressTimer = null;
-        let currentBulkPanel = null;
+        let productToRemove = null;
+
+        let scale = 1;
+        let startX = 0;
+        let startY = 0;
+        let offsetX = 0;
+        let offsetY = 0;
+        let isDragging = false;
+        let isPinching = false;
+        let initialDistance = 0;
 
         // Функция для безопасной загрузки корзины из localStorage
         function loadCart() {
@@ -1837,6 +1889,26 @@
             if (orderModalClose) orderModalClose.addEventListener('click', () => hideModal(orderModal));
             if (orderModalOk) orderModalOk.addEventListener('click', () => hideModal(orderModal));
 
+            // Подтверждение удаления
+            const removeModal = document.getElementById('remove-confirm-modal');
+            const removeModalClose = document.getElementById('remove-modal-close');
+            const removeCancelBtn = document.getElementById('remove-cancel-btn');
+            const removeConfirmBtn = document.getElementById('remove-confirm-btn');
+
+            if (removeModalClose) removeModalClose.addEventListener('click', () => hideModal(removeModal));
+            if (removeCancelBtn) removeCancelBtn.addEventListener('click', () => hideModal(removeModal));
+            if (removeConfirmBtn) {
+                removeConfirmBtn.addEventListener('click', () => {
+                    if (productToRemove) {
+                        cart = cart.filter(item => item.id !== productToRemove);
+                        saveCart();
+                        updateCartDisplay();
+                        hideModal(removeModal);
+                        productToRemove = null;
+                    }
+                });
+            }
+
             // Кнопки профиля
             document.getElementById('my-orders-btn').addEventListener('click', () => {
                 showNotification('Раздел "Мои заказы" в разработке');
@@ -1907,55 +1979,47 @@
         }
 
         function setupClearSearchButtons() {
-            // Обработчики для кнопок очистки поиска
             document.querySelectorAll('.clear-search').forEach(btn => {
                 btn.addEventListener('click', function() {
                     const input = this.parentNode.querySelector('.search-input');
                     if (input) {
                         input.value = '';
                         this.style.display = 'none';
-                        
-                        // Восстанавливаем исходный каталог
                         currentSearchQuery = '';
-                        fillProductsGrid('catalog-products', products);
+                        
+                        if (document.getElementById('catalog').classList.contains('active')) {
+                            fillProductsGrid('catalog-products', products);
+                        }
                     }
                 });
             });
         }
 
-        // Функция для нормализации поискового запроса (транслитерация и исправление опечаток)
+        // Нормализация поискового запроса
         function normalizeSearchQuery(query) {
-            if (!query) return '';
-            
             const translitMap = {
-                'a': 'а', 'b': 'б', 'c': 'с', 'd': 'д', 'e': 'е', 'f': 'ф', 'g': 'г', 'h': 'х', 
-                'i': 'и', 'j': 'й', 'k': 'к', 'l': 'л', 'm': 'м', 'n': 'н', 'o': 'о', 'p': 'п', 
-                'q': 'к', 'r': 'р', 's': 'с', 't': 'т', 'u': 'у', 'v': 'в', 'w': 'в', 'x': 'кс', 
-                'y': 'ы', 'z': 'з',
-                'а': 'a', 'б': 'b', 'в': 'v', 'г': 'g', 'д': 'd', 'е': 'e', 'ё': 'e', 'ж': 'zh', 
-                'з': 'z', 'и': 'i', 'й': 'y', 'к': 'k', 'л': 'l', 'м': 'm', 'н': 'n', 'о': 'o', 
-                'п': 'p', 'р': 'r', 'с': 's', 'т': 't', 'у': 'u', 'ф': 'f', 'х': 'h', 'ц': 'ts', 
-                'ч': 'ch', 'ш': 'sh', 'щ': 'sch', 'ъ': '', 'ы': 'y', 'ь': '', 'э': 'e', 'ю': 'yu', 
-                'я': 'ya'
+                'a': 'а', 'b': 'б', 'c': 'с', 'd': 'д', 'e': 'е', 'f': 'ф', 'g': 'г', 
+                'h': 'х', 'i': 'и', 'j': 'й', 'k': 'к', 'l': 'л', 'm': 'м', 'n': 'н', 
+                'o': 'о', 'p': 'п', 'q': 'к', 'r': 'р', 's': 'с', 't': 'т', 'u': 'у', 
+                'v': 'в', 'w': 'в', 'x': 'кс', 'y': 'ы', 'z': 'з'
             };
             
             const commonTypos = {
+                'дркль': 'дрель',
                 'сникерс': 'snickers',
                 'сникер': 'snickers',
-                'кола': 'cola',
-                'пепси': 'pepsi',
                 'шоколад': 'chocolate',
-                'чипсы': 'chips'
+                'кола': 'cola'
             };
             
             let normalized = query.toLowerCase();
             
-            // Исправляем распространенные опечатки
-            Object.keys(commonTypos).forEach(typo => {
+            // Исправление распространенных опечаток
+            for (const [typo, correction] of Object.entries(commonTypos)) {
                 if (normalized.includes(typo)) {
-                    normalized = normalized.replace(typo, commonTypos[typo]);
+                    normalized = normalized.replace(typo, correction);
                 }
-            });
+            }
             
             // Транслитерация
             let result = '';
@@ -1970,6 +2034,7 @@
         function openProductModal(product) {
             currentProduct = product;
             currentImageIndex = 0;
+            resetZoom();
             
             const modal = document.getElementById('product-modal');
             const content = modal.querySelector('.product-modal-content');
@@ -1977,6 +2042,13 @@
             const cartItem = Array.isArray(cart) ? cart.find(item => item.id === product.id) : null;
             const productImages = Array.isArray(product.images) && product.images.length > 0 ? 
                 product.images : (product.image ? [product.image] : []);
+            
+            productImages.forEach((imgSrc, index) => {
+                if (index > 0) {
+                    const img = new Image();
+                    img.src = imgSrc;
+                }
+            });
             
             const seller = sellers.find(s => s.userId == product.sellerId);
             const sellerName = seller ? seller.companyName : 'Неизвестно';
@@ -2056,16 +2128,24 @@
                 
                 <div class="product-modal-actions" id="product-modal-actions">
                     ${cartItem ? `
-                        <div class="quantity-controls">
+                        <div class="quantity-controls" data-id="${product.id}">
                             <button class="quantity-btn minus" data-id="${product.id}">-</button>
-                            <span class="quantity-display">${cartItem.quantity}</span>
+                            <span class="quantity-display" data-id="${product.id}">${cartItem.quantity}</span>
+                            <input type="text" class="quantity-input" data-id="${product.id}" value="${cartItem.quantity}" maxlength="5">
                             <button class="quantity-btn plus" data-id="${product.id}">+</button>
-                            <div class="bulk-panel" id="bulk-panel-${product.id}">
-                                <button class="bulk-btn" data-amount="5">+5</button>
-                                <button class="bulk-btn" data-amount="10">+10</button>
-                                <button class="bulk-btn" data-amount="20">+20</button>
-                                <button class="bulk-btn" data-amount="50">+50</button>
-                                <button class="bulk-btn" data-amount="100">+100</button>
+                            <div class="quick-select-panel plus-panel" data-id="${product.id}">
+                                <button class="quick-select-btn" data-amount="5">+5</button>
+                                <button class="quick-select-btn" data-amount="10">+10</button>
+                                <button class="quick-select-btn" data-amount="20">+20</button>
+                                <button class="quick-select-btn" data-amount="50">+50</button>
+                                <button class="quick-select-btn" data-amount="100">+100</button>
+                            </div>
+                            <div class="quick-select-panel minus-panel" data-id="${product.id}">
+                                <button class="quick-select-btn" data-amount="-5">-5</button>
+                                <button class="quick-select-btn" data-amount="-10">-10</button>
+                                <button class="quick-select-btn" data-amount="-20">-20</button>
+                                <button class="quick-select-btn" data-amount="-50">-50</button>
+                                <button class="quick-select-btn" data-amount="-100">-100</button>
                             </div>
                         </div>
                         <button class="go-to-cart-btn">Перейти в корзину</button>
@@ -2081,188 +2161,180 @@
                 closeBtn.addEventListener('click', () => hideModal(modal));
             }
 
+            // Обработчики для изображений
+            const imageElement = content.querySelector('.product-modal-image');
+            const imageContainer = content.querySelector('.product-modal-image-container');
+            const imageCounter = content.querySelector('.image-counter');
+            
+            if (imageElement && imageElement.tagName === 'IMG') {
+                setupImageZoom(imageElement, imageContainer);
+            }
+
+            // Свайпы для переключения изображений
+            if (productImages.length > 1) {
+                setupImageSwipe(imageContainer, productImages, imageElement, imageCounter);
+            }
+
             setupProductModalActions(product, modal);
             showModal(modal);
         }
 
-        // Функции для работы с оптовыми закупками
-        function setupBulkActions(plusBtn, minusBtn, productId) {
-            // Долгое нажатие для плюса
-            plusBtn.addEventListener('mousedown', () => startPressTimer(plusBtn, productId, 'plus'));
-            plusBtn.addEventListener('touchstart', () => startPressTimer(plusBtn, productId, 'plus'));
-            plusBtn.addEventListener('mouseup', clearPressTimer);
-            plusBtn.addEventListener('touchend', clearPressTimer);
-            plusBtn.addEventListener('mouseleave', clearPressTimer);
-            
-            // Долгое нажатие для минуса
-            minusBtn.addEventListener('mousedown', () => startPressTimer(minusBtn, productId, 'minus'));
-            minusBtn.addEventListener('touchstart', () => startPressTimer(minusBtn, productId, 'minus'));
-            minusBtn.addEventListener('mouseup', clearPressTimer);
-            minusBtn.addEventListener('touchend', clearPressTimer);
-            minusBtn.addEventListener('mouseleave', clearPressTimer);
-            
-            // Обычное нажатие
-            plusBtn.addEventListener('click', (e) => {
-                e.preventDefault();
-                e.stopPropagation();
-                increaseQuantity(productId);
-            });
-            
-            minusBtn.addEventListener('click', (e) => {
-                e.preventDefault();
-                e.stopPropagation();
-                decreaseQuantity(productId);
-            });
+        function resetZoom() {
+            scale = 1;
+            offsetX = 0;
+            offsetY = 0;
+            isDragging = false;
+            isPinching = false;
+            initialDistance = 0;
         }
 
-        function startPressTimer(button, productId, type) {
-            clearPressTimer();
-            pressTimer = setTimeout(() => {
-                showBulkPanel(button, productId, type);
-            }, 500);
-        }
-
-        function clearPressTimer() {
-            if (pressTimer) {
-                clearTimeout(pressTimer);
-                pressTimer = null;
-            }
-        }
-
-        function showBulkPanel(button, productId, type) {
-            // Скрываем предыдущую панель
-            if (currentBulkPanel) {
-                currentBulkPanel.classList.remove('active');
-            }
+        function setupImageZoom(imageElement, container) {
+            imageElement.style.setProperty('--zoom-scale', scale);
+            imageElement.style.setProperty('--offset-x', `${offsetX}px`);
+            imageElement.style.setProperty('--offset-y', `${offsetY}px`);
             
-            const panel = document.getElementById(`bulk-panel-${productId}`);
-            if (panel) {
-                panel.classList.add('active');
-                currentBulkPanel = panel;
-                
-                // Назначаем обработчики для кнопок панели
-                panel.querySelectorAll('.bulk-btn').forEach(btn => {
-                    btn.addEventListener('click', (e) => {
-                        e.preventDefault();
-                        e.stopPropagation();
-                        const amount = parseInt(btn.getAttribute('data-amount'));
-                        if (type === 'plus') {
-                            increaseQuantityBy(productId, amount);
-                        } else {
-                            decreaseQuantityBy(productId, amount);
-                        }
-                        panel.classList.remove('active');
-                    });
-                });
-                
-                // Закрытие панели при клике вне
-                setTimeout(() => {
-                    document.addEventListener('click', closeBulkPanel);
-                }, 10);
-            }
-        }
-
-        function closeBulkPanel(e) {
-            if (currentBulkPanel && !currentBulkPanel.contains(e.target)) {
-                currentBulkPanel.classList.remove('active');
-                document.removeEventListener('click', closeBulkPanel);
-            }
-        }
-
-        function increaseQuantityBy(productId, amount) {
-            loadCart();
-            
-            if (!Array.isArray(cart)) return;
-            
-            const item = cart.find(item => item.id === productId);
-            if (item) {
-                item.quantity += amount;
-            } else {
-                const product = products.find(p => p.id === productId);
-                if (product) {
-                    cart.push({
-                        id: product.id,
-                        name: product.fullName,
-                        shortName: product.shortName,
-                        price: product.price,
-                        image: Array.isArray(product.images) && product.images.length > 0 ? 
-                            product.images[0] : product.image,
-                        quantity: amount
-                    });
-                }
-            }
-            
-            saveCart();
-            updateCartDisplay();
-            
-            // Обновляем модальное окно если оно открыто
-            const modal = document.getElementById('product-modal');
-            if (modal.classList.contains('active') && currentProduct && currentProduct.id === productId) {
-                setupProductModalActions(currentProduct, modal);
-            }
-        }
-
-        function decreaseQuantityBy(productId, amount) {
-            loadCart();
-            
-            if (!Array.isArray(cart)) return;
-            
-            const item = cart.find(item => item.id === productId);
-            if (item) {
-                item.quantity = Math.max(0, item.quantity - amount);
-                if (item.quantity <= 0) {
-                    cart = cart.filter(item => item.id !== productId);
-                }
-                saveCart();
-                updateCartDisplay();
-                
-                // Обновляем модальное окно если оно открыто
-                const modal = document.getElementById('product-modal');
-                if (modal.classList.contains('active') && currentProduct && currentProduct.id === productId) {
-                    setupProductModalActions(currentProduct, modal);
-                }
-            }
-        }
-
-        // Функция для ввода количества с клавиатуры
-        function setupQuantityInput(quantityDisplay, productId) {
-            const input = document.createElement('input');
-            input.type = 'number';
-            input.className = 'quantity-input';
-            input.value = quantityDisplay.textContent;
-            input.min = '0';
-            
-            quantityDisplay.parentNode.replaceChild(input, quantityDisplay);
-            
-            input.focus();
-            input.select();
-            
-            input.addEventListener('blur', () => {
-                const newQuantity = parseInt(input.value) || 0;
-                if (newQuantity <= 0) {
-                    cart = cart.filter(item => item.id !== productId);
+            // Одиночное нажатие для зума
+            imageElement.addEventListener('click', (e) => {
+                if (scale === 1) {
+                    scale = 2;
+                    imageElement.classList.add('zoomed');
                 } else {
-                    const item = cart.find(item => item.id === productId);
-                    if (item) {
-                        item.quantity = newQuantity;
+                    resetZoom();
+                    imageElement.classList.remove('zoomed');
+                }
+                applyImageTransform(imageElement);
+            });
+
+            // Жесты для масштабирования и панорамирования
+            container.addEventListener('touchstart', handleTouchStart);
+            container.addEventListener('touchmove', handleTouchMove);
+            container.addEventListener('touchend', handleTouchEnd);
+
+            function handleTouchStart(e) {
+                if (e.touches.length === 2) {
+                    // Начало жеста двумя пальцами (зум)
+                    isPinching = true;
+                    const touch1 = e.touches[0];
+                    const touch2 = e.touches[1];
+                    initialDistance = Math.hypot(
+                        touch1.clientX - touch2.clientX,
+                        touch1.clientY - touch2.clientY
+                    );
+                } else if (e.touches.length === 1 && scale > 1) {
+                    // Начало жеста одним пальцем (панорамирование)
+                    isDragging = true;
+                    startX = e.touches[0].clientX - offsetX;
+                    startY = e.touches[0].clientY - offsetY;
+                }
+            }
+
+            function handleTouchMove(e) {
+                if (isPinching && e.touches.length === 2) {
+                    // Масштабирование
+                    e.preventDefault();
+                    const touch1 = e.touches[0];
+                    const touch2 = e.touches[1];
+                    const currentDistance = Math.hypot(
+                        touch1.clientX - touch2.clientX,
+                        touch1.clientY - touch2.clientY
+                    );
+                    
+                    scale = Math.max(1, Math.min(3, currentDistance / initialDistance));
+                    applyImageTransform(imageElement);
+                } else if (isDragging && e.touches.length === 1 && scale > 1) {
+                    // Панорамирование
+                    e.preventDefault();
+                    offsetX = e.touches[0].clientX - startX;
+                    offsetY = e.touches[0].clientY - startY;
+                    applyImageTransform(imageElement);
+                }
+            }
+
+            function handleTouchEnd(e) {
+                isDragging = false;
+                isPinching = false;
+            }
+        }
+
+        function applyImageTransform(imageElement) {
+            imageElement.style.setProperty('--zoom-scale', scale);
+            imageElement.style.setProperty('--offset-x', `${offsetX}px`);
+            imageElement.style.setProperty('--offset-y', `${offsetY}px`);
+        }
+
+        function setupImageSwipe(container, images, imageElement, imageCounter) {
+            let startX = 0;
+            let currentX = 0;
+            let isSwiping = false;
+
+            container.addEventListener('touchstart', (e) => {
+                if (scale > 1) return;
+                startX = e.touches[0].clientX;
+                currentX = startX;
+                isSwiping = true;
+            });
+
+            container.addEventListener('touchmove', (e) => {
+                if (!isSwiping || scale > 1) return;
+                currentX = e.touches[0].clientX;
+            });
+
+            container.addEventListener('touchend', () => {
+                if (!isSwiping || scale > 1) return;
+                
+                const diffX = startX - currentX;
+                const swipeThreshold = 50;
+                
+                if (Math.abs(diffX) > swipeThreshold) {
+                    if (diffX > 0) {
+                        // Свайп влево - следующее изображение
+                        navigateImages(1, images, imageElement, imageCounter);
+                    } else {
+                        // Свайп вправо - предыдущее изображение
+                        navigateImages(-1, images, imageElement, imageCounter);
                     }
                 }
                 
-                saveCart();
-                updateCartDisplay();
-                
-                // Обновляем модальное окно если оно открыто
-                const modal = document.getElementById('product-modal');
-                if (modal.classList.contains('active') && currentProduct && currentProduct.id === productId) {
-                    setupProductModalActions(currentProduct, modal);
-                }
+                isSwiping = false;
             });
+        }
+
+        function navigateImages(direction, images, imageElement, imageCounter) {
+            const nextIndex = (currentImageIndex + direction + images.length) % images.length;
+            const nextImage = new Image();
+            nextImage.src = images[nextIndex];
             
-            input.addEventListener('keypress', (e) => {
-                if (e.key === 'Enter') {
-                    input.blur();
-                }
-            });
+            nextImage.onload = function() {
+                imageElement.style.opacity = 0;
+                
+                setTimeout(() => {
+                    currentImageIndex = nextIndex;
+                    imageElement.src = images[currentImageIndex];
+                    resetZoom();
+                    imageElement.classList.remove('zoomed');
+                    imageCounter.textContent = `${currentImageIndex + 1} / ${images.length}`;
+                    
+                    setTimeout(() => {
+                        imageElement.style.opacity = 1;
+                    }, 50);
+                }, 150);
+            };
+            
+            nextImage.onerror = function() {
+                imageElement.style.opacity = 0;
+                
+                setTimeout(() => {
+                    currentImageIndex = nextIndex;
+                    imageElement.src = images[currentImageIndex];
+                    resetZoom();
+                    imageElement.classList.remove('zoomed');
+                    imageCounter.textContent = `${currentImageIndex + 1} / ${images.length}`;
+                    
+                    setTimeout(() => {
+                        imageElement.style.opacity = 1;
+                    }, 50);
+                }, 150);
+            };
         }
 
         function setupProductModalActions(product, modal) {
@@ -2273,36 +2345,28 @@
             
             if (cartItem) {
                 actionsContainer.innerHTML = `
-                    <div class="quantity-controls">
+                    <div class="quantity-controls" data-id="${product.id}">
                         <button class="quantity-btn minus" data-id="${product.id}">-</button>
-                        <span class="quantity-display">${cartItem.quantity}</span>
+                        <span class="quantity-display" data-id="${product.id}">${cartItem.quantity}</span>
+                        <input type="text" class="quantity-input" data-id="${product.id}" value="${cartItem.quantity}" maxlength="5">
                         <button class="quantity-btn plus" data-id="${product.id}">+</button>
-                        <div class="bulk-panel" id="bulk-panel-${product.id}">
-                            <button class="bulk-btn" data-amount="5">+5</button>
-                            <button class="bulk-btn" data-amount="10">+10</button>
-                            <button class="bulk-btn" data-amount="20">+20</button>
-                            <button class="bulk-btn" data-amount="50">+50</button>
-                            <button class="bulk-btn" data-amount="100">+100</button>
+                        <div class="quick-select-panel plus-panel" data-id="${product.id}">
+                            <button class="quick-select-btn" data-amount="5">+5</button>
+                            <button class="quick-select-btn" data-amount="10">+10</button>
+                            <button class="quick-select-btn" data-amount="20">+20</button>
+                            <button class="quick-select-btn" data-amount="50">+50</button>
+                            <button class="quick-select-btn" data-amount="100">+100</button>
+                        </div>
+                        <div class="quick-select-panel minus-panel" data-id="${product.id}">
+                            <button class="quick-select-btn" data-amount="-5">-5</button>
+                            <button class="quick-select-btn" data-amount="-10">-10</button>
+                            <button class="quick-select-btn" data-amount="-20">-20</button>
+                            <button class="quick-select-btn" data-amount="-50">-50</button>
+                            <button class="quick-select-btn" data-amount="-100">-100</button>
                         </div>
                     </div>
                     <button class="go-to-cart-btn">Перейти в корзину</button>
                 `;
-                
-                // Настраиваем оптовые закупки
-                const plusBtn = actionsContainer.querySelector('.plus');
-                const minusBtn = actionsContainer.querySelector('.minus');
-                const quantityDisplay = actionsContainer.querySelector('.quantity-display');
-                
-                if (plusBtn && minusBtn) {
-                    setupBulkActions(plusBtn, minusBtn, product.id);
-                }
-                
-                // Ввод количества с клавиатуры
-                if (quantityDisplay) {
-                    quantityDisplay.addEventListener('click', () => {
-                        setupQuantityInput(quantityDisplay, product.id);
-                    });
-                }
             } else {
                 actionsContainer.innerHTML = `<button class="add-to-cart-btn">Добавить в корзину</button>`;
             }
@@ -2325,6 +2389,277 @@
                     setTimeout(() => switchPage('cart'), 300);
                 });
             }
+
+            setupQuantityControls(product.id);
+        }
+
+        function setupQuantityControls(productId) {
+            const quantityControls = document.querySelector(`.quantity-controls[data-id="${productId}"]`);
+            if (!quantityControls) return;
+            
+            const minusBtn = quantityControls.querySelector('.minus');
+            const plusBtn = quantityControls.querySelector('.plus');
+            const quantityDisplay = quantityControls.querySelector('.quantity-display');
+            const quantityInput = quantityControls.querySelector('.quantity-input');
+            const plusPanel = quantityControls.querySelector('.plus-panel');
+            const minusPanel = quantityControls.querySelector('.minus-panel');
+            
+            // Показ панели при зажатии
+            function showPlusPanel() {
+                hideAllPanels();
+                plusPanel.classList.add('show');
+            }
+            
+            function showMinusPanel() {
+                hideAllPanels();
+                minusPanel.classList.add('show');
+            }
+            
+            function hideAllPanels() {
+                plusPanel.classList.remove('show');
+                minusPanel.classList.remove('show');
+            }
+            
+            // Обработчики для быстрого выбора
+            function setupQuickSelectPanel(panel) {
+                const quickSelectBtns = panel.querySelectorAll('.quick-select-btn');
+                quickSelectBtns.forEach(btn => {
+                    btn.addEventListener('click', function(e) {
+                        e.stopPropagation();
+                        const amount = parseInt(this.getAttribute('data-amount'));
+                        updateQuantity(productId, amount);
+                        hideAllPanels();
+                    });
+                });
+            }
+            
+            setupQuickSelectPanel(plusPanel);
+            setupQuickSelectPanel(minusPanel);
+            
+            // Показ панели при зажатии
+            plusBtn.addEventListener('mousedown', showPlusPanel);
+            plusBtn.addEventListener('touchstart', showPlusPanel);
+            
+            minusBtn.addEventListener('mousedown', showMinusPanel);
+            minusBtn.addEventListener('touchstart', showMinusPanel);
+            
+            // Скрытие панелей при отпускании
+            document.addEventListener('mouseup', function(e) {
+                if (!quantityControls.contains(e.target)) {
+                    hideAllPanels();
+                }
+            });
+            
+            document.addEventListener('touchend', function(e) {
+                if (!quantityControls.contains(e.target)) {
+                    hideAllPanels();
+                }
+            });
+            
+            // Обычные клики
+            minusBtn.addEventListener('click', function(e) {
+                e.stopPropagation();
+                if (!plusPanel.classList.contains('show') && !minusPanel.classList.contains('show')) {
+                    updateQuantity(productId, -1);
+                }
+            });
+            
+            plusBtn.addEventListener('click', function(e) {
+                e.stopPropagation();
+                if (!plusPanel.classList.contains('show') && !minusPanel.classList.contains('show')) {
+                    updateQuantity(productId, 1);
+                }
+            });
+            
+            // Редактирование количества
+            quantityDisplay.addEventListener('click', function() {
+                quantityDisplay.style.display = 'none';
+                quantityInput.style.display = 'block';
+                quantityInput.focus();
+                quantityInput.select();
+            });
+            
+            quantityInput.addEventListener('blur', function() {
+                finishQuantityEdit(productId, quantityInput.value);
+            });
+            
+            quantityInput.addEventListener('keypress', function(e) {
+                if (e.key === 'Enter') {
+                    finishQuantityEdit(productId, quantityInput.value);
+                }
+            });
+        }
+
+        function setupCartItemQuantityControls(productId) {
+            const cartItemControls = document.querySelector(`.cart-item-controls[data-id="${productId}"]`);
+            if (!cartItemControls) return;
+            
+            const minusBtn = cartItemControls.querySelector('.minus');
+            const plusBtn = cartItemControls.querySelector('.plus');
+            const quantityDisplay = cartItemControls.querySelector('.quantity-display');
+            const quantityInput = cartItemControls.querySelector('.quantity-input');
+            const plusPanel = cartItemControls.querySelector('.plus-panel');
+            const minusPanel = cartItemControls.querySelector('.minus-panel');
+            
+            // Показ панели при зажатии
+            function showPlusPanel() {
+                hideAllPanels();
+                plusPanel.classList.add('show');
+            }
+            
+            function showMinusPanel() {
+                hideAllPanels();
+                minusPanel.classList.add('show');
+            }
+            
+            function hideAllPanels() {
+                plusPanel.classList.remove('show');
+                minusPanel.classList.remove('show');
+            }
+            
+            // Обработчики для быстрого выбора
+            function setupQuickSelectPanel(panel) {
+                const quickSelectBtns = panel.querySelectorAll('.quick-select-btn');
+                quickSelectBtns.forEach(btn => {
+                    btn.addEventListener('click', function(e) {
+                        e.stopPropagation();
+                        const amount = parseInt(this.getAttribute('data-amount'));
+                        updateQuantity(productId, amount);
+                        hideAllPanels();
+                    });
+                });
+            }
+            
+            setupQuickSelectPanel(plusPanel);
+            setupQuickSelectPanel(minusPanel);
+            
+            // Показ панели при зажатии
+            plusBtn.addEventListener('mousedown', showPlusPanel);
+            plusBtn.addEventListener('touchstart', showPlusPanel);
+            
+            minusBtn.addEventListener('mousedown', showMinusPanel);
+            minusBtn.addEventListener('touchstart', showMinusPanel);
+            
+            // Скрытие панелей при отпускании
+            document.addEventListener('mouseup', function(e) {
+                if (!cartItemControls.contains(e.target)) {
+                    hideAllPanels();
+                }
+            });
+            
+            document.addEventListener('touchend', function(e) {
+                if (!cartItemControls.contains(e.target)) {
+                    hideAllPanels();
+                }
+            });
+            
+            // Обычные клики
+            minusBtn.addEventListener('click', function(e) {
+                e.stopPropagation();
+                if (!plusPanel.classList.contains('show') && !minusPanel.classList.contains('show')) {
+                    updateQuantity(productId, -1);
+                }
+            });
+            
+            plusBtn.addEventListener('click', function(e) {
+                e.stopPropagation();
+                if (!plusPanel.classList.contains('show') && !minusPanel.classList.contains('show')) {
+                    updateQuantity(productId, 1);
+                }
+            });
+            
+            // Редактирование количества
+            quantityDisplay.addEventListener('click', function() {
+                quantityDisplay.style.display = 'none';
+                quantityInput.style.display = 'block';
+                quantityInput.focus();
+                quantityInput.select();
+            });
+            
+            quantityInput.addEventListener('blur', function() {
+                finishQuantityEdit(productId, quantityInput.value);
+            });
+            
+            quantityInput.addEventListener('keypress', function(e) {
+                if (e.key === 'Enter') {
+                    finishQuantityEdit(productId, quantityInput.value);
+                }
+            });
+        }
+
+        function finishQuantityEdit(productId, value) {
+            const quantityInput = document.querySelector(`.quantity-input[data-id="${productId}"]`);
+            const quantityDisplay = document.querySelector(`.quantity-display[data-id="${productId}"]`);
+            
+            if (!quantityInput || !quantityDisplay) return;
+            
+            let newQuantity = parseInt(value);
+            
+            if (isNaN(newQuantity) || newQuantity < 0) {
+                showNotification('Неверное количество товара');
+                quantityInput.value = getCurrentQuantity(productId);
+            } else if (newQuantity > 15000) {
+                newQuantity = 15000;
+                showNotification('Максимальное количество: 15000');
+            } else if (newQuantity === 0) {
+                productToRemove = productId;
+                showModal(document.getElementById('remove-confirm-modal'));
+                newQuantity = getCurrentQuantity(productId);
+            }
+            
+            quantityInput.value = newQuantity;
+            quantityDisplay.textContent = newQuantity;
+            quantityInput.style.display = 'none';
+            quantityDisplay.style.display = 'block';
+            
+            updateCartItemQuantity(productId, newQuantity);
+        }
+
+        function getCurrentQuantity(productId) {
+            const item = cart.find(item => item.id === productId);
+            return item ? item.quantity : 0;
+        }
+
+        function updateCartItemQuantity(productId, newQuantity) {
+            const item = cart.find(item => item.id === productId);
+            if (item) {
+                if (newQuantity === 0) {
+                    cart = cart.filter(item => item.id !== productId);
+                } else {
+                    item.quantity = newQuantity;
+                }
+                saveCart();
+                updateCartDisplay();
+                
+                // Обновляем модальное окно товара если оно открыто
+                const modal = document.getElementById('product-modal');
+                if (modal.classList.contains('active') && currentProduct && currentProduct.id === productId) {
+                    setupProductModalActions(currentProduct, modal);
+                }
+            }
+        }
+
+        function updateQuantity(productId, change) {
+            const currentQuantity = getCurrentQuantity(productId);
+            let newQuantity = currentQuantity + change;
+            
+            if (newQuantity < 0) {
+                showNotification('Неверное количество товара');
+                return;
+            }
+            
+            if (newQuantity > 15000) {
+                newQuantity = 15000;
+                showNotification('Максимальное количество: 15000');
+            }
+            
+            if (newQuantity === 0) {
+                productToRemove = productId;
+                showModal(document.getElementById('remove-confirm-modal'));
+                return;
+            }
+            
+            updateCartItemQuantity(productId, newQuantity);
         }
 
         function showModal(modal) {
@@ -2429,10 +2764,25 @@
                         <div class="cart-item-price-info">${item.price} ₽ × ${item.quantity}</div>
                         <div class="cart-item-total">${itemTotal} ₽</div>
                     </div>
-                    <div class="cart-item-controls">
+                    <div class="cart-item-controls" data-id="${item.id}">
                         <button class="quantity-btn minus" data-id="${item.id}">-</button>
-                        <span class="quantity-display">${item.quantity}</span>
+                        <span class="quantity-display" data-id="${item.id}">${item.quantity}</span>
+                        <input type="text" class="quantity-input" data-id="${item.id}" value="${item.quantity}" maxlength="5">
                         <button class="quantity-btn plus" data-id="${item.id}">+</button>
+                        <div class="quick-select-panel plus-panel" data-id="${item.id}">
+                            <button class="quick-select-btn" data-amount="5">+5</button>
+                            <button class="quick-select-btn" data-amount="10">+10</button>
+                            <button class="quick-select-btn" data-amount="20">+20</button>
+                            <button class="quick-select-btn" data-amount="50">+50</button>
+                            <button class="quick-select-btn" data-amount="100">+100</button>
+                        </div>
+                        <div class="quick-select-panel minus-panel" data-id="${item.id}">
+                            <button class="quick-select-btn" data-amount="-5">-5</button>
+                            <button class="quick-select-btn" data-amount="-10">-10</button>
+                            <button class="quick-select-btn" data-amount="-20">-20</button>
+                            <button class="quick-select-btn" data-amount="-50">-50</button>
+                            <button class="quick-select-btn" data-amount="-100">-100</button>
+                        </div>
                     </div>
                 `;
                 
@@ -2445,55 +2795,13 @@
                     }
                 });
                 
-                // Настраиваем оптовые закупки для корзины
-                const plusBtn = cartItem.querySelector('.plus');
-                const minusBtn = cartItem.querySelector('.minus');
-                const quantityDisplay = cartItem.querySelector('.quantity-display');
-                
-                if (plusBtn && minusBtn) {
-                    setupBulkActions(plusBtn, minusBtn, item.id);
-                }
-                
-                // Ввод количества с клавиатуры в корзине
-                if (quantityDisplay) {
-                    quantityDisplay.addEventListener('click', () => {
-                        setupQuantityInput(quantityDisplay, item.id);
-                    });
-                }
-                
                 cartItems.appendChild(cartItem);
+                
+                // Настраиваем контролы количества для этого элемента
+                setupCartItemQuantityControls(item.id);
             });
             
             if (cartTotal) cartTotal.textContent = `Итого: ${total} ₽`;
-        }
-
-        function increaseQuantity(productId) {
-            loadCart();
-            
-            if (!Array.isArray(cart)) return;
-            
-            const item = cart.find(item => item.id === productId);
-            if (item) {
-                item.quantity += 1;
-                saveCart();
-                updateCartDisplay();
-            }
-        }
-
-        function decreaseQuantity(productId) {
-            loadCart();
-            
-            if (!Array.isArray(cart)) return;
-            
-            const item = cart.find(item => item.id === productId);
-            if (item) {
-                item.quantity -= 1;
-                if (item.quantity <= 0) {
-                    cart = cart.filter(item => item.id !== productId);
-                }
-                saveCart();
-                updateCartDisplay();
-            }
         }
 
         function switchPage(pageId) {
@@ -2529,7 +2837,7 @@
                     performSearchActual(currentSearchQuery);
                 } else {
                     // Если поиска нет, показываем все товары
-                    showAllProducts();
+                    fillProductsGrid('catalog-products', products);
                 }
             }
             
@@ -2557,7 +2865,7 @@
                 if (switchToCatalog) {
                     switchPage('catalog');
                 }
-                showAllProducts();
+                fillProductsGrid('catalog-products', products);
                 return;
             }
             
@@ -2577,32 +2885,22 @@
             }
         }
 
-        function showAllProducts() {
-            fillProductsGrid('catalog-products', products);
-        }
-
         function performSearchActual(query) {
-            const searchTerm = query.toLowerCase().trim();
-            currentSearchQuery = searchTerm;
+            const searchTerm = normalizeSearchQuery(query.toLowerCase().trim());
+            currentSearchQuery = query; // Сохраняем оригинальный запрос для отображения
             
             if (!searchTerm) {
-                showAllProducts();
+                fillProductsGrid('catalog-products', products);
                 return;
             }
             
-            // Нормализуем запрос (транслитерация и исправление опечаток)
-            const normalizedQuery = normalizeSearchQuery(searchTerm);
-            
             // Фильтруем товары
-            const filteredProducts = products.filter(product => {
-                const productName = (product.shortName + ' ' + product.fullName).toLowerCase();
-                const productDescription = (product.description || '').toLowerCase();
-                
-                return productName.includes(normalizedQuery) || 
-                       productName.includes(searchTerm) ||
-                       productDescription.includes(normalizedQuery) ||
-                       productDescription.includes(searchTerm);
-            });
+            const filteredProducts = products.filter(product => 
+                normalizeSearchQuery(product.shortName.toLowerCase()).includes(searchTerm) ||
+                normalizeSearchQuery(product.fullName.toLowerCase()).includes(searchTerm) ||
+                (product.description && normalizeSearchQuery(product.description.toLowerCase()).includes(searchTerm)) ||
+                (product.tags && product.tags.some(tag => normalizeSearchQuery(tag.toLowerCase()).includes(searchTerm)))
+            );
             
             // Перерисовываем каталог отфильтрованными товарами
             fillProductsGrid('catalog-products', filteredProducts);
@@ -2614,6 +2912,83 @@
 
         // Запуск приложения
         document.addEventListener('DOMContentLoaded', loadProducts);
+
+        // Функции для демонстрационных данных
+        function getFallbackProducts() {
+            return [
+                {
+                    id: 1,
+                    shortName: "Телефон",
+                    fullName: "Смартфон Samsung Galaxy S21",
+                    price: 59999,
+                    currency: "₽",
+                    description: "Новый флагманский смартфон с отличной камерой и производительностью.",
+                    characteristics: {
+                        "Экран": "6.2 дюйма",
+                        "Память": "128 ГБ",
+                        "Камера": "64 Мп"
+                    },
+                    images: ["media/products/phone1.jpg", "media/products/phone2.jpg"],
+                    sellerId: 1,
+                    reviews: [
+                        {author: "Иван", rating: 5, text: "Отличный телефон!"},
+                        {author: "Мария", rating: 4, text: "Хорошая камера, но дорогой"}
+                    ],
+                    tags: ["смартфон", "телефон", "samsung", "galaxy"]
+                },
+                {
+                    id: 2,
+                    shortName: "Ноутбук",
+                    fullName: "Ноутбук Apple MacBook Pro 13",
+                    price: 129999,
+                    currency: "₽",
+                    description: "Мощный ноутбук для работы и творчества.",
+                    characteristics: {
+                        "Экран": "13.3 дюйма",
+                        "Память": "256 ГБ",
+                        "Процессор": "Apple M1"
+                    },
+                    images: ["media/products/laptop1.jpg"],
+                    sellerId: 2,
+                    reviews: [],
+                    tags: ["ноутбук", "apple", "macbook", "про"]
+                }
+            ];
+        }
+
+        function getFallbackSellers() {
+            return [
+                {
+                    userId: 123456789,
+                    companyName: "TechStore",
+                    contactPhone: "+7 (999) 123-45-67",
+                    avatar: "media/sellers/techstore.jpg"
+                },
+                {
+                    userId: 987654321,
+                    companyName: "Apple Shop",
+                    contactPhone: "+7 (888) 765-43-21",
+                    avatar: "media/sellers/appleshop.jpg"
+                }
+            ];
+        }
+
+        function getFallbackNotifications() {
+            return [
+                {
+                    id: 1,
+                    title: "Ваш заказ готов к получению",
+                    date: new Date().toISOString(),
+                    userId: null
+                },
+                {
+                    id: 2,
+                    title: "Новые поступления в каталоге",
+                    date: new Date(Date.now() - 86400000).toISOString(),
+                    userId: null
+                }
+            ];
+        }
     </script>
 </body>
 </html>
