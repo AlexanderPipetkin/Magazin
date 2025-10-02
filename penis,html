@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <style>
+        @font-face {
+            font-family: 'Test Font';
+            src: url('fonts/MOSCOWSANSREGULAR.TTF') format('truetype');
+        }
+        .test {
+            font-family: 'Test Font', Arial;
+            font-size: 24px;
+        }
+    </style>
+</head>
+<body>
+    <div class="test">Тест шрифта Moscow Sans</div>
+    
+    <script>
+        document.fonts.ready.then(() => {
+            console.log('Загруженные шрифты:', document.fonts);
+        });
+        
+        setTimeout(() => {
+            const testEl = document.querySelector('.test');
+            const computedStyle = window.getComputedStyle(testEl);
+            console.log('Фактический шрифт:', computedStyle.fontFamily);
+        }, 1000);
+    </script>
+</body>
+</html>
