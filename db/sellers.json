@@ -2,7 +2,7 @@
   "sellers": [
     {
       "userId": 1618025244,
-      "companyName": "ООО \"Это же Лёха\"",
+      "companyName": "ООО \"тут был леха 🥞\"",
       "contactPhone": "8 (800) 555-35-35",
       "email": "contact@techgadgets.ru",
       "avatar": "media/sellers/lexa.jpg",
@@ -12,4 +12,5 @@
       "isActive": true
     }
   ]
+
 }
