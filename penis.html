@@ -26,5 +26,14 @@
             console.log('Фактический шрифт:', computedStyle.fontFamily);
         }, 1000);
     </script>
+
+    <script>
+        // Добавьте этот код в тестовую страницу
+        document.fonts.ready.then(() => {
+            document.fonts.forEach(font => {
+                console.log('Шрифт:', font.family, 'стиль:', font.style, 'вес:', font.weight);
+            });
+        });
+    </script>
 </body>
 </html>
