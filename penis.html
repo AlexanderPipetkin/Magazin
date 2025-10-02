@@ -3,37 +3,66 @@
 <head>
     <style>
         @font-face {
-            font-family: 'Test Font';
+            font-family: 'Moscow Sans Test';
             src: url('fonts/MOSCOWSANSREGULAR.TTF') format('truetype');
         }
-        .test {
-            font-family: 'Test Font', Arial;
+        .test-container {
+            padding: 20px;
+            background: black;
+            color: white;
+        }
+        .test-with-font {
+            font-family: 'Moscow Sans Test', Arial;
             font-size: 24px;
+            margin: 10px 0;
+        }
+        .test-without-font {
+            font-family: Arial;
+            font-size: 24px;
+            margin: 10px 0;
+        }
+        .result {
+            font-size: 18px;
+            margin-top: 20px;
+            padding: 10px;
+            border: 1px solid white;
         }
     </style>
 </head>
 <body>
-    <div class="test">Тест шрифта Moscow Sans</div>
+    <div class="test-container">
+        <h2>Тест шрифта Moscow Sans</h2>
+        
+        <div class="test-with-font">
+            Этот текст должен быть Moscow Sans: ABCabc 123
+        </div>
+        
+        <div class="test-without-font">
+            Этот текст должен быть Arial: ABCabc 123
+        </div>
+        
+        <div id="result" class="result">
+            Результат: проверяем...
+        </div>
+    </div>
     
     <script>
-        document.fonts.ready.then(() => {
-            console.log('Загруженные шрифты:', document.fonts);
-        });
-        
         setTimeout(() => {
-            const testEl = document.querySelector('.test');
-            const computedStyle = window.getComputedStyle(testEl);
-            console.log('Фактический шрифт:', computedStyle.fontFamily);
+            const withFont = document.querySelector('.test-with-font');
+            const withoutFont = document.querySelector('.test-without-font');
+            const result = document.getElementById('result');
+            
+            const widthWith = withFont.offsetWidth;
+            const widthWithout = withoutFont.offsetWidth;
+            
+            if (widthWith !== widthWithout) {
+                result.innerHTML = '✅ SUCCESS: Moscow Sans загружен и работает!';
+                result.style.background = 'green';
+            } else {
+                result.innerHTML = '❌ FAIL: Moscow Sans НЕ загружен. Используется Arial.';
+                result.style.background = 'red';
+            }
         }, 1000);
-    </script>
-
-    <script>
-        // Добавьте этот код в тестовую страницу
-        document.fonts.ready.then(() => {
-            document.fonts.forEach(font => {
-                console.log('Шрифт:', font.family, 'стиль:', font.style, 'вес:', font.weight);
-            });
-        });
     </script>
 </body>
 </html>
