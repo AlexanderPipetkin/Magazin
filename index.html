@@ -1442,7 +1442,7 @@
                 </div>
 
                 <!-- Профиль продавца -->
-                 <div class="orders-section" id="seller-profile" style="display: none;">
+                 <div class="orders-section" id="seller-profile">
                     <div class="orders-header">
                         <div class="section-title">Я, как продавец</div>
                         <button class="settings-btn" id="seller-settings-btn">
@@ -1848,6 +1848,9 @@
                 showEmptyState('catalog-products', 'Каталог пуст');
                 showEmptyState('cart-recommended-products', 'Рекомендации появятся скоро');
             }
+
+            // Проверяем пользователя и показываем профиль продавца
+            checkSellerProfile()
 
             // Навигация
             setupNavigation();
