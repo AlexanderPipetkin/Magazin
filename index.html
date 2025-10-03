@@ -428,13 +428,15 @@
         .quantity-display {
             font-size: 16px;
             font-weight: bold;
-            min-width: 20px;
+            min-width: 30px;
             text-align: center;
             padding: 0 5px;
+            overflow: hidden;
+            text-overflow: ellipsis;
         }
         
         .quantity-input {
-            width: 60px;
+            width: 70px;
             height: 30px;
             border: var(--border-width) solid var(--border-color);
             border-radius: var(--border-radius-small);
@@ -835,18 +837,22 @@
             align-items: center;
             margin-top: 15px;
             flex-wrap: nowrap;
+            min-height: 45px;
+            transition: all 0.3s ease;
         }
         
         .quantity-controls {
             display: flex;
             align-items: center;
-            gap: 10px;
+            gap: 8px;
             background: rgba(255, 255, 255, 0.1);
             padding: 8px 12px;
             border-radius: var(--border-radius);
             transition: all 0.3s ease;
             animation: slideInControls 0.3s ease;
             position: relative;
+            min-width: 140px;
+            justify-content: center;
         }
         
         @keyframes slideInControls {
@@ -855,6 +861,7 @@
         }
         
         .add-to-cart-btn {
+            font-weight: bold;
             height: 45px;
             background: var(--primary-text);
             color: var(--primary-bg);
@@ -865,6 +872,7 @@
             transition: var(--transition);
             flex: 1;
             min-width: 150px;
+            animation: slideInUp 0.3s ease;
         }
         
         .go-to-cart-btn {
@@ -1160,11 +1168,13 @@
             .product-modal-actions {
                 flex-direction: row;
                 flex-wrap: wrap;
+                gap: 8px;
             }
             
             .add-to-cart-btn, .go-to-cart-btn {
                 min-width: 100%;
-                height: 40px;
+                height: 45px;
+                font-size: 16px;
             }
             
             .cart-item {
@@ -1189,14 +1199,26 @@
             
             .quantity-controls {
                 flex: 1;
-                max-width: 120px;
+                max-width: 140px;
                 justify-content: center;
+                gap: 6px;
+            }
+            
+            .quantity-display {
+                min-width: 35px;
+                font-size: 14px;
+            }
+            
+            .quantity-input {
+                width: 65px;
+                font-size: 14px;
             }
             
             .go-to-cart-btn {
                 flex: 2;
                 min-width: auto;
-                margin-left: 10px;
+                margin-left: 0;
+                height: 45px;
             }
         }
         
@@ -1391,7 +1413,7 @@
                     <button class="profile-btn" id="about-btn">О нас</button>
                 </div>
 
-                <div class="version-info">Версия: 0.0.15</div>
+                <div class="version-info">Версия: 0.0.17</div>
             </div>
         </section>
         
@@ -1876,6 +1898,14 @@
                         saveCart();
                         updateCartDisplay();
                         hideModal(removeModal);
+                        
+                        // ОБНОВЛЯЕМ КНОПКИ В МОДАЛЬНОМ ОКНЕ ЕСЛИ ОНО ОТКРЫТО С АНИМАЦИЕЙ
+                        const modal = document.getElementById('product-modal');
+                        if (modal.classList.contains('active') && currentProduct && currentProduct.id === productToRemove) {
+                            setTimeout(() => {
+                                setupProductModalActions(currentProduct, modal);
+                            }, 10);
+                        }
                         productToRemove = null;
                     }
                 });
@@ -2011,8 +2041,8 @@
             const modal = document.getElementById('product-modal');
             const content = modal.querySelector('.product-modal-content');
             
-            // Прокручиваем модальное окно вверх
-            modal.scrollTop = 0;
+            // ПРОКРУЧИВАЕМ В САМЫЙ ВЕРХ ПРИ ОТКРЫТИИ
+            content.scrollTop = 0;
             
             const cartItem = Array.isArray(cart) ? cart.find(item => item.id === product.id) : null;
             const productImages = Array.isArray(product.images) && product.images.length > 0 ? 
@@ -2304,40 +2334,52 @@
             
             const cartItem = Array.isArray(cart) ? cart.find(item => item.id === product.id) : null;
             
-            if (cartItem) {
-                actionsContainer.innerHTML = `
-                    <div class="quantity-controls" data-id="${product.id}">
-                        <button class="quantity-btn minus" data-id="${product.id}">-</button>
-                        <span class="quantity-display" data-id="${product.id}">${cartItem.quantity}</span>
-                        <input type="text" class="quantity-input" data-id="${product.id}" value="${cartItem.quantity}" maxlength="5">
-                        <button class="quantity-btn plus" data-id="${product.id}">+</button>
-                    </div>
-                    <button class="go-to-cart-btn">Перейти в корзину</button>
-                `;
-            } else {
-                actionsContainer.innerHTML = `<button class="add-to-cart-btn">Добавить в корзину</button>`;
-            }
+            // ДОБАВЛЯЕМ АНИМАЦИЮ ИСЧЕЗНОВЕНИЯ
+            actionsContainer.style.opacity = '0';
+            actionsContainer.style.transform = 'translateY(10px)';
             
-            // Назначаем обработчики
-            const addToCartBtn = actionsContainer.querySelector('.add-to-cart-btn');
-            if (addToCartBtn) {
-                addToCartBtn.addEventListener('click', function(e) {
-                    e.stopPropagation();
-                    addToCart(product);
-                    setupProductModalActions(product, modal);
-                });
-            }
+            setTimeout(() => {
+                // ОБНОВЛЯЕМ КНОПКИ В ЗАВИСИМОСТИ ОТ НАЛИЧИЯ ТОВАРА В КОРЗИНЕ
+                if (cartItem && cartItem.quantity > 0) {
+                    actionsContainer.innerHTML = `
+                        <div class="quantity-controls" data-id="${product.id}">
+                            <button class="quantity-btn minus" data-id="${product.id}">-</button>
+                            <span class="quantity-display" data-id="${product.id}">${cartItem.quantity}</span>
+                            <input type="text" class="quantity-input" data-id="${product.id}" value="${cartItem.quantity}" maxlength="5">
+                            <button class="quantity-btn plus" data-id="${product.id}">+</button>
+                        </div>
+                        <button class="go-to-cart-btn">Перейти в корзину</button>
+                    `;
+                } else {
+                    actionsContainer.innerHTML = `<button class="add-to-cart-btn">Добавить в корзину</button>`;
+                }
+                
+                // АНИМАЦИЯ ПОЯВЛЕНИЯ
+                actionsContainer.style.opacity = '1';
+                actionsContainer.style.transform = 'translateY(0)';
+                actionsContainer.style.transition = 'all 0.3s ease';
+                
+                // Назначаем обработчики
+                const addToCartBtn = actionsContainer.querySelector('.add-to-cart-btn');
+                if (addToCartBtn) {
+                    addToCartBtn.addEventListener('click', function(e) {
+                        e.stopPropagation();
+                        addToCart(product);
+                        setupProductModalActions(product, modal);
+                    });
+                }
 
-            const goToCartBtn = actionsContainer.querySelector('.go-to-cart-btn');
-            if (goToCartBtn) {
-                goToCartBtn.addEventListener('click', function(e) {
-                    e.stopPropagation();
-                    hideModal(modal);
-                    setTimeout(() => switchPage('cart'), 300);
-                });
-            }
+                const goToCartBtn = actionsContainer.querySelector('.go-to-cart-btn');
+                if (goToCartBtn) {
+                    goToCartBtn.addEventListener('click', function(e) {
+                        e.stopPropagation();
+                        hideModal(modal);
+                        setTimeout(() => switchPage('cart'), 300);
+                    });
+                }
 
-            setupQuantityControls(product.id);
+                setupQuantityControls(product.id);
+            }, 150);
         }
 
         function setupQuantityControls(productId) {
@@ -2368,6 +2410,7 @@
                 quantityInput.select();
             });
             
+            // ОБРАБОТЧИК BLUR - срабатывает при потере фокуса
             quantityInput.addEventListener('blur', function() {
                 finishQuantityEdit(productId, quantityInput.value);
             });
@@ -2390,7 +2433,7 @@
             
             if (isNaN(newQuantity) || newQuantity < 0) {
                 showNotification('Неверное количество товара');
-                // ВОССТАНАВЛИВАЕМ ПРЕДЫДУЩЕЕ ЗНАЧЕНИЕ
+                // ВОССТАНАВЛИВАЕМ ПРЕДЫДУЩЕЕ ЗНАЧЕНИЕ И СКРЫВАЕМ ПОЛЕ ВВОДА
                 quantityInput.value = currentQuantity;
                 quantityDisplay.textContent = currentQuantity;
                 quantityInput.style.display = 'none';
@@ -2399,17 +2442,25 @@
             } else if (newQuantity > 15000) {
                 newQuantity = 15000;
                 showNotification('Максимальное количество: 15000');
-            } else if (newQuantity === 0) {
-                productToRemove = productId;
-                showModal(document.getElementById('remove-confirm-modal'));
-                // ВОССТАНАВЛИВАЕМ ПРЕДЫДУЩЕЕ ЗНАЧЕНИЕ
-                quantityInput.value = currentQuantity;
-                quantityDisplay.textContent = currentQuantity;
-                quantityInput.style.display = 'none';
-                quantityDisplay.style.display = 'block';
+            }
+            
+            // ЕСЛИ НОВОЕ КОЛИЧЕСТВО 0 - УДАЛЯЕМ ТОВАР
+            if (newQuantity === 0) {
+                cart = cart.filter(item => item.id !== productId);
+                saveCart();
+                updateCartDisplay();
+                
+                // ОБНОВЛЯЕМ КНОПКИ С АНИМАЦИЕЙ
+                const modal = document.getElementById('product-modal');
+                if (modal.classList.contains('active') && currentProduct && currentProduct.id === productId) {
+                    setTimeout(() => {
+                        setupProductModalActions(currentProduct, modal);
+                    }, 10);
+                }
                 return;
             }
             
+            // ОБНОВЛЯЕМ ЗНАЧЕНИЕ В КАРТОЧКЕ
             quantityInput.value = newQuantity;
             quantityDisplay.textContent = newQuantity;
             quantityInput.style.display = 'none';
@@ -2425,13 +2476,17 @@
 
         function updateCartItemQuantity(productId, newQuantity) {
             const item = cart.find(item => item.id === productId);
+            const modal = document.getElementById('product-modal');
+            const isModalOpen = modal.classList.contains('active') && currentProduct && currentProduct.id === productId;
+            
             if (item) {
                 if (newQuantity === 0) {
                     cart = cart.filter(item => item.id !== productId);
-                    // ОБНОВЛЯЕМ КНОПКИ В МОДАЛЬНОМ ОКНЕ
-                    const modal = document.getElementById('product-modal');
-                    if (modal.classList.contains('active') && currentProduct && currentProduct.id === productId) {
-                        setupProductModalActions(currentProduct, modal);
+                    // ОБНОВЛЯЕМ КНОПКИ В МОДАЛЬНОМ ОКНЕ ЕСЛИ ОНО ОТКРЫТО
+                    if (isModalOpen) {
+                        setTimeout(() => {
+                            setupProductModalActions(currentProduct, modal);
+                        }, 10);
                     }
                 } else {
                     item.quantity = newQuantity;
@@ -2440,9 +2495,12 @@
                 updateCartDisplay();
                 
                 // Обновляем модальное окно товара если оно открыто
-                const modal = document.getElementById('product-modal');
-                if (modal.classList.contains('active') && currentProduct && currentProduct.id === productId) {
-                    setupProductModalActions(currentProduct, modal);
+                if (isModalOpen && newQuantity > 0) {
+                    // ОБНОВЛЯЕМ ТОЛЬКО ЦИФРУ, ЕСЛИ ТОВАР ЕЩЕ В КОРЗИНЕ
+                    const quantityDisplay = document.querySelector(`.quantity-display[data-id="${productId}"]`);
+                    const quantityInput = document.querySelector(`.quantity-input[data-id="${productId}"]`);
+                    if (quantityDisplay) quantityDisplay.textContent = newQuantity;
+                    if (quantityInput) quantityInput.value = newQuantity;
                 }
             }
         }
@@ -2473,8 +2531,11 @@
         function showModal(modal) {
             modal.classList.remove('fade-out');
             modal.classList.add('active');
-            // Прокручиваем модальное окно вверх при открытии
-            modal.scrollTop = 0;
+            // ПРОКРУЧИВАЕМ В САМЫЙ ВЕРХ ПРИ ОТКРЫТИИ ЛЮБОЙ КАРТОЧКИ
+            const content = modal.querySelector('.product-modal-content');
+            if (content) {
+                content.scrollTop = 0;
+            }
         }
 
         function hideModal(modal) {
@@ -2628,6 +2689,7 @@
                 quantityInput.select();
             });
             
+            // ОБРАБОТЧИК BLUR - срабатывает при потере фокуса
             quantityInput.addEventListener('blur', function() {
                 finishQuantityEdit(productId, quantityInput.value);
             });
