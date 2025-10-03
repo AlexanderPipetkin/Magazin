@@ -443,33 +443,18 @@
             text-align: center;
             font-size: 14px;
             display: none;
+            animation: inputExpand 0.3s ease;
         }
-        
-        .quick-select-panel {
-            position: absolute;
-            bottom: 100%;
-            left: 50%;
-            transform: translateX(-50%);
-            background: var(--primary-bg);
-            border: var(--border-width) solid var(--border-color);
-            border-radius: var(--border-radius);
-            padding: 8px;
-            display: none;
-            gap: 5px;
-            z-index: 100;
-            margin-bottom: 5px;
-        }
-        
-        .quick-select-btn {
-            padding: 5px 8px;
-            border: var(--border-width) solid var(--border-color);
-            border-radius: var(--border-radius-small);
-            background: transparent;
-            color: var(--primary-text);
-            font-size: 12px;
-            cursor: pointer;
-            transition: var(--transition);
-            white-space: nowrap;
+
+        @keyframes inputExpand {
+            from { 
+                opacity: 0;
+                transform: scale(0.8);
+            }
+            to { 
+                opacity: 1;
+                transform: scale(1);
+            }
         }
         
         .cart-total {
@@ -1406,7 +1391,7 @@
                     <button class="profile-btn" id="about-btn">О нас</button>
                 </div>
 
-                <div class="version-info">Версия: 0.0.14</div>
+                <div class="version-info">Версия: 0.0.15</div>
             </div>
         </section>
         
@@ -2026,6 +2011,9 @@
             const modal = document.getElementById('product-modal');
             const content = modal.querySelector('.product-modal-content');
             
+            // Прокручиваем модальное окно вверх
+            modal.scrollTop = 0;
+            
             const cartItem = Array.isArray(cart) ? cart.find(item => item.id === product.id) : null;
             const productImages = Array.isArray(product.images) && product.images.length > 0 ? 
                 product.images : (product.image ? [product.image] : []);
@@ -2120,13 +2108,6 @@
                             <span class="quantity-display" data-id="${product.id}">${cartItem.quantity}</span>
                             <input type="text" class="quantity-input" data-id="${product.id}" value="${cartItem.quantity}" maxlength="5">
                             <button class="quantity-btn plus" data-id="${product.id}">+</button>
-                            <div class="quick-select-panel" data-id="${product.id}">
-                                <button class="quick-select-btn" data-amount="5">+5</button>
-                                <button class="quick-select-btn" data-amount="10">+10</button>
-                                <button class="quick-select-btn" data-amount="20">+20</button>
-                                <button class="quick-select-btn" data-amount="50">+50</button>
-                                <button class="quick-select-btn" data-amount="100">+100</button>
-                            </div>
                         </div>
                         <button class="go-to-cart-btn">Перейти в корзину</button>
                     ` : `
@@ -2330,13 +2311,6 @@
                         <span class="quantity-display" data-id="${product.id}">${cartItem.quantity}</span>
                         <input type="text" class="quantity-input" data-id="${product.id}" value="${cartItem.quantity}" maxlength="5">
                         <button class="quantity-btn plus" data-id="${product.id}">+</button>
-                        <div class="quick-select-panel" data-id="${product.id}">
-                            <button class="quick-select-btn" data-amount="5">+5</button>
-                            <button class="quick-select-btn" data-amount="10">+10</button>
-                            <button class="quick-select-btn" data-amount="20">+20</button>
-                            <button class="quick-select-btn" data-amount="50">+50</button>
-                            <button class="quick-select-btn" data-amount="100">+100</button>
-                        </div>
                     </div>
                     <button class="go-to-cart-btn">Перейти в корзину</button>
                 `;
@@ -2374,53 +2348,15 @@
             const plusBtn = quantityControls.querySelector('.plus');
             const quantityDisplay = quantityControls.querySelector('.quantity-display');
             const quantityInput = quantityControls.querySelector('.quantity-input');
-            const quickSelectPanel = quantityControls.querySelector('.quick-select-panel');
-            
-            let longPressTimer;
-            
-            // Обработчики для быстрого выбора
-            const quickSelectBtns = quickSelectPanel.querySelectorAll('.quick-select-btn');
-            quickSelectBtns.forEach(btn => {
-                btn.addEventListener('click', function() {
-                    const amount = parseInt(this.getAttribute('data-amount'));
-                    updateQuantity(productId, amount);
-                    quickSelectPanel.style.display = 'none';
-                });
-            });
-            
-            // Долгое нажатие для показа панели быстрого выбора
-            function startLongPress(e) {
-                longPressTimer = setTimeout(() => {
-                    quickSelectPanel.style.display = 'flex';
-                }, 500);
-            }
-            
-            function cancelLongPress() {
-                clearTimeout(longPressTimer);
-            }
-            
-            plusBtn.addEventListener('mousedown', startLongPress);
-            plusBtn.addEventListener('touchstart', startLongPress);
-            plusBtn.addEventListener('mouseup', cancelLongPress);
-            plusBtn.addEventListener('touchend', cancelLongPress);
-            plusBtn.addEventListener('mouseleave', cancelLongPress);
-            
-            minusBtn.addEventListener('mousedown', startLongPress);
-            minusBtn.addEventListener('touchstart', startLongPress);
-            minusBtn.addEventListener('mouseup', cancelLongPress);
-            minusBtn.addEventListener('touchend', cancelLongPress);
-            minusBtn.addEventListener('mouseleave', cancelLongPress);
             
             // Обычные клики
             minusBtn.addEventListener('click', function(e) {
                 e.stopPropagation();
-                cancelLongPress();
                 updateQuantity(productId, -1);
             });
             
             plusBtn.addEventListener('click', function(e) {
                 e.stopPropagation();
-                cancelLongPress();
                 updateQuantity(productId, 1);
             });
             
@@ -2441,13 +2377,6 @@
                     finishQuantityEdit(productId, quantityInput.value);
                 }
             });
-            
-            // Закрытие панели быстрого выбора при клике вне
-            document.addEventListener('click', function(e) {
-                if (!quantityControls.contains(e.target)) {
-                    quickSelectPanel.style.display = 'none';
-                }
-            });
         }
 
         function finishQuantityEdit(productId, value) {
@@ -2457,17 +2386,28 @@
             if (!quantityInput || !quantityDisplay) return;
             
             let newQuantity = parseInt(value);
+            const currentQuantity = getCurrentQuantity(productId);
             
             if (isNaN(newQuantity) || newQuantity < 0) {
                 showNotification('Неверное количество товара');
-                quantityInput.value = getCurrentQuantity(productId);
+                // ВОССТАНАВЛИВАЕМ ПРЕДЫДУЩЕЕ ЗНАЧЕНИЕ
+                quantityInput.value = currentQuantity;
+                quantityDisplay.textContent = currentQuantity;
+                quantityInput.style.display = 'none';
+                quantityDisplay.style.display = 'block';
+                return;
             } else if (newQuantity > 15000) {
                 newQuantity = 15000;
                 showNotification('Максимальное количество: 15000');
             } else if (newQuantity === 0) {
                 productToRemove = productId;
                 showModal(document.getElementById('remove-confirm-modal'));
-                newQuantity = getCurrentQuantity(productId);
+                // ВОССТАНАВЛИВАЕМ ПРЕДЫДУЩЕЕ ЗНАЧЕНИЕ
+                quantityInput.value = currentQuantity;
+                quantityDisplay.textContent = currentQuantity;
+                quantityInput.style.display = 'none';
+                quantityDisplay.style.display = 'block';
+                return;
             }
             
             quantityInput.value = newQuantity;
@@ -2488,6 +2428,11 @@
             if (item) {
                 if (newQuantity === 0) {
                     cart = cart.filter(item => item.id !== productId);
+                    // ОБНОВЛЯЕМ КНОПКИ В МОДАЛЬНОМ ОКНЕ
+                    const modal = document.getElementById('product-modal');
+                    if (modal.classList.contains('active') && currentProduct && currentProduct.id === productId) {
+                        setupProductModalActions(currentProduct, modal);
+                    }
                 } else {
                     item.quantity = newQuantity;
                 }
@@ -2528,6 +2473,8 @@
         function showModal(modal) {
             modal.classList.remove('fade-out');
             modal.classList.add('active');
+            // Прокручиваем модальное окно вверх при открытии
+            modal.scrollTop = 0;
         }
 
         function hideModal(modal) {
@@ -2632,13 +2579,6 @@
                         <span class="quantity-display" data-id="${item.id}">${item.quantity}</span>
                         <input type="text" class="quantity-input" data-id="${item.id}" value="${item.quantity}" maxlength="5">
                         <button class="quantity-btn plus" data-id="${item.id}">+</button>
-                        <div class="quick-select-panel" data-id="${item.id}">
-                            <button class="quick-select-btn" data-amount="5">+5</button>
-                            <button class="quick-select-btn" data-amount="10">+10</button>
-                            <button class="quick-select-btn" data-amount="20">+20</button>
-                            <button class="quick-select-btn" data-amount="50">+50</button>
-                            <button class="quick-select-btn" data-amount="100">+100</button>
-                        </div>
                     </div>
                 `;
                 
@@ -2668,53 +2608,15 @@
             const plusBtn = cartItemControls.querySelector('.plus');
             const quantityDisplay = cartItemControls.querySelector('.quantity-display');
             const quantityInput = cartItemControls.querySelector('.quantity-input');
-            const quickSelectPanel = cartItemControls.querySelector('.quick-select-panel');
-            
-            let longPressTimer;
-            
-            // Обработчики для быстрого выбора
-            const quickSelectBtns = quickSelectPanel.querySelectorAll('.quick-select-btn');
-            quickSelectBtns.forEach(btn => {
-                btn.addEventListener('click', function() {
-                    const amount = parseInt(this.getAttribute('data-amount'));
-                    updateQuantity(productId, amount);
-                    quickSelectPanel.style.display = 'none';
-                });
-            });
-            
-            // Долгое нажатие для показа панели быстрого выбора
-            function startLongPress(e) {
-                longPressTimer = setTimeout(() => {
-                    quickSelectPanel.style.display = 'flex';
-                }, 500);
-            }
-            
-            function cancelLongPress() {
-                clearTimeout(longPressTimer);
-            }
-            
-            plusBtn.addEventListener('mousedown', startLongPress);
-            plusBtn.addEventListener('touchstart', startLongPress);
-            plusBtn.addEventListener('mouseup', cancelLongPress);
-            plusBtn.addEventListener('touchend', cancelLongPress);
-            plusBtn.addEventListener('mouseleave', cancelLongPress);
-            
-            minusBtn.addEventListener('mousedown', startLongPress);
-            minusBtn.addEventListener('touchstart', startLongPress);
-            minusBtn.addEventListener('mouseup', cancelLongPress);
-            minusBtn.addEventListener('touchend', cancelLongPress);
-            minusBtn.addEventListener('mouseleave', cancelLongPress);
             
             // Обычные клики
             minusBtn.addEventListener('click', function(e) {
                 e.stopPropagation();
-                cancelLongPress();
                 updateQuantity(productId, -1);
             });
             
             plusBtn.addEventListener('click', function(e) {
                 e.stopPropagation();
-                cancelLongPress();
                 updateQuantity(productId, 1);
             });
             
@@ -2733,13 +2635,6 @@
             quantityInput.addEventListener('keypress', function(e) {
                 if (e.key === 'Enter') {
                     finishQuantityEdit(productId, quantityInput.value);
-                }
-            });
-            
-            // Закрытие панели быстрого выбора при клике вне
-            document.addEventListener('click', function(e) {
-                if (!cartItemControls.contains(e.target)) {
-                    quickSelectPanel.style.display = 'none';
                 }
             });
         }
