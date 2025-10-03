@@ -426,6 +426,7 @@
         }
         
         .quantity-display {
+            transition: transform 0.05s ease;
             font-size: 16px;
             font-weight: bold;
             min-width: 30px;
@@ -2476,14 +2477,13 @@
 
         function updateCartItemQuantity(productId, newQuantity) {
             const item = cart.find(item => item.id === productId);
-            const modal = document.getElementById('product-modal');
-            const isModalOpen = modal.classList.contains('active') && currentProduct && currentProduct.id === productId;
             
             if (item) {
                 if (newQuantity === 0) {
                     cart = cart.filter(item => item.id !== productId);
-                    // ОБНОВЛЯЕМ КНОПКИ В МОДАЛЬНОМ ОКНЕ ЕСЛИ ОНО ОТКРЫТО
-                    if (isModalOpen) {
+                    // ОБНОВЛЯЕМ КНОПКИ В МОДАЛЬНОМ ОКНЕ
+                    const modal = document.getElementById('product-modal');
+                    if (modal.classList.contains('active') && currentProduct && currentProduct.id === productId) {
                         setTimeout(() => {
                             setupProductModalActions(currentProduct, modal);
                         }, 10);
@@ -2493,18 +2493,9 @@
                 }
                 saveCart();
                 updateCartDisplay();
-                
-                // Обновляем модальное окно товара если оно открыто
-                if (isModalOpen && newQuantity > 0) {
-                    // ОБНОВЛЯЕМ ТОЛЬКО ЦИФРУ, ЕСЛИ ТОВАР ЕЩЕ В КОРЗИНЕ
-                    const quantityDisplay = document.querySelector(`.quantity-display[data-id="${productId}"]`);
-                    const quantityInput = document.querySelector(`.quantity-input[data-id="${productId}"]`);
-                    if (quantityDisplay) quantityDisplay.textContent = newQuantity;
-                    if (quantityInput) quantityInput.value = newQuantity;
-                }
             }
         }
-
+        
         function updateQuantity(productId, change) {
             const currentQuantity = getCurrentQuantity(productId);
             let newQuantity = currentQuantity + change;
@@ -2524,6 +2515,25 @@
                 showModal(document.getElementById('remove-confirm-modal'));
                 return;
             }
+            
+            // ОБНОВЛЯЕМ ИНТЕРФЕЙС С АНИМАЦИЕЙ
+            const quantityDisplays = document.querySelectorAll(`.quantity-display[data-id="${productId}"]`);
+            const quantityInputs = document.querySelectorAll(`.quantity-input[data-id="${productId}"]`);
+            
+            quantityDisplays.forEach(display => {
+                // АНИМАЦИЯ ИЗМЕНЕНИЯ ЧИСЛА
+                display.style.transform = 'scale(1.2)';
+                display.style.transition = 'transform 0.2s ease';
+                display.textContent = newQuantity;
+                
+                setTimeout(() => {
+                    display.style.transform = 'scale(1)';
+                }, 200);
+            });
+            
+            quantityInputs.forEach(input => {
+                input.value = newQuantity;
+            });
             
             updateCartItemQuantity(productId, newQuantity);
         }
